@@ -19,9 +19,13 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 ```
 https://github.com/Itz-fork/Mega.nz-Bot
 ```
+- Enter the directory,
+```
+cd Mega.nz-Bot
+```
 - Install Requirements,
 ```
-https://github.com/Itz-fork/Mega.nz-Bot
+pip3 install -r requirements.txt
 ```
 - Run the Bot,
 ```
@@ -29,4 +33,4 @@ python3 main.py
 ```
 
 # Support
-<a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support_Group-2cb6e0?style=for-the-badge&logo=telegram&logoColor=white"></a>
+<a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white"></a>
