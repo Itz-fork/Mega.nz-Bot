@@ -126,4 +126,8 @@ async def megadl(_, message: Message):
 # Replying If There is no mega url in the message
 @Client.on_message(~filters.regex(MEGA_REGEX) & filters.private)
 async def nomegaurl(_, message: Message):
+  # Auth users only
+    if message.from_user.id not in Config.AUTH_USERS:
+        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+        return
     await message.reply_text("**Sorry, I can't find a valid mega.nz url in your message! Can you check it again?")
