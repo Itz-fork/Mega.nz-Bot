@@ -1,9 +1,9 @@
 {
-  "name": "CallsMusic-Plus",
-  "description": "Telegram Voice Chat Music Player Bot Based On Callsmusic with Extrac Features!",
-  "keywords": ["music", "voicechat", "telegram"],
-  "repository": "https://github.com/Itz-fork/Callsmusic-Plus",
-  "logo": "https://telegra.ph/file/7fa5bd949db5061e6f361.jpg",
+  "name": "Mega.nz Bot",
+  "description": "Simple Telegram Bot to download files from Mega.nz",
+  "keywords": ["mega.nz", "bot", "telegram"],
+  "repository": "https://github.com/Itz-fork/Mega.nz-Bot",
+  "logo": "https://telegra.ph/file/583f46da57641b90c28f9.png",
   "stack": "container",
   "env": {
     "API_ID": {
@@ -19,7 +19,7 @@
       "required": true
     },
     "AUTH_USERS": {
-      "description": "Telegram Ids Of Auth Users. Only they can use this bot!",
+      "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
       "required": true
     }
   }
