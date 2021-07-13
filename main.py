@@ -7,10 +7,10 @@ from config import Config
 
 if __name__ == "__main__" :
     Megadlbot = Client(
-        "Nexa MegaDl",
+        "NexaMegaDl",
         bot_token=Config.BOT_TOKEN,
         api_id=Config.APP_ID,
         api_hash=Config.API_HASH,
         plugins=dict(root="megadl")
     )
-    Megadlbot.start()
+    Megadlbot.run()
