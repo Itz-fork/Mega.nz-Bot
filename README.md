@@ -15,6 +15,18 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### With VPS/PC
 
-- Clone the Repo - ```https://github.com/Itz-fork/Mega.nz-Bot```
-- Install Requirements - ```https://github.com/Itz-fork/Mega.nz-Bot```
-- Run the Bot - ```python3 main.py```
+- Clone the Repo,
+```
+https://github.com/Itz-fork/Mega.nz-Bot
+```
+- Install Requirements,
+```
+https://github.com/Itz-fork/Mega.nz-Bot
+```
+- Run the Bot,
+```
+python3 main.py
+```
+
+# Support
+<a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support_Group-2cb6e0?style=for-the-badge&logo=telegram&logoColor=white"></a>
