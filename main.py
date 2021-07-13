@@ -7,7 +7,7 @@ from config import Config
 
 if __name__ == "__main__" :
     Megadlbot = Client(
-        "NexaMegaDl",
+        "Nexa MegaDl",
         bot_token=Config.BOT_TOKEN,
         api_id=Config.APP_ID,
         api_hash=Config.API_HASH,
