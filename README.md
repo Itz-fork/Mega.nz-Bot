@@ -11,7 +11,7 @@ Simple Telegram Bot to Download Files From Mega.nz and Upload It to Telegram
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### With Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/Mega.nz-Bot)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Itz-fork/Mega.nz-Bot)
 
 ### With VPS/PC
 
