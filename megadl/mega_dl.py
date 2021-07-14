@@ -63,7 +63,6 @@ async def megadl(_, message: Message):
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
         magapylol = m.download_url(url, megadldir)
-        logger = logging.getLogger(magapylol)
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** `{e}`")
