@@ -1,12 +1,5 @@
 # Copyright (c) 2021 Itz-fork
 # Don't kang this else your dad is gae
-# From SpEcHiDe sar's AnyDLBot
-
-
-import logging
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
 
 import math
 import os
