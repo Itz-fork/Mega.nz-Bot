@@ -126,7 +126,7 @@ async def megadl(_, message: Message):
 
 
 # Replying If There is no mega url in the message
-@Client.on_message(~filters.command(["info"]) & ~filters.regex(MEGA_REGEX) & filters.private)
+@Client.on_message(~filters.command(["info", "upload"]) & ~filters.regex(MEGA_REGEX) & filters.private)
 async def nomegaurl(_, message: Message):
   # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
