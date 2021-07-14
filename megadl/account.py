@@ -27,15 +27,3 @@ if Config.USER_ACCOUNT == "False":
   except:
     print("Can't Login as a Anonymouse user for some reason. Can You Login with Your Mega Account? \n\n Bot is Leaving This world...")
     exit()
-
-
-# Method to check if user is using Mega user account
-def is_using_mega_acc(func):
-    async def using_mega_acc(client: Client, message: Message):
-      if Config.USER_ACCOUNT == "True":
-        return await func(client, message)
-      else:
-        await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
-        return
-      
-      return using_mega_acc
