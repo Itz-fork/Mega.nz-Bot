@@ -9,11 +9,15 @@ from pyrogram.types import Message
 from hurry.filesize import size
 
 from megadl.account import m
+from megadl.mega_dl import GITHUB_REPO
 from config import Config
 
 # Get Mega user Account info
 @Client.on_message(filters.command("info") & filters.private)
 async def nomegaurl(_, message: Message):
+  if message.from_user.id not in Config.AUTH_USERS:
+    await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+    return
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
