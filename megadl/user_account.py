@@ -24,5 +24,5 @@ async def nomegaurl(_, message: Message):
   acc_name = uacc_info['name']
   acc_quota = m.get_quota()
   acc_space_bytes = m.get_storage_space()
-  acc_space = size(acc_space_bytes)
-  await message.reply_text(f"**Mega.nz User Account Info** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage Space:** `{acc_space}` \n**Quota:** `{acc_quota} MB`")
+  # acc_space = size(acc_space_bytes)
+  await message.reply_text(f"**Mega.nz User Account Info** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage Space:** `{acc_space_bytes}` \n**Quota:** `{acc_quota} MB`")
