@@ -23,7 +23,7 @@
             "description": "Your Bot Token From @BotFather",
             "value": ""
         },
-        "BOT_TOKEN": {
+        "AUTH_USERS": {
             "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
             "value": ""
         }
