@@ -31,7 +31,7 @@ if Config.USER_ACCOUNT == "False":
 
 
 # Method to check if user is using Mega user account
-def is_that_owner(func):
+def is_using_mega_acc(func):
     @wraps(func)
     async def using_mega_acc(client: Client, message: Message):
       if Config.USER_ACCOUNT == "True":
