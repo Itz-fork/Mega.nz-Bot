@@ -32,4 +32,4 @@ async def nomegaurl(_, message: Message):
   total_space = size(btotal_space)
   used_space = size(bused_space)
   free_space = size(bfree_space)
-  await message.reply_text(f"**~ Your User Account Info ~** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage,** \n **Total:** `{total_space}` \n **Used:** `{used_space}` \n **Free:** `{free_space}` \n**Quota:** `{acc_quota} MB`")
+  await message.reply_text(f"**~ Your User Account Info ~** \n\n▪ **Account Name:** `{acc_name}` \n▪ **Email:** `{acc_email}` \n▪ **Storage,** \n - **Total:** `{total_space}` \n - **Used:** `{used_space}` \n - **Free:** `{free_space}` \n▪ **Quota:** `{acc_quota} MB`")
