@@ -26,6 +26,18 @@
         "AUTH_USERS": {
             "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
             "required": true
+        },
+        "USER_ACCOUNT": {
+            "description": "Set this to 'True' If you want to use your own Mega Account. Default to 'False' !",
+            "required": false
+        },
+        "MEGA_EMAIL": {
+            "description": "Fill this if you set the 'USER_ACCOUNT' var to True. This is your Mega account Email!",
+            "required": false
+        },
+        "MEGA_PASSWORD": {
+            "description": "Fill this if you set the 'USER_ACCOUNT' var to True. This is your Mega account Password!",
+            "required": false
         }
     },
     "addons": [],
