@@ -13,11 +13,8 @@ from mega import Mega
 from hurry.filesize import size
 from megadl.mega_help import progress_for_pyrogram, humanbytes
 
+from megadl.account import m
 from config import Config
-
-# Mega Client
-mega = Mega()
-m = mega.login()
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
