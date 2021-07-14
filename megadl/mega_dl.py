@@ -18,9 +18,8 @@ from config import Config
 
 # Logging
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(magapylol)
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
@@ -64,6 +63,7 @@ async def megadl(_, message: Message):
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
         magapylol = m.download_url(url, megadldir)
+        logger = logging.getLogger(magapylol) # Log
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         await message.edit(f"**Error:** `{e}`")
