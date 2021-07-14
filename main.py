@@ -5,12 +5,11 @@ from pyrogram import Client
 from config import Config
 
 
-if __name__ == "__main__" :
-    Megadlbot = Client(
-        "Nexa MegaDl",
-        bot_token=Config.BOT_TOKEN,
-        api_id=Config.APP_ID,
-        api_hash=Config.API_HASH,
-        plugins=dict(root="megadl")
-    )
-    Megadlbot.run()
+MeganzBot = Client(
+    "Meganz Bot",
+    api_id=Config.APP_ID,
+    api_hash=Config.API_HASH,
+    bot_token=Config.BOT_TOKEN,
+    plugins=dict(root="megadl")
+)
+MeganzBot.run()
