@@ -6,18 +6,20 @@ import shutil
 import filetype
 import moviepy.editor
 import time
+import logging
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from mega import Mega
 from hurry.filesize import size
 from megadl.mega_help import progress_for_pyrogram, humanbytes
 
+from megadl.account import m
 from config import Config
 
-# Mega Client
-mega = Mega()
-m = mega.login()
+# Logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
@@ -63,7 +65,7 @@ async def megadl(_, message: Message):
         magapylol = m.download_url(url, megadldir)
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
-        await message.edit(f"**Error:** `{e}`")
+        await download_msg.edit(f"**Error:** `{e}`")
         shutil.rmtree(basedir + "/" + userpath)
         return
     lmaocheckdis = os.stat(alreadylol).st_size

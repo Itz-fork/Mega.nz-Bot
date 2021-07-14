@@ -9,3 +9,7 @@ class Config(object):
     AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
     DOWNLOAD_LOCATION = "NexaBots"
     TG_MAX_SIZE = 2040108421
+    # Mega User Account
+    USER_ACCOUNT = os.environ.get("USER_ACCOUNT", "False")
+    MEGA_EMAIL = os.environ.get("MEGA_EMAIL", "")
+    MEGA_PASSWORD = os.environ.get("MEGA_PASSWORD", "")
