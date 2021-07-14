@@ -8,7 +8,7 @@ email = Config.MEGA_EMAIL
 password = Config.MEGA_PASSWORD
 
 # Mega User Account
-if USE_ACCOUNT is "True":
+if Config.USER_ACCOUNT is "True":
   m = mega.login(email, password)
 else:
   m = mega.login()
