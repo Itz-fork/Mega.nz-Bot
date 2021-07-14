@@ -6,6 +6,7 @@ import shutil
 import filetype
 import moviepy.editor
 import time
+import logging
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -14,6 +15,12 @@ from megadl.mega_help import progress_for_pyrogram, humanbytes
 
 from megadl.account import m
 from config import Config
+
+# Logging
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
