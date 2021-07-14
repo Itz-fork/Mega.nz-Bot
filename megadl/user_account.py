@@ -8,12 +8,15 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from hurry.filesize import size
 
-from megadl.account import m, is_using_mega_acc
+from megadl.account import m
+from config import Config
 
 # Get Mega user Account info
 @Client.on_message(filters.command("info") & filters.private)
-@is_using_mega_acc
 async def nomegaurl(_, message: Message):
+  if Config.USER_ACCOUNT == "False":
+    await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
+    return
   get_user = m.get_user()
   imported_user = json.dumps(get_user)
   uacc_info = json.loads(imported_user)
