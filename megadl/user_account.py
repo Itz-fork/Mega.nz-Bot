@@ -6,11 +6,13 @@ import json
 
 from pyrogram import Client, filters
 from pyrogram.types import Message
+from hurry.filesize import size
 
-from megadl.account import m
+from megadl.account import m, is_using_mega_acc
 
-
+# Get Mega user Account info
 @Client.on_message(filters.command("info") & filters.private)
+@is_using_mega_acc
 async def nomegaurl(_, message: Message):
   get_user = m.get_user()
   imported_user = json.dumps(get_user)
@@ -18,4 +20,6 @@ async def nomegaurl(_, message: Message):
   acc_email = uacc_info['email']
   acc_name = uacc_info['name']
   acc_quota = m.get_quota()
-  await message.reply_text(f"**Mega.nz User Account Info** \n\n**Account Name:** {acc_name} \n**Email:** {acc_email} \n**Quota:** {acc_quota}")
+  acc_space_bytes = m.get_storage_space()
+  acc_space = size(acc_space_bytes)
+  await message.reply_text(f"**Mega.nz User Account Info** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage Space:** `{acc_space}` \n**Quota:** `{acc_quota} MB`")
