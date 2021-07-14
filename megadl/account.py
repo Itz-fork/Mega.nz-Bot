@@ -10,7 +10,7 @@ password = Config.MEGA_PASSWORD
 mega = Mega()
 
 # Mega User Account
-if Config.USER_ACCOUNT is "True":
+if Config.USER_ACCOUNT == "True":
   m = mega.login(email, password)
 else:
   m = mega.login()
