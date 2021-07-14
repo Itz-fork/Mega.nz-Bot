@@ -28,7 +28,7 @@ async def nomegaurl(_, message: Message):
   acc_space = json.loads(acc_space_f)
   btotal_space = acc_space['total']
   bused_space = acc_space['used']
-  bfree_space = total_space - used_space
+  bfree_space = btotal_space - bused_space
   total_space = size(btotal_space)
   used_space = size(bused_space)
   free_space = size(bfree_space)
