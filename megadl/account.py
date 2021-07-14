@@ -2,6 +2,10 @@
 # Don't kang this else your dad is gae
 
 from mega import Mega
+from pyrogram import Client
+from pyrogram.types import Message
+from functools import wraps
+
 from config import Config
 
 email = Config.MEGA_EMAIL
@@ -24,3 +28,16 @@ if Config.USER_ACCOUNT == "False":
   except:
     print("Can't Login as a Anonymouse user for some reason. Can You Login with Your Mega Account? \n\n Bot is Leaving This world...")
     exit()
+
+
+# Method to check if user is using Mega user account
+def is_that_owner(func):
+    @wraps(func)
+    async def using_mega_acc(client: Client, message: Message):
+      if Config.USER_ACCOUNT == "True":
+        return await func(client, message)
+      else:
+        await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
+        return
+      
+      return using_mega_acc
