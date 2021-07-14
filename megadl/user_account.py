@@ -64,7 +64,7 @@ async def uptomega(client: Client, message: Message):
     toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", megaupmsg, start_time))
     await megaupmsg.edit("**Successfully Downloaded the File!**")
     await megaupmsg.edit("**Trying to Upload to Mega.nz**")
-    uploadfile = m.upload(toupload)
+    uploadfile = m.upload(f'{toupload}')
     link = m.get_upload_link(uploadfile)
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**")
     if toupload is not None:
