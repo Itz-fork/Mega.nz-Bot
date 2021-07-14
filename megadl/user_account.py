@@ -23,6 +23,13 @@ async def nomegaurl(_, message: Message):
   acc_email = uacc_info['email']
   acc_name = uacc_info['name']
   acc_quota = m.get_quota()
-  acc_space_bytes = m.get_storage_space()
-  # acc_space = size(acc_space_bytes)
-  await message.reply_text(f"**Mega.nz User Account Info** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage Space:** `{acc_space_bytes}` \n**Quota:** `{acc_quota} MB`")
+  js_acc_space = m.get_storage_space()
+  acc_space_f = json.dumps(js_acc_space)
+  acc_space = json.loads(acc_space_f)
+  btotal_space = acc_space['total']
+  bused_space = acc_space['used']
+  bfree_space = total_space - used_space
+  total_space = size(btotal_space)
+  used_space = size(bused_space)
+  free_space = size(bfree_space)
+  await message.reply_text(f"**~ Your User Account Info ~** \n\n**Account Name:** `{acc_name}` \n**Email:** `{acc_email}` \n**Storage,** \n **Total:** `{total_space}` \n **Used:** `{used_space}` \n **Free:** `{free_space}` \n**Quota:** `{acc_quota} MB`")
