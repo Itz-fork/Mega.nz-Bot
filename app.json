@@ -1,26 +1,44 @@
 {
-  "name": "Mega.nz Bot",
-  "description": "Simple Telegram Bot to download files from Mega.nz",
-  "keywords": ["mega.nz", "bot", "telegram"],
-  "repository": "https://github.com/Itz-fork/Mega.nz-Bot",
-  "logo": "https://telegra.ph/file/583f46da57641b90c28f9.png",
-  "stack": "container",
-  "env": {
-    "API_ID": {
-      "description": "Your API_ID from my.telegram.org",
-      "required": true
+    "name": "Mega.nz Bot",
+    "description": "Simple Telegram Bot to download files from Mega.nz",
+    "logo": "https://telegra.ph/file/583f46da57641b90c28f9.png",
+    "keywords": [
+        "mega.nz",
+        "Telegram Bot",
+        "mega.nz bot"
+    ],
+    "website": "https://t.me/NexaBotsUpdates",
+    "repository": "https://github.com/Itz-fork/Mega.nz-Bot",
+    "success_url": "https://t.me/NexaBotsUpdates",
+    "env": {
+        "API_ID": {
+            "description": "Your API_ID from my.telegram.org",
+            "value": ""
+        },
+        "API_HASH": {
+            "description": "Your API_HASH from my.telegram.org",
+            "value": ""
+        },
+        "BOT_TOKEN": {
+            "description": "Your Bot Token From @BotFather",
+            "value": ""
+        },
+        "BOT_TOKEN": {
+            "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
+            "value": ""
+        }
     },
-    "API_HASH": {
-      "description": "Your API_HASH from my.telegram.org",
-      "required": true
+    "addons": [],
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
     },
-    "BOT_TOKEN": {
-      "description": "Your Bot Token From @BotFather",
-      "required": true
-    },
-    "AUTH_USERS": {
-      "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
-      "required": true
-    }
-  }
+    "stack": "heroku-20"
 }
