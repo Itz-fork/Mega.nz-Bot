@@ -20,7 +20,7 @@ from config import Config
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(magapylol)
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
