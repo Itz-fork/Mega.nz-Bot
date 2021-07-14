@@ -9,7 +9,6 @@ import time
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from mega import Mega
 from hurry.filesize import size
 from megadl.mega_help import progress_for_pyrogram, humanbytes
 
