@@ -13,19 +13,19 @@
     "env": {
         "API_ID": {
             "description": "Your API_ID from my.telegram.org",
-            "value": ""
+            "required": true
         },
         "API_HASH": {
             "description": "Your API_HASH from my.telegram.org",
-            "value": ""
+            "required": true
         },
         "BOT_TOKEN": {
             "description": "Your Bot Token From @BotFather",
-            "value": ""
+            "required": true
         },
-        "BOT_TOKEN": {
+        "AUTH_USERS": {
             "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
-            "value": ""
+            "required": true
         }
     },
     "addons": [],
