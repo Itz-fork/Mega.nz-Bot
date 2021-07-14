@@ -7,10 +7,9 @@ from config import Config
 
 MeganzBot = Client(
     "Meganz Bot",
-    bot_token=Config.BOT_TOKEN,
     api_id=Config.APP_ID,
     api_hash=Config.API_HASH,
+    bot_token=Config.BOT_TOKEN,
     plugins=dict(root="megadl")
-    )
-
+)
 MeganzBot.run()
