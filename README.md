@@ -2,11 +2,12 @@
 Simple Telegram Bot to Download Files From Mega.nz and Upload It to Telegram
 
 # Features
-- All Mega.nz Links supported
+- All Mega.nz File Links supported
 - No login required
 - Auto Detect File Type Before Upload to Telegram
 - Auth Users Only
 - Mega User Account Supported
+- Upload Files From Telegram to Mega.nz (**VPS Only**)
 
 # Deploy
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
