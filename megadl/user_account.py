@@ -61,7 +61,7 @@ async def uptomega(client: Client, message: Message):
   try:
     start_time = time.time()
     megaupmsg = await message.reply_text("**Starting to Download The Content to My Server! This may take while 😴**")
-    toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", megaupmsg, start_time))
+    toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Download!** \n", megaupmsg, start_time))
     await megaupmsg.edit("**Successfully Downloaded the File!**")
     await megaupmsg.edit("**Trying to Upload to Mega.nz**")
     uploadfile = m.upload(f"{toupload}")
