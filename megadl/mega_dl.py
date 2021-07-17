@@ -43,7 +43,7 @@ GITHUB_REPO=InlineKeyboardMarkup(
         )
 
 
-@Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
+@Client.on_message(filters.private)
 async def megadl(_, message: Message):
     # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
