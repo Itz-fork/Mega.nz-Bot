@@ -53,6 +53,7 @@ async def megadl(_, message: Message):
     # Url Detect (regex filters won't work anymore)
     if "https://mega.nz" or "https://mega.co.nz" not in url:
       await message.reply_text("Sorry, I can't find a valid mega.nz url in your message! Can you check it again?")
+      return
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
     if not os.path.isdir(alreadylol):
