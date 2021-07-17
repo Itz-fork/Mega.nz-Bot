@@ -26,9 +26,10 @@ basedir = Config.DOWNLOAD_LOCATION
 # Telegram's max file size
 TG_MAX_FILE_SIZE = Config.TG_MAX_SIZE
 
-# Auto Mega Url Detect
+# Automatic Url Detect (From ImJanindu's AnyDLBot)
 MEGA_REGEX = (r"^((?:https?:)?\/\/)"
-              r"?((?:mega\.nz|mega\.co\.nz))"
+              r"?((?:www)\.)"
+              r"?((?:mega\.nz))"
               r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
 
 # Github Repo (Don't remove this)
@@ -48,7 +49,7 @@ GITHUB_REPO=InlineKeyboardMarkup(
         )
 
 
-@Client.on_message(filters.private & filters.regex(MEGA_REGEX))
+@Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
 async def megadl(_, message: Message):
     # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
@@ -125,7 +126,7 @@ async def megadl(_, message: Message):
 
 
 # Replying If There is no mega url in the message
-@Client.on_message(~filters.regex(MEGA_REGEX) & filters.private &~filters.command(["info", "upload", "start", "help"]))
+@Client.on_message(~filters.command(["start", "help", "info", "upload"]) & ~filters.regex(MEGA_REGEX) & filters.private)
 async def nomegaurl(_, message: Message):
   # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
