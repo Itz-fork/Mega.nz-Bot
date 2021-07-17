@@ -28,7 +28,6 @@ TG_MAX_FILE_SIZE = Config.TG_MAX_SIZE
 
 # Automatic Url Detect (From ImJanindu's AnyDLBot)
 MEGA_REGEX = (r"^((?:https?:)?\/\/)"
-              r"?((?:www)\.)"
               r"?((?:mega\.nz|mega\.co\.nz))"
               r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
 
@@ -143,7 +142,7 @@ async def startcmd(megabot: Client, message: Message):
     await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
     return
   else:
-    await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **{(await megabot.get_me()).username}**, Your Own Mega.nz Uploader 😉! \nIf You don't Know how to work with me hit on /help command 😁")
+    await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, Your Own Mega.nz Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
 
 # Help command
 @Client.on_message(filters.command("help"))
@@ -153,4 +152,4 @@ async def helpcmd(megabot: Client, message: Message):
     await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
     return
   else:
-    await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n** Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**Powered by @NexaBotsUpdates**")
+    await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**Powered by @NexaBotsUpdates**")
