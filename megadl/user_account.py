@@ -24,6 +24,7 @@ async def accinfo(_, message: Message):
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
+  acc_info_msg = await message.reply_text("`Processing...⚙️`")
   get_user = m.get_user()
   imported_user = json.dumps(get_user)
   uacc_info = json.loads(imported_user)
@@ -39,7 +40,7 @@ async def accinfo(_, message: Message):
   total_space = size(btotal_space)
   used_space = size(bused_space)
   free_space = size(bfree_space)
-  await message.reply_text(f"**~ Your User Account Info ~** \n\n▪ **Account Name:** `{acc_name}` \n▪ **Email:** `{acc_email}` \n▪ **Storage,** \n    - **Total:** `{total_space}` \n    - **Used:** `{used_space}` \n    - **Free:** `{free_space}` \n▪ **Quota:** `{acc_quota} MB`")
+  await acc_info_msg.edit(f"**~ Your User Account Info ~** \n\n▪ **Account Name:** `{acc_name}` \n▪ **Email:** `{acc_email}` \n▪ **Storage,** \n     - **Total:** `{total_space}` \n     - **Used:** `{used_space}` \n     - **Free:** `{free_space}` \n▪ **Quota:** `{acc_quota} MB`")
 
 
 # uplaod files
