@@ -26,11 +26,6 @@ basedir = Config.DOWNLOAD_LOCATION
 # Telegram's max file size
 TG_MAX_FILE_SIZE = Config.TG_MAX_SIZE
 
-# Automatic Url Detect (From ImJanindu's AnyDLBot)
-MEGA_REGEX = (r"^((?:https?:)?\/\/)"
-              r"?((?:mega\.nz|mega\.co\.nz))"
-              r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
-
 # Github Repo (Don't remove this)
 GITHUB_REPO=InlineKeyboardMarkup(
             [
@@ -125,14 +120,18 @@ async def megadl(_, message: Message):
 
 
 # Replying If There is no mega url in the message
-@Client.on_message(~filters.command(["info", "upload", "start", "help"]) & ~filters.regex(MEGA_REGEX) & filters.private)
+@Client.on_message(~filters.command(["info", "upload", "start", "help"]) & filters.private)
 async def nomegaurl(_, message: Message):
+  # Mega Url detect (better use regex but not working for this repo, next level logic can be found here)
+  nomegadl_msg = message.text
+  if "https://mega.nz/" or "https://mega.co.nz/" not in nomegadl_msg:
+    await message.reply_text("Sorry, I can't find a valid mega.nz url in your message! Can you check it again?")
+    return
   # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
         await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
         return
-    else:
-      await message.reply_text("Sorry, I can't find a valid mega.nz url in your message! Can you check it again?")
+      
 
 # Start message
 @Client.on_message(filters.command("start"))
