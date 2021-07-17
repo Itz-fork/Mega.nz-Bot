@@ -127,9 +127,6 @@ async def megadl(_, message: Message):
 # Replying If There is no mega url in the message
 @Client.on_message(filters.private & ~filters.regex(MEGA_REGEX) & ~filters.command(["info", "upload", "start", "help"]))
 async def nomegaurl(_, message: Message):
-    textify_cmd = message.command
-    if "info" or "upload" or "start" or "help" in textify_cmd:
-      return
   # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
         await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
