@@ -19,7 +19,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 - Clone the Repo,
 ```
-https://github.com/Itz-fork/Mega.nz-Bot
+git clone https://github.com/Itz-fork/Mega.nz-Bot
 ```
 - Enter the directory,
 ```
