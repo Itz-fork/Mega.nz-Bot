@@ -7,7 +7,7 @@ import os
 import time
 
 from pyrogram import Client, filters
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
 
 from megadl.account import m
@@ -24,6 +24,7 @@ async def accinfo(_, message: Message):
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
+  acc_info_msg = await message.reply_text("`Processing...⚙️`")
   get_user = m.get_user()
   imported_user = json.dumps(get_user)
   uacc_info = json.loads(imported_user)
@@ -39,7 +40,7 @@ async def accinfo(_, message: Message):
   total_space = size(btotal_space)
   used_space = size(bused_space)
   free_space = size(bfree_space)
-  await message.reply_text(f"**~ Your User Account Info ~** \n\n▪ **Account Name:** `{acc_name}` \n▪ **Email:** `{acc_email}` \n▪ **Storage,** \n - **Total:** `{total_space}` \n - **Used:** `{used_space}` \n - **Free:** `{free_space}` \n▪ **Quota:** `{acc_quota} MB`")
+  await acc_info_msg.edit(f"**~ Your User Account Info ~** \n\n▪ **Account Name:** `{acc_name}` \n▪ **Email:** `{acc_email}` \n▪ **Storage,** \n     - **Total:** `{total_space}` \n     - **Used:** `{used_space}` \n     - **Free:** `{free_space}` \n▪ **Quota:** `{acc_quota} MB`")
 
 
 # uplaod files
@@ -66,7 +67,7 @@ async def uptomega(client: Client, message: Message):
     await megaupmsg.edit("**Trying to Upload to Mega.nz**")
     uploadfile = m.upload(f"{toupload}")
     link = m.get_upload_link(uploadfile)
-    await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**")
+    await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     if toupload is not None:
       os.remove(toupload)
   except Exception as e:
@@ -75,3 +76,24 @@ async def uptomega(client: Client, message: Message):
       os.remove(toupload)
     else:
       print("Why this file is gae?")
+
+
+# Start message
+@Client.on_message(filters.command("start"))
+async def startcmd(megabot: Client, message: Message):
+  # Auth users only
+    if message.from_user.id not in Config.AUTH_USERS:
+        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+        return
+    else:
+      await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, Your Own Mega.nz Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
+
+# Help command
+@Client.on_message(filters.command("help"))
+async def helpcmd(megabot: Client, message: Message):
+  # Auth users only
+    if message.from_user.id not in Config.AUTH_USERS:
+        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+        return
+    else:
+      await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**Powered by @NexaBotsUpdates**")
