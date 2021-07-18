@@ -24,7 +24,7 @@ async def accinfo(_, message: Message):
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
-  acc_info_msg = await message.reply_text("`Processing...⚙️`")
+  acc_info_msg = await message.reply_text("`Processing ⚙️...`")
   get_user = m.get_user()
   imported_user = json.dumps(get_user)
   uacc_info = json.loads(imported_user)
@@ -86,30 +86,32 @@ async def importurlf(_, message: Message):
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
+  importing_msg = await message.reply_text("`Processing ⚙️...`")
   reply_msg = message.reply_to_message
   try:
     if reply_msg:
       replied_txt_msg = reply_msg.text
       if "mega.nz" not in replied_txt_msg:
-        await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
+        await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
         return
       else:
         msg_text = replied_txt_msg
     else:
       msg_txt_url = message.text
       if "mega.nz" not in msg_txt_url:
-        await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
+        await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
         return
       else:
         msg_text = msg_txt_url
   except Exception as e:
-    await message.reply_text("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
+    await importing_msg.edit("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
     print(e)
     return
   else:
     try:
       import_file = m.import_public_url(msg_text)
       imported_link = m.get_upload_link(import_file)
+      await importing_msg.delete()
       await message.reply_text(f"**Successfully Imported 😌** \n\n**Link:** `{imported_link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Imported Link 📥", url=f"{imported_link}")]]))
     except Exception as e:
       await message.reply_text(f"**Error:** `{e}`")
