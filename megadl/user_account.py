@@ -7,8 +7,6 @@ import os
 import time
 
 from pyrogram import Client, filters
-from pyrogram.methods import messages
-from pyrogram.methods.messages import edit_message_caption
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
 
@@ -89,7 +87,7 @@ async def importurlf(_, message: Message):
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
   reply_msg = message.reply_to_message
-  if reply_msg.text or message.text is None:
+  if not reply_msg.text or message.text:
     await message.reply_text("There is no Mega.nz Url to Import 😑!")
     return
   try:
