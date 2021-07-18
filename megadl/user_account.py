@@ -68,14 +68,13 @@ async def uptomega(client: Client, message: Message):
     uploadfile = m.upload(f"{toupload}")
     link = m.get_upload_link(uploadfile)
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
-    if toupload is not None:
-      os.remove(toupload)
+    os.remove(toupload)
   except Exception as e:
     await megaupmsg.edit(f"**Error:** `{e}`")
-    if toupload is not None:
+    try:
       os.remove(toupload)
-    else:
-      print("Why this file is gae?")
+    except Exception as e:
+      print(f"Why this file is gae? \nError: {e}")
 
 
 # Start message
