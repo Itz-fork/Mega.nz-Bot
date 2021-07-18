@@ -89,7 +89,7 @@ async def importurlf(_, message: Message):
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
   reply_msg = message.reply_to_message
-  if not reply_msg.text or message.text:
+  if reply_msg.text or message.text is None:
     await message.reply_text("There is no Mega.nz Url to Import 😑!")
     return
   try:
