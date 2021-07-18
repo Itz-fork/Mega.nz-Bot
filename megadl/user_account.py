@@ -89,15 +89,22 @@ async def importurlf(_, message: Message):
   reply_msg = message.reply_to_message
   try:
     if reply_msg:
-      msg_text = reply_msg.text
+      replied_txt_msg = reply_msg.text
+      if "mega.nz" not in replied_txt_msg:
+        await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
+        return
+      else:
+        msg_text = replied_txt_msg
     else:
-      msg_text = message.text
+      msg_txt_url = message.text
+      if "mega.nz" not in msg_txt_url:
+        await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
+        return
+      else:
+        msg_text = msg_txt_url
   except Exception as e:
     await message.reply_text("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
     print(e)
-    return
-  if "mega.nz" not in msg_text:
-    await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
     return
   else:
     try:
