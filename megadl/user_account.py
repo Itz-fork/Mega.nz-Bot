@@ -77,6 +77,28 @@ async def uptomega(client: Client, message: Message):
       print(f"Why this file is gae? \nError: {e}")
 
 
+# Import files from a public url
+@Client.on_message(filters.command("import") & filters.private)
+async def importurlf(_, message: Message):
+  if message.from_user.id not in Config.AUTH_USERS:
+    await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+    return
+  if Config.USER_ACCOUNT == "False":
+    await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
+    return
+  msg_text = message.text
+  if "mega.nz" not in msg_text:
+    await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
+    return
+  else:
+    try:
+      import_file = m.import_public_url(msg_text)
+      imported_link = m.get_upload_link(import_file)
+      await message.reply_text(f"**Successfully Imported 😌** \n\n**Link:** `{imported_link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Imported Link 📥", url=f"{imported_link}")]]))
+    except Exception as e:
+      await message.reply_text(e)
+
+
 # Start message
 @Client.on_message(filters.command("start"))
 async def startcmd(megabot: Client, message: Message):
