@@ -86,7 +86,16 @@ async def importurlf(_, message: Message):
   if Config.USER_ACCOUNT == "False":
     await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
     return
-  msg_text = message.text
+  reply_msg = message.reply_to_message
+  try:
+    if reply_msg:
+      msg_text = reply_msg.text
+    else:
+      msg_text = message.text
+  except Exception as e:
+    await message.reply_text("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
+    print(e)
+    return
   if "mega.nz" not in msg_text:
     await message.reply_text("Send me a **Valid Mega.nz** Link to Import 😏!")
     return
@@ -96,7 +105,7 @@ async def importurlf(_, message: Message):
       imported_link = m.get_upload_link(import_file)
       await message.reply_text(f"**Successfully Imported 😌** \n\n**Link:** `{imported_link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Imported Link 📥", url=f"{imported_link}")]]))
     except Exception as e:
-      await message.reply_text(e)
+      await message.reply_text(f"**Error:** `{e}`")
 
 
 # Start message
@@ -117,4 +126,4 @@ async def helpcmd(megabot: Client, message: Message):
         await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
         return
     else:
-      await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**🖇️ Import Public Mega,nz Files** \n - Send me that mega.nz url with `/import` command (**Usage:** `/import your_mega_link`) \n\n**Powered by @NexaBotsUpdates**")
+      await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**🖇️ Import Public Mega,nz Files** \n - Send or reply to a mega.nz url with `/import` command (**Usage:** `/import your_mega_link`) \n\n**Powered by @NexaBotsUpdates**")
