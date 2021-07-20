@@ -4,3 +4,4 @@ mega.py
 hurry.filesize
 filetype
 moviepy
+ffmpeg
