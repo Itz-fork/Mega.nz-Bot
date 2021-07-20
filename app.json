@@ -19,24 +19,24 @@
             "description": "Your API_HASH from my.telegram.org",
             "required": true
         },
-        "BOT_TOKEN": {
-            "description": "Your Bot Token From @BotFather",
-            "required": true
-        },
         "AUTH_USERS": {
             "description": "Telegram Ids Of Auth Users, Only they can use this bot. Separate them by space!",
             "required": true
         },
-        "USER_ACCOUNT": {
-            "description": "Set this to 'True' If you want to use your own Mega Account. Default to 'False' !",
-            "required": false
+        "BOT_TOKEN": {
+            "description": "Your Bot Token From @BotFather",
+            "required": true
         },
         "MEGA_EMAIL": {
-            "description": "Fill this if you set the 'USER_ACCOUNT' var to True. This is your Mega account Email!",
+            "description": "Fill this if you want to use your own Mega Account. This is your Mega account Email!",
             "required": false
         },
         "MEGA_PASSWORD": {
-            "description": "Fill this if you set the 'USER_ACCOUNT' var to True. This is your Mega account Password!",
+            "description": "Fill this if you want to use your own Mega Account. This is your Mega account Password!",
+            "required": false
+        },
+        "USER_ACCOUNT": {
+            "description": "Set this to 'True' If you want to use your own Mega Account. Default to 'False' !",
             "required": false
         }
     },
