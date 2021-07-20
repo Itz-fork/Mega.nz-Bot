@@ -7,6 +7,7 @@ import filetype
 import moviepy.editor
 import time
 import logging
+import subprocess
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -62,7 +63,7 @@ async def megadl(_, message: Message):
         megadldir = os.makedirs(alreadylol)
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
-        magapylol = m.download_url(url, megadldir)
+        magapylol = m.download_url(url, alreadylol)
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** `{e}`")
@@ -82,7 +83,6 @@ async def megadl(_, message: Message):
             await message.reply_document(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
             await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
             shutil.rmtree(basedir + "/" + userpath)
-            print(e)
             return
         filemimespotted = guessedfilemime.mime
         # Checking If it's a gif
@@ -99,14 +99,13 @@ async def megadl(_, message: Message):
             await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
         # Checking if it's a video
         elif "video" in filemimespotted:
+            await download_msg.edit("**Generating Data...**")
             viddura = moviepy.editor.VideoFileClip(f"{magapylol}")
             vidduration = int(viddura.duration)
-            if "!streamable" in url:
-                await message.reply_video(magapylol, duration=vidduration, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-                await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-            else:
-                await message.reply_document(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-                await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
+            thumbnail_path = f"{alreadylol}/thumbnail.jpg"
+            subprocess.call(['ffmpeg', '-i', magapylol, '-ss', '00:00:00.000', '-vframes', '1', thumbnail_path])
+            await message.reply_video(magapylol, duration=vidduration, thumb=thumbnail_path, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
+            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
         # Checking if it's a audio
         elif "audio" in filemimespotted:
             await download_msg.edit("**Trying to Upload Now!**")
