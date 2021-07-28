@@ -131,7 +131,7 @@ async def startcmd(megabot: Client, message: Message):
   except:
     print("Da Fak happend to me?")
     return
-  await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, Your Own Mega.nz Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
+  await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, \nMega.nz Url Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
 
 # Help command
 @Client.on_message(filters.command("help"))
