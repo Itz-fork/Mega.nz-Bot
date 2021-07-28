@@ -63,10 +63,14 @@ def DownloadMegaLink(url, alreadylol, download_msg):
 
 @Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
 async def megadl(_, message: Message):
-    # Auth users only
-    if message.from_user.id not in Config.AUTH_USERS:
-        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-        return
+    # To use bot private or public
+    try:
+      if Config.IS_PUBLIC_BOT == "False":
+        if message.from_user.id not in Config.AUTH_USERS:
+          await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+          return
+    except:
+      pass
     url = message.text
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
