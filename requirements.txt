@@ -3,5 +3,5 @@ TgCrypto
 git+https://github.com/Itz-fork/mega.py.git
 hurry.filesize
 filetype
-moviepy
 ffmpeg
+moviepy
