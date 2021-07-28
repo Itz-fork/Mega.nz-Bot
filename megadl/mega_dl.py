@@ -69,8 +69,8 @@ async def megadl(_, message: Message):
         if message.from_user.id not in Config.AUTH_USERS:
           await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
           return
-        if Config.IS_PUBLIC_BOT == "True":
-          pass
+      if Config.IS_PUBLIC_BOT == "True":
+        pass
     except:
       print("Da Fak happend to me?")
       pass
