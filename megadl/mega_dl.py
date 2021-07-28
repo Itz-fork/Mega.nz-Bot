@@ -54,9 +54,9 @@ GITHUB_REPO=InlineKeyboardMarkup(
         )
 
 # Download Mega Link
-def DownloadMegaLink(url, alreadylol):
+def DownloadMegaLink(url, alreadylol, download_msg):
     try:
-        m.download_url(url, alreadylol)
+        m.download_url(url, alreadylol, statusdl_msg=download_msg)
     except Exception as e:
         #await download_msg.edit(f"**Error:** `{e}`")
         print(e)
@@ -75,7 +75,7 @@ async def megadl(_, message: Message):
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
         loop = get_running_loop()
-        await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol))
+        await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol, download_msg))
         getfiles = [f for f in os.listdir(alreadylol) if isfile(join(alreadylol, f))]
         files = getfiles[0]
         magapylol = f"{alreadylol}/{files}"
