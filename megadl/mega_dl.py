@@ -12,6 +12,10 @@ import subprocess
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
+from functools import partial
+from asyncio import get_running_loop
+from genericpath import isfile
+from posixpath import join
 from megadl.mega_help import progress_for_pyrogram, humanbytes
 
 from megadl.account import m
@@ -49,6 +53,13 @@ GITHUB_REPO=InlineKeyboardMarkup(
             ]
         )
 
+# Download Mega Link
+def DownloadMegaLink(url, alreadylol):
+    try:
+        m.download_url(url, alreadylol)
+    except Exception as e:
+        #await download_msg.edit(f"**Error:** `{e}`")
+        print(e)
 
 @Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
 async def megadl(_, message: Message):
@@ -60,10 +71,14 @@ async def megadl(_, message: Message):
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
     if not os.path.isdir(alreadylol):
-        megadldir = os.makedirs(alreadylol)
+        os.makedirs(alreadylol)
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
-        magapylol = m.download_url(url, alreadylol)
+        loop = get_running_loop()
+        await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol))
+        getfiles = [f for f in os.listdir(alreadylol) if isfile(join(alreadylol, f))]
+        files = getfiles[0]
+        magapylol = f"{alreadylol}/{files}"
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** `{e}`")
