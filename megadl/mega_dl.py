@@ -12,6 +12,10 @@ import subprocess
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
+from functools import partial
+from asyncio import get_running_loop
+from genericpath import isfile
+from posixpath import join
 from megadl.mega_help import progress_for_pyrogram, humanbytes
 
 from megadl.account import m
@@ -49,21 +53,39 @@ GITHUB_REPO=InlineKeyboardMarkup(
             ]
         )
 
+# Download Mega Link
+def DownloadMegaLink(url, alreadylol, download_msg):
+    try:
+        m.download_url(url, alreadylol, statusdl_msg=download_msg)
+    except Exception as e:
+        #await download_msg.edit(f"**Error:** `{e}`")
+        print(e)
 
 @Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
 async def megadl(_, message: Message):
-    # Auth users only
-    if message.from_user.id not in Config.AUTH_USERS:
-        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-        return
+    # To use bot private or public
+    try:
+      if Config.IS_PUBLIC_BOT == "False":
+        if message.from_user.id not in Config.AUTH_USERS:
+          await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+          return
+      elif Config.IS_PUBLIC_BOT == "True":
+        pass
+    except:
+      print("Da Fak happend to me?")
+      return
     url = message.text
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
     if not os.path.isdir(alreadylol):
-        megadldir = os.makedirs(alreadylol)
+        os.makedirs(alreadylol)
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
-        magapylol = m.download_url(url, alreadylol)
+        loop = get_running_loop()
+        await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol, download_msg))
+        getfiles = [f for f in os.listdir(alreadylol) if isfile(join(alreadylol, f))]
+        files = getfiles[0]
+        magapylol = f"{alreadylol}/{files}"
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** `{e}`")

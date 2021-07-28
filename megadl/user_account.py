@@ -120,19 +120,31 @@ async def importurlf(_, message: Message):
 # Start message
 @Client.on_message(filters.command("start"))
 async def startcmd(megabot: Client, message: Message):
-  # Auth users only
-    if message.from_user.id not in Config.AUTH_USERS:
+  # To use bot private or public
+  try:
+    if Config.IS_PUBLIC_BOT == "False":
+      if message.from_user.id not in Config.AUTH_USERS:
         await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
         return
-    else:
-      await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, Your Own Mega.nz Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
+    elif Config.IS_PUBLIC_BOT == "True":
+      pass
+  except:
+    print("Da Fak happend to me?")
+    return
+  await message.reply_text(f"Hello, Nice to Meet You **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, \nMega.nz Url Uploader 😉! \n\nIf You don't Know how to work with me hit on /help command 😁")
 
 # Help command
 @Client.on_message(filters.command("help"))
 async def helpcmd(megabot: Client, message: Message):
-  # Auth users only
-    if message.from_user.id not in Config.AUTH_USERS:
+  # To use bot private or public
+  try:
+    if Config.IS_PUBLIC_BOT == "False":
+      if message.from_user.id not in Config.AUTH_USERS:
         await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
         return
-    else:
-      await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**🖇️ Import Public Mega,nz Files** \n - Send or reply to a mega.nz url with `/import` command (**Usage:** `/import your_mega_link`) \n\n**Powered by @NexaBotsUpdates**")
+    elif Config.IS_PUBLIC_BOT == "True":
+      pass
+  except:
+    print("Da Fak happend to me?")
+    return
+  await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\n\n**📥 Download Mega.nz Links** \n - Just send me a valid Mega.nz Link. (Folder Not Supported) \n\n**📤 Upload to Mega.nz** \n - First Send or Forward a File to Me. \n - Then Reply to that file with `/upload` command \n\n**🖇️ Import Public Mega,nz Files** \n - Send or reply to a mega.nz url with `/import` command (**Usage:** `/import your_mega_link`) \n\n**Powered by @NexaBotsUpdates**")
