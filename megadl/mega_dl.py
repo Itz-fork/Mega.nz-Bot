@@ -54,9 +54,9 @@ GITHUB_REPO=InlineKeyboardMarkup(
         )
 
 # Download Mega Link
-def DownloadMegaLink(url, alreadylol):
+def DownloadMegaLink(url, alreadylol, download_msg):
     try:
-        m.download_url(url, alreadylol)
+        m.download_url(url, alreadylol, download_status_msg=download_msg)
     except Exception as e:
         #await download_msg.edit(f"**Error:** `{e}`")
         print(e)
