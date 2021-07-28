@@ -27,6 +27,11 @@
             "description": "Your Bot Token From @BotFather",
             "required": true
         },
+        "IS_PUBLIC_BOT": {
+            "description": "Set this to 'True' If you want to set Download Function as Public. Default to 'False' !",
+            "required": false
+            "value": "False"
+        },
         "MEGA_EMAIL": {
             "description": "Fill this if you want to use your own Mega Account. This is your Mega account Email!",
             "required": false
@@ -38,6 +43,7 @@
         "USER_ACCOUNT": {
             "description": "Set this to 'True' If you want to use your own Mega Account. Default to 'False' !",
             "required": false
+            "value": "False"
         }
     },
     "addons": [],
