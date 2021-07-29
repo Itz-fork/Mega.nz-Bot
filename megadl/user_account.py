@@ -11,8 +11,6 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
 from functools import partial
 from asyncio import get_running_loop
-from genericpath import isfile
-from posixpath import join
 
 from megadl.account import m
 from megadl.mega_dl import GITHUB_REPO
@@ -47,11 +45,13 @@ async def accinfo(_, message: Message):
   await acc_info_msg.edit(f"**~ Your User Account Info ~** \n\n✦ **Account Name:** `{acc_name}` \n✦ **Email:** `{acc_email}` \n✦ **Storage,** \n       - **Total:** `{total_space}` \n       - **Used:** `{used_space}` \n       - **Free:** `{free_space}` \n✦ **Quota:** `{acc_quota} MB`")
 
 # Upload files from telegram to Mega.nz
+public_link = None
+
 def UploadToMega(toupload, megaupmsg):
+  global public_link
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
-    link = m.get_upload_link(uploadfile)
-    return link
+    public_link = m.get_upload_link(uploadfile)
   except Exception as e:
     print(e)
 
@@ -78,6 +78,7 @@ async def uptomega(client: Client, message: Message):
     await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴**")
     loop = get_running_loop()
     await loop.run_in_executor(None, partial(UploadToMega, toupload, megaupmsg))
+    link = public_link
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     os.remove(toupload)
   except Exception as e:
