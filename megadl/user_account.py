@@ -50,7 +50,7 @@ async def accinfo(_, message: Message):
 # uplaod files
 def UploadToMega(toupload, megaupmsg):
   try:
-    uploadfile = m.upload(f"{toupload}")
+    uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     link = m.get_upload_link(uploadfile)
   except Exception as e::
     print(e)
