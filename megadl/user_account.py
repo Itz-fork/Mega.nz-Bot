@@ -52,13 +52,12 @@ def GetPublicMegaLink(meganzfile):
     return public_link
 
 # uplaod files
-def UploadToMega(toupload, megaupmsg, flink):
+def UploadToMega(toupload, megaupmsg):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     return GetPublicMegaLink(meganzfile=uploadfile)
   except Exception as e:
     print(e)
-    return
 
 @Client.on_message(filters.command("upload") & filters.private)
 async def uptomega(client: Client, message: Message):
