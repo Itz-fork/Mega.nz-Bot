@@ -46,16 +46,11 @@ async def accinfo(_, message: Message):
   free_space = size(bfree_space)
   await acc_info_msg.edit(f"**~ Your User Account Info ~** \n\n✦ **Account Name:** `{acc_name}` \n✦ **Email:** `{acc_email}` \n✦ **Storage,** \n       - **Total:** `{total_space}` \n       - **Used:** `{used_space}` \n       - **Free:** `{free_space}` \n✦ **Quota:** `{acc_quota} MB`")
 
-# Get public link from file
-def GetPublicMegaLink(meganzfile):
-    public_link = m.get_upload_link(meganzfile)
-    return public_link
-
-# uplaod files
+# Upload files from telegram to Mega.nz
 def UploadToMega(toupload, megaupmsg):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
-    return GetPublicMegaLink(meganzfile=uploadfile)
+    link = m.get_upload_link(uploadfile)
   except Exception as e:
     print(e)
 
@@ -82,7 +77,7 @@ async def uptomega(client: Client, message: Message):
     await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴**")
     loop = get_running_loop()
     await loop.run_in_executor(None, partial(UploadToMega, toupload, megaupmsg))
-    await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{public_link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{public_link}")]]))
+    await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     os.remove(toupload)
   except Exception as e:
     await megaupmsg.edit(f"**Error:** `{e}`")
