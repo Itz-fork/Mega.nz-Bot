@@ -52,7 +52,7 @@ def UploadToMega(toupload, megaupmsg):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     flink = m.get_upload_link(uploadfile)
-    return link
+    return flink
   except Exception as e:
     print(e)
     return
