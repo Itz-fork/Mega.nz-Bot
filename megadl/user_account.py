@@ -52,6 +52,7 @@ def UploadToMega(toupload, megaupmsg):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     link = m.get_upload_link(uploadfile)
+    return link
   except Exception as e:
     print(e)
     return
