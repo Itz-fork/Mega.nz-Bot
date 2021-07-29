@@ -1,7 +1,7 @@
 pyrogram
 TgCrypto
 hurry.filesize
-git+https://github.com/Itz-fork/mega.py.git
+git+https://github.com/Itz-fork/pyro-mega.py.git
 filetype
 ffmpeg
 moviepy
