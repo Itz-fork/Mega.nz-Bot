@@ -46,13 +46,16 @@ async def accinfo(_, message: Message):
   free_space = size(bfree_space)
   await acc_info_msg.edit(f"**~ Your User Account Info ~** \n\n✦ **Account Name:** `{acc_name}` \n✦ **Email:** `{acc_email}` \n✦ **Storage,** \n       - **Total:** `{total_space}` \n       - **Used:** `{used_space}` \n       - **Free:** `{free_space}` \n✦ **Quota:** `{acc_quota} MB`")
 
+# Get public link from file
+def GetPublicMegaLink(meganzfile):
+    public_link = m.get_upload_link(meganzfile)
+    return public_link
 
 # uplaod files
 def UploadToMega(toupload, megaupmsg, flink):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
-    flink = m.get_upload_link(uploadfile)
-    return flink
+    return GetPublicMegaLink(meganzfile=uploadfile)
   except Exception as e:
     print(e)
     return
@@ -77,10 +80,10 @@ async def uptomega(client: Client, message: Message):
     megaupmsg = await message.reply_text("**Starting to Download The Content to My Server! This may take while 😴**")
     toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Download!** \n", megaupmsg, start_time))
     await megaupmsg.edit("**Successfully Downloaded the File!**")
-    await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴****")
+    await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴**")
     loop = get_running_loop()
     await loop.run_in_executor(None, partial(UploadToMega, toupload, megaupmsg))
-    link = flink
+    link = public_link
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     os.remove(toupload)
   except Exception as e:
