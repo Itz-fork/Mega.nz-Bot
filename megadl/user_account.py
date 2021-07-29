@@ -48,7 +48,7 @@ async def accinfo(_, message: Message):
 
 
 # uplaod files
-def UploadToMega(toupload, megaupmsg):
+def UploadToMega(toupload, megaupmsg, flink):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     flink = m.get_upload_link(uploadfile)
