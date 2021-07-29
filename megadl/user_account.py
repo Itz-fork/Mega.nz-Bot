@@ -51,7 +51,7 @@ async def accinfo(_, message: Message):
 def UploadToMega(toupload, megaupmsg):
   try:
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
-    link = m.get_upload_link(uploadfile)
+    flink = m.get_upload_link(uploadfile)
     return link
   except Exception as e:
     print(e)
@@ -80,7 +80,7 @@ async def uptomega(client: Client, message: Message):
     await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴****")
     loop = get_running_loop()
     await loop.run_in_executor(None, partial(UploadToMega, toupload, megaupmsg))
-    #link = m.get_upload_link(uploadfile)
+    link = flink
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     os.remove(toupload)
   except Exception as e:
