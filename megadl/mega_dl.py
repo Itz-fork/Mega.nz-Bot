@@ -22,7 +22,6 @@ from megadl.account import m
 from config import Config
 
 # Logging
-
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -31,7 +30,7 @@ basedir = Config.DOWNLOAD_LOCATION
 # Telegram's max file size
 TG_MAX_FILE_SIZE = Config.TG_MAX_SIZE
 
-# Automatic Url Detect (From ImJanindu's AnyDLBot)
+# Automatic Url Detect (From stackoverflow. Can't find link lol)
 MEGA_REGEX = (r"^((?:https?:)?\/\/)"
               r"?((?:www)\.)"
               r"?((?:mega\.nz))"
@@ -121,7 +120,7 @@ async def megadl(_, message: Message):
             await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
         # Checking if it's a video
         elif "video" in filemimespotted:
-            await download_msg.edit("**Generating Data...**")
+            await download_msg.edit("`Generating Data...`")
             viddura = moviepy.editor.VideoFileClip(f"{magapylol}")
             vidduration = int(viddura.duration)
             thumbnail_path = f"{alreadylol}/thumbnail.jpg"
