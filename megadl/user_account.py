@@ -9,6 +9,10 @@ import time
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from hurry.filesize import size
+from functools import partial
+from asyncio import get_running_loop
+from genericpath import isfile
+from posixpath import join
 
 from megadl.account import m
 from megadl.mega_dl import GITHUB_REPO
@@ -22,7 +26,7 @@ async def accinfo(_, message: Message):
     await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
     return
   if Config.USER_ACCOUNT == "False":
-    await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
+    await message.reply_text("`You didn't setup a Mega.nz Account to Get details!`")
     return
   acc_info_msg = await message.reply_text("`Processing ⚙️...`")
   get_user = m.get_user()
@@ -44,13 +48,21 @@ async def accinfo(_, message: Message):
 
 
 # uplaod files
+def UploadToMega(toupload, megaupmsg):
+  try:
+    uploadfile = m.upload(f"{toupload}")
+    link = m.get_upload_link(uploadfile)
+  except Exception as e::
+    print(e)
+    return
+
 @Client.on_message(filters.command("upload") & filters.private)
 async def uptomega(client: Client, message: Message):
   if message.from_user.id not in Config.AUTH_USERS:
     await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
     return
   if Config.USER_ACCOUNT == "False":
-    await message.reply_text("You didn't setup a Mega.nz Account to Get details!")
+    await message.reply_text("`You didn't setup a Mega.nz Account to Get details!`")
     return
   todownfile = message.reply_to_message
   if not todownfile:
@@ -64,9 +76,10 @@ async def uptomega(client: Client, message: Message):
     megaupmsg = await message.reply_text("**Starting to Download The Content to My Server! This may take while 😴**")
     toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Download!** \n", megaupmsg, start_time))
     await megaupmsg.edit("**Successfully Downloaded the File!**")
-    await megaupmsg.edit("**Trying to Upload to Mega.nz**")
-    uploadfile = m.upload(f"{toupload}")
-    link = m.get_upload_link(uploadfile)
+    await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴****")
+    loop = get_running_loop()
+    await loop.run_in_executor(None, partial(UploadToMega, toupload, megaupmsg))
+    #link = m.get_upload_link(uploadfile)
     await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
     os.remove(toupload)
   except Exception as e:
