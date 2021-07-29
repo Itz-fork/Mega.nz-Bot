@@ -76,8 +76,12 @@ async def megadl(_, message: Message):
     url = message.text
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
-    if not os.path.isdir(alreadylol):
-        os.makedirs(alreadylol)
+    # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
+    if os.path.isdir(alreadylol):
+      await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
+      return
+    else:
+      os.makedirs(alreadylol)
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
         loop = get_running_loop()
