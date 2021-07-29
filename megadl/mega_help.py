@@ -1,5 +1,6 @@
 # Copyright (c) 2021 Itz-fork
 # Don't kang this else your dad is gae
+# From SpEcHiDe's AnyDL-Bot
 
 import math
 import os
