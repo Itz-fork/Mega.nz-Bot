@@ -2,7 +2,7 @@
 # Don't kang this else your dad is gae
 
 from pyrogram import Client, filters
-from pyrogram.types import Message, CallbackQuery
+from pyrogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import __version__ as pyrogram_version
 
 from config import Config
