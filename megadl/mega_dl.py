@@ -86,10 +86,10 @@ async def megadl(_, message: Message):
       readable_f_size = size(mega_f_size)
       if mega_f_size > TG_MAX_FILE_SIZE:
         await message.reply_text(f"**Detected File Size:** `{readable_f_size}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
-        shutil.rmtree(basedir + "/" + userpath)
         return
     except Exception as e:
       await message.reply_text(f"**Error:** `{e}`")
+      return
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
     if os.path.isdir(alreadylol):
       await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
