@@ -8,6 +8,7 @@ import moviepy.editor
 import time
 import logging
 import subprocess
+import json
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -76,6 +77,19 @@ async def megadl(_, message: Message):
     url = message.text
     userpath = str(message.from_user.id)
     alreadylol = basedir + "/" + userpath
+    # Getting file size before download
+    try:
+      json_f_info = m.get_public_url_info(url)
+      dumped_j_info = json.dumps(json_f_info)
+      loaded_f_info = json.loads(dumped_j_info)
+      mega_f_size = loaded_f_info['size']
+      readable_f_size = size(mega_f_size)
+      if mega_f_size > TG_MAX_FILE_SIZE:
+        await message.reply_text(f"**Detected File Size:** `{readable_f_size}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
+        shutil.rmtree(basedir + "/" + userpath)
+        return
+    except Exception as e:
+      await message.reply_text(f"**Error:** `{e}`")
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
     if os.path.isdir(alreadylol):
       await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
@@ -96,6 +110,7 @@ async def megadl(_, message: Message):
         return
     lmaocheckdis = os.stat(alreadylol).st_size
     readablefilesize = size(lmaocheckdis) # Convert Bytes into readable size
+    # below code for checking file size isn't needed at all. but i'm not sure about my codes so...
     if lmaocheckdis > TG_MAX_FILE_SIZE:
         await download_msg.edit(f"**Detected File Size:** `{readablefilesize}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
         shutil.rmtree(basedir + "/" + userpath)
