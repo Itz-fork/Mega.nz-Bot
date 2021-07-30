@@ -36,6 +36,11 @@ HELP_BUTTONS=InlineKeyboardMarkup(
                     InlineKeyboardButton(
                         "Mega.nz Importer 📲", callback_data="meganzimportercb"
                     )
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Back ⬅️", callback_data="startcallback"
+                    )
                 ]
             ]
         )
@@ -66,7 +71,7 @@ ABUT_BUTTONS=InlineKeyboardMarkup(
                 ],
                 [
                     InlineKeyboardButton(
-                        "Back ⬅️", callback_data="helpcallback"
+                        "Back ⬅️", callback_data="startcallback"
                     ),
                     InlineKeyboardButton(
                         "Close ❌", callback_data="closeqcb"
@@ -78,7 +83,10 @@ ABUT_BUTTONS=InlineKeyboardMarkup(
 # Callbacks
 @Client.on_callback_query()
 async def meganz_cb(megabot: Client, query: CallbackQuery):
-  if query.data == "helpcallback":
+  if query.data == "startcallback":
+    await query.edit_message_text(f"Hi **{query.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, \nA Simple Mega.nz Downloader Bot 😉! \n\nUse Below Buttons to Know More About Me and My Commands 😁 \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=START_MSGA_B)
+
+  elif query.data == "helpcallback":
     await query.edit_message_text(f"**Here is the Help Menu Of @{(await megabot.get_me()).username}** \n\nUse Below Buttons to Get Help Menu of That Module 😊", reply_markup=HELP_BUTTONS)
   
   elif query.data == "meganzdownloadercb":
@@ -112,7 +120,7 @@ async def meganz_cb(megabot: Client, query: CallbackQuery):
     await query.edit_message_text("**Here is The Help Of Mega.nz Url Importer Module** \n\n\n  ✗ Send or Reply to a Public Mega.nz url with `/import` Command (**Usage:** `/import your_mega_link`) \n\n   ✗ Wait till It Finish \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=MODULES_HELP)
   
   elif query.data == "aboutcallback":
-    await query.edit_message_text(f"**About Mega.nz Bot** \n\n\n  ✗ **Username:** @{(await megabot.get_me()).username} \n\n  ✗ **Language:** [Python](https://www.python.org/) \n\n  ✗ **Library:** [Pyrogram](https://docs.pyrogram.org/) \n\n  ✗ **Pyrogram Version:** `{pyrogram_version}` \n\n  ✗ **Source Code:** [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot) \n\n  ✗ **Developer:** [Itz-fork](https://github.com/Itz-fork) \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=ABUT_BUTTONS)
+    await query.edit_message_text(f"**About Mega.nz Bot** \n\n\n  ✗ **Username:** @{(await megabot.get_me()).username} \n\n  ✗ **Language:** [Python](https://www.python.org/) \n\n  ✗ **Library:** [Pyrogram](https://docs.pyrogram.org/) \n\n  ✗ **Pyrogram Version:** `{pyrogram_version}` \n\n  ✗ **Source Code:** [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot) \n\n  ✗ **Developer:** [Itz-fork](https://github.com/Itz-fork) \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=ABUT_BUTTONS, disable_web_page_preview=True)
   
   elif query.data == "closeqcb":
     await query.answer(f"Closed Help Menu of @{(await megabot.get_me()).username}")
@@ -133,4 +141,3 @@ async def startcmd(megabot: Client, message: Message):
     print("Da Fak happend to me?")
     return
   await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, \nA Simple Mega.nz Downloader Bot 😉! \n\nUse Below Buttons to Know More About Me and My Commands 😁 \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=START_MSGA_B)
-                                  
