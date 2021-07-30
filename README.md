@@ -1,5 +1,5 @@
 # Mega.nz-Bot
-Simple Telegram Bot to Download Files From Mega.nz and Upload It to Telegram
+A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings](https://github.com/Itz-fork/Mega.nz-Bot#features) Related to [Mega.nz](https://mega.nz/) Cloud Storage.
 
 # Features
 - All Mega.nz File Links supported
@@ -44,8 +44,9 @@ cd Mega.nz-Bot
 ```
 pip3 install -r requirements.txt
 ```
-- Fill Config Vars,
-If you haven't installed nano yet, Read This - [How to install Nano in your computer/Vps](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9)
+- Fill Config Vars, </br>
+For PCs - Use Normal Text Editor to Fill Config Vars </br>
+For Vps - If you haven't installed nano yet, Read This - [How to install Nano in your computer/Vps](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9)
 ```
 sudo nano config.py
 ```
