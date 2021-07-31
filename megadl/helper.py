@@ -5,6 +5,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import __version__ as pyrogram_version
 
+from megadl.mega_dl import GITHUB_REPO
 from config import Config
 
 # Start Message Callback buttons
