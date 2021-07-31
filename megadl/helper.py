@@ -130,15 +130,4 @@ async def meganz_cb(megabot: Client, query: CallbackQuery):
 # Start message
 @Client.on_message(filters.command("start"))
 async def startcmd(megabot: Client, message: Message):
-  # To use bot private or public
-  try:
-    if Config.IS_PUBLIC_BOT == "False":
-      if message.from_user.id not in Config.AUTH_USERS:
-        await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-        return
-      elif Config.IS_PUBLIC_BOT == "True":
-        pass
-  except:
-      print("Da Fak happend to me?")
-      return
   await message.reply_text(f"Hi **{message.from_user.first_name}** 😇!, \n\nI'm **@{(await megabot.get_me()).username}**, \nA Simple Mega.nz Downloader Bot 😉! \n\nUse Below Buttons to Know More About Me and My Commands 😁 \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=START_MSGA_B)
