@@ -9,7 +9,7 @@ class Config(object):
     AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
     DOWNLOAD_LOCATION = "./NexaBots"
     IS_PUBLIC_BOT = os.environ.get("IS_PUBLIC_BOT", "False")
-    LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL"))
+    LOGS_CHANNEL = int(os.environ.get("LOGS_CHANNEL", -1234567))
     TG_MAX_SIZE = 2040108421
     # Mega User Account
     MEGA_EMAIL = os.environ.get("MEGA_EMAIL", "")
