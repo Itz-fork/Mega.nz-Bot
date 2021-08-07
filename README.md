@@ -24,7 +24,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 **Non Mandatory Vars,**
 - `IS_PUBLIC_BOT` - Set this to 'True' if you want to set Download Function as Public. Default to 'False'
-- `LOGS_CHANNEL` - Make a private channel and forward a message from that channel to [@ChannelidHEXbot](https://t.me/ChannelidHEXbot) and Get this. [Recomended to add this variable]
+- `LOGS_CHANNEL` - Make a private channel and forward a message from that channel to [@ChannelidHEXbot](https://t.me/ChannelidHEXbot) and Get this. (Recomended to add this variable). If you're hosting your bot Heroku, after deploying the bot delete `LOGS_CHANNEL` var. Else you'll get some errors
 - `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
 - `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
 
