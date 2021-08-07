@@ -6,7 +6,6 @@ import shutil
 import filetype
 import moviepy.editor
 import time
-import logging
 import subprocess
 import json
 
@@ -17,14 +16,10 @@ from functools import partial
 from asyncio import get_running_loop
 from genericpath import isfile
 from posixpath import join
-from megadl.mega_help import progress_for_pyrogram, humanbytes
 
-from megadl.account import m
+from megadl.helpers_nexa.account import m
+from megadl.helpers_nexa.mega_help import progress_for_pyrogram, humanbytes, send_errors, send_logs
 from config import Config
-
-# Logging
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 # path we gonna give the download
 basedir = Config.DOWNLOAD_LOCATION
@@ -42,12 +37,23 @@ GITHUB_REPO=InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "Github Repo", url="https://github.com/Itz-fork/Mega.nz-Bot"
+                        "Source Code 🗂", url="https://github.com/Itz-fork/Mega.nz-Bot"
                     )
                 ],
                 [
                     InlineKeyboardButton(
-                        "🆘 Support Group 🆘", url="https://t.me/Nexa_bots"
+                        "Support Group 🆘", url="https://t.me/Nexa_bots"
+                    )
+                ]
+            ]
+        )
+
+# Cancel Button
+CANCEL_BUTTN=InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "Cancel ❌", callback_data="cancelvro"
                     )
                 ]
             ]
@@ -58,46 +64,49 @@ def DownloadMegaLink(url, alreadylol, download_msg):
     try:
         m.download_url(url, alreadylol, statusdl_msg=download_msg)
     except Exception as e:
-        #await download_msg.edit(f"**Error:** `{e}`")
-        print(e)
+        send_errors(e=e)
+
 
 @Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
-async def megadl(_, message: Message):
+async def megadl(megabot: Client, message: Message):
     # To use bot private or public
     try:
-      if Config.IS_PUBLIC_BOT == "False":
-        if message.from_user.id not in Config.AUTH_USERS:
-          await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-          return
-      elif Config.IS_PUBLIC_BOT == "True":
-        pass
-    except:
-      print("Da Fak happend to me?")
-      return
+        if Config.IS_PUBLIC_BOT == "False":
+            if message.from_user.id not in Config.AUTH_USERS:
+                await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+                return
+            elif Config.IS_PUBLIC_BOT == "True":
+                pass
+    except Exception as e:
+        await send_errors(e=e)
+        return
     url = message.text
     userpath = str(message.from_user.id)
+    the_chat_id = str(message.chat.id)
     alreadylol = basedir + "/" + userpath
     # Getting file size before download
     try:
-      json_f_info = m.get_public_url_info(url)
-      dumped_j_info = json.dumps(json_f_info)
-      loaded_f_info = json.loads(dumped_j_info)
-      mega_f_size = loaded_f_info['size']
-      readable_f_size = size(mega_f_size)
-      if mega_f_size > TG_MAX_FILE_SIZE:
-        await message.reply_text(f"**Detected File Size:** `{readable_f_size}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
-        return
+        json_f_info = m.get_public_url_info(url)
+        dumped_j_info = json.dumps(json_f_info)
+        loaded_f_info = json.loads(dumped_j_info)
+        mega_f_size = loaded_f_info['size']
+        readable_f_size = size(mega_f_size)
+        if mega_f_size > TG_MAX_FILE_SIZE:
+            await message.reply_text(f"**Detected File Size:** `{readable_f_size}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
+            return
     except Exception as e:
-      await message.reply_text(f"**Error:** `{e}`")
-      return
+        await message.reply_text(f"**Error:** `{e}`")
+        await send_errors(e=e)
+        return
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
     if os.path.isdir(alreadylol):
-      await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
-      return
+        await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
+        return
     else:
-      os.makedirs(alreadylol)
+        os.makedirs(alreadylol)
     try:
-        download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**")
+        download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**", reply_markup=CANCEL_BUTTN)
+        await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
         loop = get_running_loop()
         await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol, download_msg))
         getfiles = [f for f in os.listdir(alreadylol) if isfile(join(alreadylol, f))]
@@ -105,9 +114,16 @@ async def megadl(_, message: Message):
         magapylol = f"{alreadylol}/{files}"
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
-        await download_msg.edit(f"**Error:** `{e}`")
-        shutil.rmtree(basedir + "/" + userpath)
+        if os.path.isdir(alreadylol):
+            await download_msg.edit(f"**Error:** `{e}`")
+            shutil.rmtree(basedir + "/" + userpath)
+            await send_errors(e=e)
         return
+    # If user cancelled the process bot will return into telegram again lmao
+    if os.path.isdir(alreadylol) is False:
+        return
+    else:
+        pass
     lmaocheckdis = os.stat(alreadylol).st_size
     readablefilesize = size(lmaocheckdis) # Convert Bytes into readable size
     # below code for checking file size isn't needed at all. but i'm not sure about my codes so...
@@ -160,7 +176,7 @@ async def megadl(_, message: Message):
         shutil.rmtree(basedir + "/" + userpath)
         print("Successfully Removed Downloaded File and the folder!")
     except Exception as e:
-        print(e)
+        await send_errors(e=e)
         return
 
 

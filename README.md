@@ -7,8 +7,9 @@ A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings
 - Auto Detect File Type Before Upload to Telegram
 - Can be used as Private or Public Bot
 - Mega User Account Supported
-- Upload Files From Telegram to Mega.nz
+- Upload Files From Telegram / Direct Link to Mega.nz
 - Import Files From Public Mega.nz Url
+- Inline Mode [Still In Development Stage: BETA]
 
 # Deploy
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
@@ -23,9 +24,9 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 **Non Mandatory Vars,**
 - `IS_PUBLIC_BOT` - Set this to 'True' if you want to set Download Function as Public. Default to 'False'
+- `LOGS_CHANNEL` - Make a private channel and forward a message from that channel to [@ChannelidHEXbot](https://t.me/ChannelidHEXbot) and Get this. [Recomended to add this variable]
 - `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
 - `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
-- `USER_ACCOUNT` Set this to 'True' If you want to use your own Mega Account. Default to 'False'
 
 ### With Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Itz-fork/Mega.nz-Bot)
@@ -48,7 +49,7 @@ pip3 install -r requirements.txt
 For PCs - Use Normal Text Editor to Fill Config Vars </br>
 For Vps - If you haven't installed nano yet, Read This - [How to install Nano in your computer/Vps](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9)
 
-Fill Config vars with your own values. If you don't know  how to get them, Read This - [How to Get Config Values](https://github.com/Itz-fork/Mega.nz-Bot#features)
+Fill Config vars with your own values. If you don't know  how to get them, Read This - [How to Get Config Values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)
 ```
 sudo nano config.py
 ```
