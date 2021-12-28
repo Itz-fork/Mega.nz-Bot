@@ -7,11 +7,10 @@ from pyrogram import Client
 from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton
 from functools import partial
 from asyncio import get_running_loop
-from hurry.filesize import size
 
-from .helpers import INLINE_MSGB, START_MSGA_B as INLINE_QUR_B
+from .callbacks import INLINE_MSGB, START_MSGA_B as INLINE_QUR_B
 from megadl.helpers_nexa.account import email, password, m
-from megadl.helpers_nexa.mega_help import send_errors
+from megadl.helpers_nexa.mega_help import humanbytes, send_errors
 from .user_account import USER_ACC_INFO
 from config import Config
 
@@ -84,7 +83,7 @@ async def inline_megadl(client, query):
                 loaded_f_info = json.loads(dumped_j_info)
                 mega_f_size = loaded_f_info['size']
                 mega_f_name = loaded_f_info['name']
-                readable_f_size = size(mega_f_size)
+                readable_f_size = humanbytes(mega_f_size)
             except Exception as e:
                 await client.answer_inline_query(
                         query.id,

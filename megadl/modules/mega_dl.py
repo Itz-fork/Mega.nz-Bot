@@ -3,22 +3,16 @@
 
 import os
 import shutil
-import filetype
-import moviepy.editor
-import time
-import subprocess
-import json
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from hurry.filesize import size
+from fsplit.filesplit import Filesplit
 from functools import partial
 from asyncio import get_running_loop
-from genericpath import isfile
-from posixpath import join
 
 from megadl.helpers_nexa.account import m
-from megadl.helpers_nexa.mega_help import progress_for_pyrogram, humanbytes, send_errors, send_logs
+from megadl.helpers_nexa.mega_help import humanbytes, send_errors, send_logs
+from megadl.helpers_nexa.up_helper import guess_and_send, run_shell_cmds
 from config import Config
 
 # path we gonna give the download
@@ -64,124 +58,140 @@ def DownloadMegaLink(url, alreadylol, download_msg):
     try:
         m.download_url(url, alreadylol, statusdl_msg=download_msg)
     except Exception as e:
-        send_errors(e=e)
+        send_errors(e)
+
+# Splitting large files
+def split_files(input_file, out_base_path):
+    nexa_fs = Filesplit()
+    split_file = input_file
+    split_fsize = 2040108421
+    out_path = out_base_path
+    nexa_fs.split(file=split_file, split_size=split_fsize, output_dir=out_path)
 
 
+# Uses mega.py package
 @Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
-async def megadl(megabot: Client, message: Message):
+async def megadl_megapy(_, message: Message):
     # To use bot private or public
     try:
         if Config.IS_PUBLIC_BOT == "False":
             if message.from_user.id not in Config.AUTH_USERS:
-                await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-                return
+                return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
             elif Config.IS_PUBLIC_BOT == "True":
                 pass
     except Exception as e:
-        await send_errors(e=e)
-        return
+        return await send_errors(e=e)
     url = message.text
     userpath = str(message.from_user.id)
     the_chat_id = str(message.chat.id)
-    alreadylol = basedir + "/" + userpath
-    # Getting file size before download
-    try:
-        json_f_info = m.get_public_url_info(url)
-        dumped_j_info = json.dumps(json_f_info)
-        loaded_f_info = json.loads(dumped_j_info)
-        mega_f_size = loaded_f_info['size']
-        readable_f_size = size(mega_f_size)
-        if mega_f_size > TG_MAX_FILE_SIZE:
-            await message.reply_text(f"**Detected File Size:** `{readable_f_size}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
-            return
-    except Exception as e:
-        await message.reply_text(f"**Error:** `{e}`")
-        await send_errors(e=e)
-        return
+    megadl_path = basedir + "/" + userpath
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
-    if os.path.isdir(alreadylol):
-        await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
-        return
+    if os.path.isdir(megadl_path):
+        return await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
     else:
-        os.makedirs(alreadylol)
+        os.makedirs(megadl_path)
     try:
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴**", reply_markup=CANCEL_BUTTN)
         await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
         loop = get_running_loop()
-        await loop.run_in_executor(None, partial(DownloadMegaLink, url, alreadylol, download_msg))
-        getfiles = [f for f in os.listdir(alreadylol) if isfile(join(alreadylol, f))]
-        files = getfiles[0]
-        magapylol = f"{alreadylol}/{files}"
+        await loop.run_in_executor(None, partial(DownloadMegaLink, url, megadl_path, download_msg))
+        folder_f = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
-        if os.path.isdir(alreadylol):
+        if os.path.isdir(megadl_path):
             await download_msg.edit(f"**Error:** `{e}`")
             shutil.rmtree(basedir + "/" + userpath)
-            await send_errors(e=e)
+            await send_errors(e)
         return
     # If user cancelled the process bot will return into telegram again lmao
-    if os.path.isdir(alreadylol) is False:
+    if os.path.isdir(megadl_path) is False:
         return
     else:
         pass
-    lmaocheckdis = os.stat(alreadylol).st_size
-    readablefilesize = size(lmaocheckdis) # Convert Bytes into readable size
-    # below code for checking file size isn't needed at all. but i'm not sure about my codes so...
-    if lmaocheckdis > TG_MAX_FILE_SIZE:
-        await download_msg.edit(f"**Detected File Size:** `{readablefilesize}` \n**Accepted File Size:** `2GB` \n\nOops! File Size is too large to send in Telegram")
-        shutil.rmtree(basedir + "/" + userpath)
-        return
-    else:
-        start_time = time.time()
-        guessedfilemime = filetype.guess(f"{magapylol}") # Detecting file type
-        if not guessedfilemime.mime:
-            await download_msg.edit("**Trying to Upload Now!** \n\n**Error:** `Can't Get File Mime Type! Sending as a Document!`")
-            await message.reply_document(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-            shutil.rmtree(basedir + "/" + userpath)
-            return
-        filemimespotted = guessedfilemime.mime
-        # Checking If it's a gif
-        if "image/gif" in filemimespotted:
-            await download_msg.edit("**Trying to Upload Now!**")
-            await message.reply_animation(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-            shutil.rmtree(basedir + "/" + userpath)
-            return
-        # Checking if it's a image
-        if "image" in filemimespotted:
-            await download_msg.edit("**Trying to Upload Now!**")
-            await message.reply_photo(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-        # Checking if it's a video
-        elif "video" in filemimespotted:
-            await download_msg.edit("`Generating Data...`")
-            viddura = moviepy.editor.VideoFileClip(f"{magapylol}")
-            vidduration = int(viddura.duration)
-            thumbnail_path = f"{alreadylol}/thumbnail.jpg"
-            subprocess.call(['ffmpeg', '-i', magapylol, '-ss', '00:00:00.000', '-vframes', '1', thumbnail_path])
-            await message.reply_video(magapylol, duration=vidduration, thumb=thumbnail_path, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-        # Checking if it's a audio
-        elif "audio" in filemimespotted:
-            await download_msg.edit("**Trying to Upload Now!**")
-            await message.reply_audio(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
-        # If it's not a image/video or audio it'll reply it as doc
-        else:
-            await download_msg.edit("**Trying to Upload Now!**")
-            await message.reply_document(magapylol, progress=progress_for_pyrogram, progress_args=("**Trying to Upload Now!** \n", download_msg, start_time))
-            await download_msg.edit(f"**Successfully Uploaded** \n\n**Join @NexaBotsUpdates If You're Enjoying This Bot**")
+    try:
+        for mg_file in folder_f:
+            file_size = os.stat(megadl_path).st_size
+            if file_size > Config.TG_MAX_SIZE:
+                base_splt_out_dir = megadl_path + "splitted_files"
+                await download_msg.edit("`Large File Detected, Trying to split it!`")
+                loop = get_running_loop()
+                await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
+                split_out_dir = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
+                for spl_f in split_out_dir:
+                    await guess_and_send(spl_f, int(the_chat_id), "cache")
+            else:
+                await guess_and_send(spl_f, int(the_chat_id), "cache")
+    except Exception as e:
+        await download_msg.edit(f"**Error:** \n`{e}`")
+        await send_errors(e)
     try:
         shutil.rmtree(basedir + "/" + userpath)
         print("Successfully Removed Downloaded File and the folder!")
     except Exception as e:
-        await send_errors(e=e)
+        return await send_errors(e)
+
+
+# Uses megatools cli
+@Client.on_message(filters.command("megadl") & filters.private)
+async def megadl_megatools(_, message: Message):
+    # To use bot private or public
+    try:
+        if Config.IS_PUBLIC_BOT == "False":
+            if message.from_user.id not in Config.AUTH_USERS:
+                return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+            elif Config.IS_PUBLIC_BOT == "True":
+                pass
+    except Exception as e:
+        return await send_errors(e)
+    url = message.text
+    userpath = str(message.from_user.id)
+    the_chat_id = str(message.chat.id)
+    megadl_path = basedir + "/" + userpath
+    # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
+    if os.path.isdir(megadl_path):
+        return await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
+    else:
+        os.makedirs(megadl_path)
+    try:
+        download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴** \n\n`Note: You can't cancel this!`")
+        await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
+        megacmd = f"megadl --limit-speed 0 --path {megadl_path} {url}"
+        loop = get_running_loop()
+        await loop.run_in_executor(None, partial(run_shell_cmds, megacmd))
+        folder_f = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
+        await download_msg.edit("**Successfully Downloaded The Content!**")
+    except Exception as e:
+        if os.path.isdir(megadl_path):
+            await download_msg.edit(f"**Error:** `{e}`")
+            shutil.rmtree(basedir + "/" + userpath)
+            await send_errors(e)
         return
+    try:
+        for mg_file in folder_f:
+            file_size = os.stat(megadl_path).st_size
+            if file_size > Config.TG_MAX_SIZE:
+                base_splt_out_dir = megadl_path + "splitted_files"
+                await download_msg.edit("`Large File Detected, Trying to split it!`")
+                loop = get_running_loop()
+                await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
+                split_out_dir = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
+                for spl_f in split_out_dir:
+                    await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
+            else:
+                await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
+        await download_msg.edit("**Successfully Uploaded The Content!**")
+    except Exception as e:
+        await download_msg.edit(f"**Error:** \n`{e}`")
+        await send_errors(e)
+    try:
+        shutil.rmtree(basedir + "/" + userpath)
+        print("Successfully Removed Downloaded File and the folder!")
+    except Exception as e:
+        await send_errors(e)
 
 
 # Replying If There is no mega url in the message
-@Client.on_message(~filters.command(["start", "help", "info", "upload", "import"]) & ~filters.regex(MEGA_REGEX) & filters.private & ~filters.media)
+@Client.on_message(~filters.command(["start", "help", "info", "upload", "import", "megadl"]) & ~filters.regex(MEGA_REGEX) & filters.private & ~filters.media)
 async def nomegaurl(_, message: Message):
   # Auth users only
     if message.from_user.id not in Config.AUTH_USERS:
