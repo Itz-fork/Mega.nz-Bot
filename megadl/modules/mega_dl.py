@@ -120,7 +120,7 @@ async def megadl_megapy(_, message: Message):
                 for spl_f in split_out_dir:
                     await guess_and_send(spl_f, int(the_chat_id), "cache")
             else:
-                await guess_and_send(spl_f, int(the_chat_id), "cache")
+                await guess_and_send(mg_file, int(the_chat_id), "cache")
     except Exception as e:
         await download_msg.edit(f"**Error:** \n`{e}`")
         await send_errors(e)
@@ -178,7 +178,7 @@ async def megadl_megatools(_, message: Message):
                 for spl_f in split_out_dir:
                     await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
             else:
-                await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
+                await guess_and_send(mg_file, int(the_chat_id), "cache", download_msg)
         await download_msg.edit("**Successfully Uploaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** \n`{e}`")
