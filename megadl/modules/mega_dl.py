@@ -2,6 +2,7 @@
 # Don't kang this else your dad is gae
 
 import os
+import re
 import shutil
 
 from pyrogram import Client, filters
@@ -118,9 +119,9 @@ async def megadl_megapy(_, message: Message):
                 await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
                 split_out_dir = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
                 for spl_f in split_out_dir:
-                    await guess_and_send(spl_f, int(the_chat_id), "cache")
+                    await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
             else:
-                await guess_and_send(mg_file, int(the_chat_id), "cache")
+                await guess_and_send(mg_file, int(the_chat_id), "cache", download_msg)
     except Exception as e:
         await download_msg.edit(f"**Error:** \n`{e}`")
         await send_errors(e)
@@ -143,7 +144,9 @@ async def megadl_megatools(_, message: Message):
                 pass
     except Exception as e:
         return await send_errors(e)
-    url = message.text
+    url = message.text.split(None, 1)[1]
+    if not re.match(MEGA_REGEX, url):
+        return await message.reply("`This isn't a mega url!`")
     userpath = str(message.from_user.id)
     the_chat_id = str(message.chat.id)
     megadl_path = basedir + "/" + userpath
