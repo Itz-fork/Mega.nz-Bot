@@ -4,6 +4,7 @@
 import os
 import re
 import shutil
+import subprocess
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
@@ -13,7 +14,7 @@ from asyncio import get_running_loop
 
 from megadl.helpers_nexa.account import m
 from megadl.helpers_nexa.mega_help import humanbytes, send_errors, send_logs
-from megadl.helpers_nexa.up_helper import guess_and_send, run_shell_cmds
+from megadl.helpers_nexa.up_helper import guess_and_send
 from config import Config
 
 # path we gonna give the download
@@ -60,6 +61,11 @@ def DownloadMegaLink(url, alreadylol, download_msg):
         m.download_url(url, alreadylol, statusdl_msg=download_msg)
     except Exception as e:
         send_errors(e)
+
+def nexa_mega_runner(command):
+    run = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    shell_ouput = run.stdout.read()[:-1].decode("utf-8")
+    return shell_ouput
 
 # Splitting large files
 def split_files(input_file, out_base_path):
@@ -159,7 +165,8 @@ async def megadl_megatools(_, message: Message):
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴** \n\n`Note: You can't cancel this!`")
         await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
         megacmd = f"megadl --limit-speed 0 --path {megadl_path} {url}"
-        await run_shell_cmds(megacmd)
+        loop = get_running_loop()
+        await loop.run_in_executor(None, partial(nexa_mega_runner, megacmd))
         folder_f = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
