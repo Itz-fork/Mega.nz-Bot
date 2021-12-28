@@ -6,8 +6,8 @@ import filetype
 import subprocess
 
 from time import time
-from pyrogram import Client
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram
+from megadl import meganzbot as Client
 
 async def run_shell_cmds(command):
     run = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
