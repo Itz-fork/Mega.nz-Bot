@@ -5,8 +5,8 @@ import re
 import filetype
 import subprocess
 
-from pyrogram import Client
 from time import time
+from pyrogram import Client
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram
 
 async def run_shell_cmds(command):

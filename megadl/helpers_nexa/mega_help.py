@@ -2,7 +2,6 @@
 # Don't kang this else your dad is gae
 
 import math
-import os
 import time
 
 from megadl import meganzbot as client

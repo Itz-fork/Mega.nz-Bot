@@ -10,12 +10,11 @@ import wget
 from pyrogram import Client, filters
 from pyrogram.methods import password
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from hurry.filesize import size
 from functools import partial
 from asyncio import get_running_loop
 
-from megadl.helpers_nexa.account import email, password, m
 from .mega_dl import GITHUB_REPO, basedir
+from megadl.helpers_nexa.account import email, password, m
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram, humanbytes, send_errors, send_logs
 from config import Config
 
@@ -36,9 +35,9 @@ def USER_ACC_INFO():
     btotal_space = acc_space['total']
     bused_space = acc_space['used']
     bfree_space = btotal_space - bused_space
-    total_space = size(btotal_space)
-    used_space = size(bused_space)
-    free_space = size(bfree_space)
+    total_space = humanbytes(btotal_space)
+    used_space = humanbytes(bused_space)
+    free_space = humanbytes(bfree_space)
     USER_ACC_INFO.info = f"""
 **~ Your User Account Info ~**
 
