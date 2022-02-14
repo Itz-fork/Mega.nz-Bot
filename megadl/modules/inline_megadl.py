@@ -161,4 +161,4 @@ async def inline_megadl(client, query):
                 switch_pm_parameter="inline",
                 cache_time=10)
     except Exception as e:
-        await send_errors(e=e)
+        await send_errors(e)

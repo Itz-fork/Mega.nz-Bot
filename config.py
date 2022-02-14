@@ -41,7 +41,7 @@ Successfully Logged Into Mega.nz User Account
 """
 
 LOGIN_ERROR_TEXT = """
-Can't Get Mega Email and Password Login as an Anonymouse User
+Unable to find Mega Email and Password, Loging as an anonymous User...
 """
 
 ERROR_TEXT = """

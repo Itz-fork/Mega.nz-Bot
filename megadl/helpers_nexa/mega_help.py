@@ -97,16 +97,9 @@ def check_logs():
 
 # Send Download or Upload logs in log channel
 async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_logs=False, upload_logs=False, import_logs=False):
-    # Log type
-    download_logs = download_logs
-    upload_logs = upload_logs
-    import_logs = import_logs
-    # Things needed to send logs
-    mega_url = mega_url
-    up_file = up_file
     if download_logs is True:
         try:
-            if Config.LOGS_CHANNEL != -1234567:
+            if Config.LOGS_CHANNEL:
                 await client.send_message(chat_id=Config.LOGS_CHANNEL, text=f"**#DOWNLOAD_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}` \n**Url:** {mega_url}")
             else:
                 print(f"DOWNLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nUrl: {mega_url}")
@@ -114,7 +107,7 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
             await send_errors(e=e)
     elif upload_logs is True:
         try:
-            if Config.LOGS_CHANNEL != -1234567:
+            if Config.LOGS_CHANNEL:
                 if up_file is not None:
                     gib_details = await up_file.forward(Config.LOGS_CHANNEL)
                     await gib_details.reply_text(f"**#UPLOAD_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}`")
@@ -129,7 +122,7 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
             await send_errors(e=e)
     elif import_logs is True:
         try:
-            if Config.LOGS_CHANNEL != -1234567:
+            if Config.LOGS_CHANNEL:
                 await client.send_message(chat_id=Config.LOGS_CHANNEL, text=f"**#IMPORT_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}` \n**Origin Url:** {mega_url}")
             else:
                 print(f"IMPORT_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nOrigin Url: {mega_url}")
@@ -138,7 +131,7 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
 
 # Send or print errors
 async def send_errors(e):
-    if Config.LOGS_CHANNEL != -1234567:
+    if Config.LOGS_CHANNEL:
         await client.send_message(Config.LOGS_CHANNEL, f"**#Error** \n`{e}`")
     else:
         print(ERROR_TEXT.format(e))

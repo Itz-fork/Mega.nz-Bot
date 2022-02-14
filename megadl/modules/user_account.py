@@ -83,23 +83,19 @@ async def uptomega(client: Client, message: Message):
   the_uid = message.from_user.id
   the_cid = message.chat.id
   if the_uid not in Config.AUTH_USERS:
-    await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-    return
+    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
   if email and password is None:
-    await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
-    return
+    return await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
   todownfile = message.reply_to_message
   if todownfile is None:
-    await megauplaod_msg.edit("**Please reply to a Media File or Direct Link to Upload!**")
-    return
+    return await megauplaod_msg.edit("**Please reply to a Media File or Direct Link to Upload!**")
   if todownfile.media is None:
     try:
       direct_link_path = f"{basedir}/{the_uid}"
       url = todownfile.text
       if os.path.isdir(direct_link_path):
-        await megauplaod_msg.edit("`Already One Process is Going On. Please wait until it's finished!`")
-        return
+        return await megauplaod_msg.edit("`Already One Process is Going On. Please wait until it's finished!`")
       else:
         os.makedirs(direct_link_path)
         megaupmsg = await megauplaod_msg.edit("**Starting to Download The Content to My Server! This may take while 😴**")
@@ -112,8 +108,7 @@ async def uptomega(client: Client, message: Message):
         os.remove(toupload)
       return
     except Exception as e:
-      await send_errors(e=e)
-      return
+      return await send_errors(e)
   try:
     start_time = time.time()
     await megauplaod_msg.delete()
@@ -129,39 +124,32 @@ async def uptomega(client: Client, message: Message):
     os.remove(toupload)
   except Exception as e:
     await megaupmsg.edit(f"**Error:** `{e}`")
-    await send_errors(e=e)
-    try:
-      os.remove(toupload)
-    except Exception as e:
-      await send_errors(e=e)
+    await send_errors(e)
+    os.remove(toupload)
 
 
 # Import files from a public url
 @Client.on_message(filters.command("import") & filters.private)
-async def importurlf(client: Client, message: Message):
+async def importurlf(_, message: Message):
   if message.from_user.id not in Config.AUTH_USERS:
-    await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-    return
+    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   importing_msg = await message.reply_text("`Processing ⚙️...`")
   reply_msg = message.reply_to_message
   try:
     if reply_msg:
       replied_txt_msg = reply_msg.text
       if "mega.nz" not in replied_txt_msg:
-        await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
-        return
+        return await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
       else:
         msg_text = replied_txt_msg
     else:
       msg_txt_url = message.text
       if "mega.nz" not in msg_txt_url:
-        await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
-        return
+        return await importing_msg.edit("Send me a **Valid Mega.nz** Link to Import 😏!")
       else:
         msg_text = msg_txt_url
   except Exception as e:
-    await importing_msg.edit("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
-    return
+    return await importing_msg.edit("Hmmm... Looks like there is something other than text! Mind if check it again 🤔?")
   else:
     try:
       await send_logs(user_id=message.from_user.id, mchat_id=message.chat.id, mega_url=msg_text, import_logs=True)
@@ -171,4 +159,4 @@ async def importurlf(client: Client, message: Message):
       await message.reply_text(f"**Successfully Imported 😌** \n\n**Link:** `{imported_link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Imported Link 📥", url=f"{imported_link}")]]))
     except Exception as e:
       await message.reply_text(f"**Error:** `{e}`")
-      await send_errors(e=e)
+      await send_errors(e)

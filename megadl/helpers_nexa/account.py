@@ -3,27 +3,23 @@
 
 from mega import Mega
 from config import Config, PROCESS_TEXT, LOGIN_ERROR_TEXT, LOGGED_AS_USER
-from .mega_help import send_errors
 
 # Mega user account credentials
-email = Config.MEGA_EMAIL
-password = Config.MEGA_PASSWORD
-
 mega = Mega()
 
 # Mega Account Login
 def login_to_mega():
   try:
-    if email and password is not None:
+    if Config.MEGA_EMAIL and Config.MEGA_PASSWORD is not None:
       # Login as Mega user account
-      login_to_mega.m = mega.login(email, password)
+      login_to_mega.m = mega.login(Config.MEGA_EMAIL, Config.MEGA_PASSWORD)
       print(LOGGED_AS_USER)
     else:
       print(LOGIN_ERROR_TEXT)
       # Login as anonymous account
       login_to_mega.m = mega.login()
   except Exception as e:
-    send_errors(e)
+    print("Error: \n{e}")
     exit()
 
 # Mega client
