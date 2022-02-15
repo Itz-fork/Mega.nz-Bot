@@ -56,7 +56,7 @@ async def inline_megadl(client, query):
         
         elif megadl_q.split()[0] == "details":
             inline_down_butotns = []
-            if Config.IS_PUBLIC_BOT == "False":
+            if not Config.IS_PUBLIC_BOT:
                 if query.from_user.id not in Config.AUTH_USERS:
                     await client.answer_inline_query(
                         query.id,

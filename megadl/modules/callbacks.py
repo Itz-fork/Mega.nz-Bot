@@ -149,21 +149,21 @@ async def meganz_cb(megabot: Client, query: CallbackQuery):
   
   elif query.data == "meganzdownloadercb":
     user_id = query.from_user.id
-    if Config.IS_PUBLIC_BOT == "False":
+    if not Config.IS_PUBLIC_BOT:
       if user_id not in Config.AUTH_USERS:
         return await query.answer("Sorry This Bot is a Private Bot 😔! \n\nJoin @NexaBotsUpdates to Make your own bot!", show_alert=True)
     await query.edit_message_text("**Here is The Help Of Mega.nz Downloader Module** \n\n\n  ✘ Send Me a Mega.nz File Link. (Size Must be Under 2GB due to Telegram API Limitations. Folder Not Supported) \n\n  ✘ Wait Till It Download and Upload That File to Telegram \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=MODULES_HELP)
   
   elif query.data == "meganzuploadercb":
     user_id = query.from_user.id
-    if Config.IS_PUBLIC_BOT == "False":
+    if not Config.IS_PUBLIC_BOT:
       if user_id not in Config.AUTH_USERS:
         return await query.answer("Sorry This Bot is a Private Bot 😔! \n\nJoin @NexaBotsUpdates to Make your own bot!", show_alert=True)
     await query.edit_message_text("**Here is The Help Of Mega.nz Uploader Module** \n\n\n  ✘ First Send or Forward a File to Me. \n\n  ✘ Then Reply to that file with `/upload` command \n\n  ✘ Wait till It Download and Upload That File to Mega.nz \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=MODULES_HELP)
   
   elif query.data == "meganzimportercb":
     user_id = query.from_user.id
-    if Config.IS_PUBLIC_BOT == "False":
+    if not Config.IS_PUBLIC_BOT:
       if user_id not in Config.AUTH_USERS:
         return await query.answer("Sorry This Bot is a Private Bot 😔! \n\nJoin @NexaBotsUpdates to Make your own bot!", show_alert=True)
     await query.edit_message_text("**Here is The Help Of Mega.nz Url Importer Module** \n\n\n  ✘ Send or Reply to a Public Mega.nz url with `/import` Command (**Usage:** `/import your_mega_link`) \n\n   ✘ Wait till It Finish \n\n**Made with ❤️ by @NexaBotsUpdates**", reply_markup=MODULES_HELP)

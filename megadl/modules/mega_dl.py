@@ -68,12 +68,8 @@ def nexa_mega_runner(command):
     return shell_ouput
 
 # Splitting large files
-def split_files(input_file, out_base_path):
-    nexa_fs = Filesplit()
-    split_file = input_file
-    split_fsize = 2040108421
-    out_path = out_base_path
-    nexa_fs.split(file=split_file, split_size=split_fsize, output_dir=out_path)
+def split_files(input_file, out_path):
+    Filesplit().split(file=input_file, split_size=2040108421, output_dir=out_path)
 
 
 # Uses mega.py package
@@ -81,11 +77,9 @@ def split_files(input_file, out_base_path):
 async def megadl_megapy(_, message: Message):
     # To use bot private or public
     try:
-        if Config.IS_PUBLIC_BOT == "False":
+        if not Config.IS_PUBLIC_BOT:
             if message.from_user.id not in Config.AUTH_USERS:
                 return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-            elif Config.IS_PUBLIC_BOT == "True":
-                pass
     except Exception as e:
         return await send_errors(e=e)
     url = message.text
@@ -143,11 +137,9 @@ async def megadl_megapy(_, message: Message):
 async def megadl_megatools(_, message: Message):
     # To use bot private or public
     try:
-        if Config.IS_PUBLIC_BOT == "False":
+        if not Config.IS_PUBLIC_BOT:
             if message.from_user.id not in Config.AUTH_USERS:
                 return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-            elif Config.IS_PUBLIC_BOT == "True":
-                pass
     except Exception as e:
         return await send_errors(e)
     url = message.text.split(None, 1)[1]

@@ -14,7 +14,7 @@ class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
     AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
     DOWNLOAD_LOCATION = "./NexaBots"
-    IS_PUBLIC_BOT = os.environ.get("IS_PUBLIC_BOT", "False")
+    IS_PUBLIC_BOT = bool(os.environ.get("IS_PUBLIC_BOT", False))
     LOGS_CHANNEL = log_channel
     TG_MAX_SIZE = 2040108421
     # Mega User Account
