@@ -57,7 +57,7 @@ async def accinfo(client: Client, message: Message):
   if message.from_user.id not in Config.AUTH_USERS:
     return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   acc_info_msg = await message.reply_text("`Processing ⚙️...`")
-  if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
+  if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
     return await acc_info_msg.edit("`Setup an User Account to Use this Feature!`")
   loop = get_running_loop()
   await loop.run_in_executor(None, partial(USER_ACC_INFO))
@@ -83,7 +83,7 @@ async def uptomega(client: Client, message: Message):
   if the_uid not in Config.AUTH_USERS:
     return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
-  if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
+  if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
     return await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
   todownfile = message.reply_to_message
   if todownfile is None:

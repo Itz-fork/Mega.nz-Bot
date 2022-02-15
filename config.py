@@ -18,8 +18,8 @@ class Config(object):
     LOGS_CHANNEL = log_channel
     TG_MAX_SIZE = 2040108421
     # Mega User Account
-    MEGA_EMAIL = os.environ.get("MEGA_EMAIL", "")
-    MEGA_PASSWORD = os.environ.get("MEGA_PASSWORD", "")
+    MEGA_EMAIL = os.environ.get("MEGA_EMAIL")
+    MEGA_PASSWORD = os.environ.get("MEGA_PASSWORD")
 
 # Text Prints
 B_START_TEXT = """

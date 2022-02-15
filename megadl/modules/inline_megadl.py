@@ -130,7 +130,7 @@ async def inline_megadl(client, query):
                 switch_pm_parameter="inline",
                 cache_time=10)
                 return
-            if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
+            if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
                 await client.answer_inline_query(
                 query.id,
                 results=answers,
