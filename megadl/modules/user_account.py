@@ -14,7 +14,7 @@ from functools import partial
 from asyncio import get_running_loop
 
 from .mega_dl import GITHUB_REPO, basedir
-from megadl.helpers_nexa.account import email, password, m
+from megadl.helpers_nexa.account import m
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram, humanbytes, send_errors, send_logs
 from config import Config
 
@@ -50,17 +50,15 @@ def USER_ACC_INFO():
 ✦ **Quota:** `{acc_quota} MB`
 """
   except Exception as e:
-    send_errors(e)
+    print(f"Error: \n{e}")
 
 @Client.on_message(filters.command("info") & filters.private)
 async def accinfo(client: Client, message: Message):
   if message.from_user.id not in Config.AUTH_USERS:
-    await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
-    return
+    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   acc_info_msg = await message.reply_text("`Processing ⚙️...`")
-  if email and password is None:
-    await acc_info_msg.edit("`Setup an User Account to Use this Feature!`")
-    return
+  if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
+    return await acc_info_msg.edit("`Setup an User Account to Use this Feature!`")
   loop = get_running_loop()
   await loop.run_in_executor(None, partial(USER_ACC_INFO))
   await acc_info_msg.edit(USER_ACC_INFO.info)
@@ -75,7 +73,7 @@ def UploadToMega(toupload, megaupmsg):
     uploadfile = m.upload(f"{toupload}", upstatusmsg=megaupmsg)
     public_link = m.get_upload_link(uploadfile)
   except Exception as e:
-    send_errors(e)
+    print(f"Error: \n{e}")
 
 
 @Client.on_message(filters.command("upload") & filters.private)
@@ -85,7 +83,7 @@ async def uptomega(client: Client, message: Message):
   if the_uid not in Config.AUTH_USERS:
     return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
-  if email and password is None:
+  if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
     return await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
   todownfile = message.reply_to_message
   if todownfile is None:

@@ -19,7 +19,7 @@ def login_to_mega():
       # Login as anonymous account
       login_to_mega.m = mega.login()
   except Exception as e:
-    print("Error: \n{e}")
+    print(f"Error: \n{e}")
     exit()
 
 # Mega client

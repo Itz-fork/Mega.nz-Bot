@@ -8,7 +8,7 @@ from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent, In
 from functools import partial
 from asyncio import get_running_loop
 
-from megadl.helpers_nexa.account import email, password, m
+from megadl.helpers_nexa.account import m
 from megadl.helpers_nexa.mega_help import humanbytes, send_errors
 from .callbacks import INLINE_MSGB, START_MSGA_B as INLINE_QUR_B
 from .user_account import USER_ACC_INFO
@@ -130,7 +130,7 @@ async def inline_megadl(client, query):
                 switch_pm_parameter="inline",
                 cache_time=10)
                 return
-            if email and password is None:
+            if Config.MEGA_EMAIL or Config.MEGA_PASSWORD is None:
                 await client.answer_inline_query(
                 query.id,
                 results=answers,
