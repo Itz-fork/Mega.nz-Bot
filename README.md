@@ -28,12 +28,13 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 - `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
 - `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
 
+
 ### With Heroku
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/Itz-fork/Mega-Deployer)
 
 > Notice ⚠️:
-> Please read install notes in [Mega.nz-Deployer](https://github.com/Itz-fork/Mega-Deployer) on "How to deploy this bot on Heroku"
+> This (Main) repo doesn't contain the Dockerfile which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
 
 ### With VPS/PC
 
@@ -48,6 +49,8 @@ cd Mega.nz-Bot
 - Install Requirements,
 ```
 pip3 install -r requirements.txt
+# Install the 'megatools' package
+sudo apt install megatools
 ```
 - Fill Config Vars, </br>
 For PCs - Use Normal Text Editor to Fill Config Vars </br>
