@@ -139,12 +139,12 @@ async def inline_megadl(client, query):
                 cache_time=10)
                 return
             loop = get_running_loop()
-            await loop.run_in_executor(None, partial(USER_ACC_INFO))
+            inf = await loop.run_in_executor(None, partial(USER_ACC_INFO))
             answers.append(
                 InlineQueryResultArticle(
                     title="About Your Mega.nz Account",
                     description="Some info about your Mega.nz Account",
-                    input_message_content=InputTextMessageContent(USER_ACC_INFO.info)
+                    input_message_content=InputTextMessageContent(inf)
                 )
             )
             await client.answer_inline_query(
