@@ -13,7 +13,7 @@ from functools import partial
 from asyncio import get_running_loop
 
 from megadl.helpers_nexa.account import m
-from megadl.helpers_nexa.mega_help import humanbytes, send_errors, send_logs
+from megadl.helpers_nexa.mega_help import send_errors, send_logs
 from megadl.helpers_nexa.up_helper import guess_and_send
 from config import Config
 
@@ -177,9 +177,9 @@ async def megadl_megatools(_, message: Message):
                 await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
                 split_out_dir = [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
                 for spl_f in split_out_dir:
-                    await guess_and_send(spl_f, int(the_chat_id), "cache", download_msg)
+                    await guess_and_send(spl_f, int(the_chat_id), download_msg)
             else:
-                await guess_and_send(mg_file, int(the_chat_id), "cache", download_msg)
+                await guess_and_send(mg_file, int(the_chat_id), download_msg)
         await download_msg.edit("**Successfully Uploaded The Content!**")
     except Exception as e:
         await download_msg.edit(f"**Error:** \n`{e}`")

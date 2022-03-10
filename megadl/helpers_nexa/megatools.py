@@ -26,7 +26,7 @@ class MegaTools:
     async def __isFile(self, path):
         return os.path.isfile(path)
     
-    async def __getErrorMsg(self, bs):
+    async def __genErrorMsg(self, bs):
         return f"""
 >>> {bs}
 
@@ -41,20 +41,20 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             return "retry"
         
         elif "Can't create directory" in out:
-            raise UnableToCreateDirectory(await self.__getErrorMsg("The program wasn't able to create the directory you requested for."))
+            raise UnableToCreateDirectory(await self.__genErrorMsg("The program wasn't able to create the directory you requested for."))
         elif "No directories specified" in out:
-            raise UnableToCreateDirectory(await self.__getErrorMsg("No directory name was given."))
+            raise UnableToCreateDirectory(await self.__genErrorMsg("No directory name was given."))
         
         elif "Upload failed" in out:
-            raise UploadFailed(await self.__getErrorMsg("Uploading was cancelled due to an (un)known error."))
+            raise UploadFailed(await self.__genErrorMsg("Uploading was cancelled due to an (un)known error."))
         elif "No files specified for upload" in out:
-            raise UploadFailed(await self.__getErrorMsg("Path to the file which need to be uploaded wasn't provided"))
+            raise UploadFailed(await self.__genErrorMsg("Path to the file which need to be uploaded wasn't provided"))
 
         elif "Can't login to mega.nz" in out:
-            raise LoginError(await self.__getErrorMsg("Unable to login to your mega.nz account."))
+            raise LoginError(await self.__genErrorMsg("Unable to login to your mega.nz account."))
         
         elif "ERROR" in out:
-            raise UnknownError(await self.__getErrorMsg("Operation cancelled due to an unknown error."))
+            raise UnknownError(await self.__genErrorMsg("Operation cancelled due to an unknown error."))
         
         else:
             return True
@@ -66,7 +66,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
 
     async def upload(self, path):
         if not self.__isFile(path):
-            return False
+            raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
         ucmd = f"megatools put -u {self.u} -p {self.p} --no-progress --disable-previews --no-ask-password --path /Root/MegaBot {path}"
         await self.__runCommands(ucmd)
         lcmd = f"megatools export -u {self.u} -p {self.p} /Root/MegaBot/{path}"
