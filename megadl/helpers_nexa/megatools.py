@@ -11,10 +11,36 @@ class MegaTools:
     Helper class to interact with megatools cli
     """
 
-    def __init__(self) -> None:
-        self.u = Config.MEGA_EMAIL
-        self.p = Config.MEGA_PASSWORD
+    def __init__(self, check_conf=True) -> None:
+        self.config = "cache/config.ini"
+        if check_conf:
+            self.genConfig()
     
+    def genConfig(self, sp_limit="0"):
+        """
+        Function to generate 'config.ini' file
+        """
+        if os.path.isfile(self.config):
+            print("\n'config.ini' file was found. Applying changes!\n")
+        else:
+            print("\nNo 'config.ini' file was found. Creating a new config file...\n")
+        # Creating the config file
+        conf_temp = f"""
+[Login]
+Username = {Config.MEGA_EMAIL}
+Password = {Config.MEGA_PASSWORD}
+
+[Network]
+SpeedLimit = {sp_limit}
+
+[Upload]
+CreatePreviews = false
+"""
+        f = open(self.config, "w+")
+        f.write(conf_temp)
+        f.close()
+
+
     async def __runCommands(self, cmd):
         run = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         shell_ouput = run.stdout.read()[:-1].decode("utf-8")
@@ -22,10 +48,8 @@ class MegaTools:
         if cc == "retry":
             return await self.__runCommands(cmd)
         return shell_ouput
-
-    async def __isFile(self, path):
-        return os.path.isfile(path)
     
+
     async def __genErrorMsg(self, bs):
         return f"""
 >>> {bs}
@@ -34,6 +58,7 @@ Please make sure that you've provided the correct username and password.
 
 You can open a new issue if the problem persists - https://github.com/Itz-fork/Mega.nz-Bot/issues
         """
+
 
     async def __checkErrors(self, out):
         if "not found" in out:
@@ -62,23 +87,24 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         else:
             return True
     
-    # THIS FEATURE ISN'T AVAILABLE?
-    async def download(self, link, path="MegaDownloads", sp_limit=0):
-        if self.u and self.p:
-            cmd = f"megatools dl --limit-speed {sp_limit} --path {path} {link}"
-        else:
-            cmd = f"megatools dl --limit-speed {sp_limit} --path {path} {link}"
+
+    async def download(self, link, path="MegaDownloads"):
+        cmd = f"megatools dl --config {self.config} --no-progress --path {path} {link}"
+        await self.__runCommands(cmd)
+        return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
+
 
     async def makeDir(self, path):
-        cmd = f"megatools mkdir -u {self.u} -p {self.p} /Root/{path}"
+        cmd = f"megatools mkdir --config {self.config} /Root/{path}"
         await self.__runCommands(cmd)
 
+
     async def upload(self, path):
-        if not await self.__isFile(path):
+        if not os.path.isfile(path):
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
-        ucmd = f"megatools put -u {self.u} -p {self.p} --no-progress --disable-previews --no-ask-password --path /Root/MegaBot {path}"
+        ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/MegaBot {path}"
         await self.__runCommands(ucmd)
-        lcmd = f"megatools export -u {self.u} -p {self.p} /Root/MegaBot/{path}"
+        lcmd = f"megatools export --config {self.config} /Root/MegaBot/{path}"
         return await self.__runCommands(lcmd)
 
 
