@@ -9,16 +9,24 @@ from config import Config
 class MegaTools:
     """
     Helper class to interact with megatools cli
+
+    Author: https://github.com/Itz-fork
+    Project: https://github.com/Itz-fork/Mega.nz-Bot
     """
 
     def __init__(self, check_conf=True) -> None:
         self.config = "cache/config.ini"
         if check_conf:
             self.genConfig()
+        else:
+            print("\nConfig validation was not performed as 'check_conf=False'. Program won't work if the config was missing or corrupted!\n")
     
     def genConfig(self, sp_limit="0"):
         """
         Function to generate 'config.ini' file
+
+        Arguments:
+            sp_limit: string - Maximum speed limit for both download and upload
         """
         if os.path.isfile(self.config):
             print("\n'config.ini' file was found. Applying changes!\n")
@@ -89,20 +97,40 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
     
 
     async def download(self, link, path="MegaDownloads"):
+        """
+        Download file/folder from given link
+
+        Arguments:
+            link: string - Mega.nz link of the content
+            path (optional): string - Path to where the content need to be downloaded
+        """
         cmd = f"megatools dl --config {self.config} --no-progress --path {path} {link}"
         await self.__runCommands(cmd)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
 
     async def makeDir(self, path):
+        """
+        Make directories
+
+        Arguments:
+            path: string - Name of the directory
+        """
         cmd = f"megatools mkdir --config {self.config} /Root/{path}"
         await self.__runCommands(cmd)
 
 
-    async def upload(self, path):
+    async def upload(self, path, m_path="MegaBot"):
+        """
+        Upload files
+
+        Arguments:
+            path: string - Path to the file that needs to be uploaded
+            m_path (optional): string - Custom path to where the files need to be uploaded
+        """
         if not os.path.isfile(path):
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
-        ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/MegaBot {path}"
+        ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
         await self.__runCommands(ucmd)
         lcmd = f"megatools export --config {self.config} /Root/MegaBot/{path}"
         return await self.__runCommands(lcmd)
