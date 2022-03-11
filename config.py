@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Itz-fork
+# Copyright (c) 2022 Itz-fork
 
 import os
 

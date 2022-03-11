@@ -1,7 +1,10 @@
 # Mega.nz-Bot
+
 A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings](https://github.com/Itz-fork/Mega.nz-Bot#features) Related to [Mega.nz](https://mega.nz/) Cloud Storage.
 
+
 # Features
+
 - All Mega.nz Files / Folder Links supported (For folder links use `/megadl` command)
 - No login required
 - Auto Detect File Type Before Upload to Telegram
@@ -10,6 +13,7 @@ A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings
 - Upload Files From Telegram / Direct Link to Mega.nz
 - Import Files From Public Mega.nz Url
 - Inline Mode [Still In Development Stage: BETA]
+
 
 # Deploy
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
@@ -31,7 +35,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### With Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://itz-fork.github.io/Redirect-to-Heroku?src=Itz-fork/Mega.nz-Bot)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
 
 > Notice ⚠️:
 > This (Main) repo doesn't contain the Dockerfile which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
@@ -64,6 +68,7 @@ sudo nano config.py
 ```
 python3 main.py
 ```
+
 
 # Support
 <a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white"></a>
