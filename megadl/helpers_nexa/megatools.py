@@ -36,7 +36,10 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         """
 
     async def __checkErrors(self, out):
-        if "Parent directory doesn't exist" in out:
+        if "not found" in out:
+            raise MegatoolsNotFound("'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/")
+        
+        elif "Parent directory doesn't exist" in out:
             await self.makeDir("MegaBot")
             return "retry"
         
@@ -58,14 +61,20 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         
         else:
             return True
-
+    
+    # THIS FEATURE ISN'T AVAILABLE?
+    async def download(self, link, path="MegaDownloads", sp_limit=0):
+        if self.u and self.p:
+            cmd = f"megatools dl --limit-speed {sp_limit} --path {path} {link}"
+        else:
+            cmd = f"megatools dl --limit-speed {sp_limit} --path {path} {link}"
 
     async def makeDir(self, path):
         cmd = f"megatools mkdir -u {self.u} -p {self.p} /Root/{path}"
         await self.__runCommands(cmd)
 
     async def upload(self, path):
-        if not self.__isFile(path):
+        if not await self.__isFile(path):
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
         ucmd = f"megatools put -u {self.u} -p {self.p} --no-progress --disable-previews --no-ask-password --path /Root/MegaBot {path}"
         await self.__runCommands(ucmd)
@@ -75,6 +84,9 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
 
 
 # Errors
+
+class MegatoolsNotFound(Exception):
+    pass
 
 class UnableToCreateDirectory(Exception):
     pass
