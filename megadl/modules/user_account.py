@@ -69,9 +69,9 @@ async def uptomega(client: Client, message: Message):
   the_cid = message.chat.id
   if the_uid not in Config.AUTH_USERS:
     return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+  megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
   if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
     return await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
-  megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
   todownfile = message.reply_to_message
   if todownfile is None:
     return await megauplaod_msg.edit("**Please reply to a Media File or Direct Link to Upload!**")
