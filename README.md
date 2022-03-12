@@ -1,10 +1,8 @@
 # Mega.nz-Bot
-
 A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings](https://github.com/Itz-fork/Mega.nz-Bot#features) Related to [Mega.nz](https://mega.nz/) Cloud Storage.
 
 
 # Features
-
 - All Mega.nz Files / Folder Links supported (For folder links use `/megadl` command)
 - No login required
 - Auto Detect File Type Before Upload to Telegram
@@ -19,7 +17,6 @@ A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### Config Vars 📓,
-
 **Mandatory Vars,**
 - `APP_ID` - Your APP_ID. Get it from [my.telegram.org](my.telegram.org)
 - `API_HASH` - Your API_ID. Get it from [my.telegram.org](my.telegram.org)
@@ -35,7 +32,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### With Heroku
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://itz-fork.github.io/Redirect-to-Heroku?src=Itz-fork/Mega.nz-Bot)
 
 > Notice ⚠️:
 > This (Main) repo doesn't contain the Dockerfile which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
@@ -53,8 +50,8 @@ cd Mega.nz-Bot
 - Install Requirements,
 ```
 pip3 install -r requirements.txt
-# Install the 'megatools' package
-sudo apt install megatools
+# Install the 'megatools' and 'ffmpeg'packages
+sudo apt install megatools ffmpeg
 ```
 - Fill Config Vars, </br>
 For PCs - Use Normal Text Editor to Fill Config Vars </br>
@@ -66,7 +63,7 @@ sudo nano config.py
 ```
 - Run the Bot,
 ```
-python3 main.py
+bash startup.sh
 ```
 
 

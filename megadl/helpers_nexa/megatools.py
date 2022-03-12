@@ -132,8 +132,11 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
         ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
         await self.__runCommands(ucmd)
-        lcmd = f"megatools export --config {self.config} /Root/MegaBot/{path}"
-        return await self.__runCommands(lcmd)
+        lcmd = f"megatools export --config {self.config} /Root/MegaBot/{os.path.basename(path)}"
+        ulink = await self.__runCommands(lcmd)
+        if not ulink:
+            raise UploadFailed(await self.__genErrorMsg("Upload failed due to an unknown error."))
+        return ulink
 
 
 
