@@ -38,6 +38,9 @@ class MegaTools:
 Username = {Config.MEGA_EMAIL}
 Password = {Config.MEGA_PASSWORD}
 
+[Cache]
+Timeout = 10
+
 [Network]
 SpeedLimit = {sp_limit}
 
@@ -71,10 +74,6 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
     async def __checkErrors(self, out):
         if "not found" in out:
             raise MegatoolsNotFound("'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/")
-        
-        elif "Parent directory doesn't exist" in out:
-            await self.makeDir("MegaBot")
-            return "retry"
         
         elif "Can't create directory" in out:
             raise UnableToCreateDirectory(await self.__genErrorMsg("The program wasn't able to create the directory you requested for."))
@@ -130,6 +129,9 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         """
         if not os.path.isfile(path):
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
+        # Checks if the remote upload path is exists
+        if not f"/Root/{m_path}" in await self.__runCommands(f"megatools ls --config {self.config} /Root"):
+            await self.makeDir(m_path)
         ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
         await self.__runCommands(ucmd)
         lcmd = f"megatools export --config {self.config} /Root/MegaBot/{os.path.basename(path)}"
