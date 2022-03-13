@@ -10,7 +10,7 @@ from asyncio import get_running_loop
 
 from megadl.helpers_nexa.account import m
 from megadl.helpers_nexa.mega_help import humanbytes, send_errors
-from .callbacks import INLINE_MSGB, START_MSGA_B as INLINE_QUR_B
+from .callbacks import get_buttons
 from .user_account import USER_ACC_INFO
 from config import Config
 
@@ -36,14 +36,14 @@ async def inline_megadl(client, query):
                     description="A Simple Bot to Do More with Mega.nz",
                     thumb_url="https://telegra.ph/file/583f46da57641b90c28f9.png",
                     input_message_content=InputTextMessageContent(aboutinlinemsg, disable_web_page_preview=True),
-                    reply_markup=INLINE_QUR_B,
+                    reply_markup=await get_buttons("start"),
                 ),
                 InlineQueryResultArticle(
                     title="Get Help",
                     description="Click here if you don't know how to use this bot.",
                     thumb_url="https://telegra.ph/file/92df448c01c9a46ec32b3.png",
                     input_message_content=InputTextMessageContent(helpinlinemsg, disable_web_page_preview=True),
-                    reply_markup=INLINE_MSGB,
+                    reply_markup=await get_buttons("inline"),
                 )
             )
             await client.answer_inline_query(
