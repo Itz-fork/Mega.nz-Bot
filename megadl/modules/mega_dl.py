@@ -7,7 +7,7 @@ import shutil
 
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from fsplit.filesplit import Filesplit
+from filesplit.split import Split
 from functools import partial
 from asyncio import get_running_loop
 
@@ -64,7 +64,8 @@ def DownloadMegaLink(url, alreadylol, download_msg):
 
 # Splitting large files
 def split_files(input_file, out_path):
-    Filesplit().split(file=input_file, split_size=2040108421, output_dir=out_path)
+    split = Split(input_file, out_path)
+    split.bysize(2040108421)
 
 
 # Uses mega.py package

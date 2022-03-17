@@ -11,6 +11,11 @@ echo "
 Copyright (c) 2021 Itz-fork | @NexaBotsUpdates
 "
 
+function show_error_msg() {
+    echo -e "ERROR: $1"
+    exit
+}
+
 function check_depends() {
     is_megatools=$(command -v megatools &> /dev/null)
     is_ffmpeg=$(command -v ffmpeg &> /dev/null)
