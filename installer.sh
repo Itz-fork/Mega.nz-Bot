@@ -38,8 +38,8 @@ function checkDepends {
     # Checks if git is installed
     if ! $is_git ; then
         show_process_msg "Installing git"
-        apt install git-all ||
-            pacman -S git ||
+        sudo apt install git-all ||
+            sudo pacman -S git ||
                 show_error_msg "Git is not installed. Visit - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
     # Checks if ffmpeg is installed
     elif ! $is_ffmpeg ; then
@@ -50,10 +50,10 @@ function checkDepends {
     elif ! $is_pip3 ; then
         show_error_msg "Pip3 is not installed"
     # Checks if megatools is installed
-    elif $is_megatools ; then
+    elif ! $is_megatools ; then
         show_process_msg "Installing megatools"
-        apt install megatools || 
-            pacman -S megatools ||
+        sudo apt install megatools || 
+            sudo pacman -S megatools ||
                 show_error_msg "Your system deosn't use 'pacman' or 'apt' as the package manager. Please install 'megatools' from - https://megatools.megous.com/"
     fi
 }

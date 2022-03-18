@@ -43,7 +43,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 If you're using a linux distro with `apt` or `pacman` package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot). To do so run the following command,
 
 ```bash
-sudo curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
+curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
 ```
 ---
 
