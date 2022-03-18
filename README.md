@@ -38,6 +38,16 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 > This (Main) repo doesn't contain the [Dockerfile](https://github.com/Itz-fork/X-Bin-Patch/blob/main/Dockerfile) which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
 
 ### With VPS/PC
+---
+**Tip 💡:**
+If you're using a linux distro with `apt` or `pacman` package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot). To do so run the following command,
+
+```bash
+sudo curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
+```
+---
+
+To setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot) follow these steps,
 
 - Clone the Repo,
 ```
