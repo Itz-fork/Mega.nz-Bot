@@ -103,7 +103,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             link: string - Mega.nz link of the content
             path (optional): string - Path to where the content need to be downloaded
         """
-        cmd = f"megatools dl --config {self.config} --no-progress --path {path} {link}"
+        cmd = f"megadl --config {self.config} --no-progress --path {path} {link}"
         await self.__runCommands(cmd)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
@@ -115,7 +115,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         Arguments:
             path: string - Name of the directory
         """
-        cmd = f"megatools mkdir --config {self.config} /Root/{path}"
+        cmd = f"megamkdir --config {self.config} /Root/{path}"
         await self.__runCommands(cmd)
 
 
@@ -130,11 +130,11 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         if not os.path.isfile(path):
             raise UploadFailed(await self.__genErrorMsg("Given path isn't belong to a file."))
         # Checks if the remote upload path is exists
-        if not f"/Root/{m_path}" in await self.__runCommands(f"megatools ls --config {self.config} /Root"):
+        if not f"/Root/{m_path}" in await self.__runCommands(f"megals --config {self.config} /Root"):
             await self.makeDir(m_path)
-        ucmd = f"megatools put --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
+        ucmd = f"megaput --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
         await self.__runCommands(ucmd)
-        lcmd = f"megatools export --config {self.config} /Root/MegaBot/{os.path.basename(path)}"
+        lcmd = f"megaexport --config {self.config} /Root/MegaBot/{os.path.basename(path)}"
         ulink = await self.__runCommands(lcmd)
         if not ulink:
             raise UploadFailed(await self.__genErrorMsg("Upload failed due to an unknown error."))
