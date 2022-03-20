@@ -66,7 +66,7 @@ def split_files(input_file, out_path):
 
 
 # Uses mega.py package
-@Client.on_message(filters.regex(MEGA_REGEX) & filters.private)
+@Client.on_message(filters.regex(MEGA_REGEX) & filters.private &~filters.command("megadl"))
 async def megadl_megapy(_, message: Message):
     # To use bot private or public
     try:
