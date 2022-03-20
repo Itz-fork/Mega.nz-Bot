@@ -1,1 +1,1 @@
-worker: python3 -m megadl
+worker: bash startup.sh

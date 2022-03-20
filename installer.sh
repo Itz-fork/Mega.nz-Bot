@@ -30,7 +30,7 @@ Mega.nz-Bot Installer
 
 "
 
-function checkDepends {
+function checkDepends() {
     is_git=$(command -v git &> /dev/null)
     is_ffmpeg=$(command -v ffmpeg &> /dev/null)
     is_pip3=$(command -v pip3 &> /dev/null)
@@ -52,19 +52,19 @@ function checkDepends {
     # Checks if megatools is installed
     elif ! $is_megatools ; then
         show_process_msg "Installing megatools"
-        sudo apt install megatools || 
+        sudo apt install megatools ||
             sudo pacman -S megatools ||
                 show_error_msg "Your system deosn't use 'pacman' or 'apt' as the package manager. Please install 'megatools' from - https://megatools.megous.com/"
     fi
 }
 
-function install {
+function install() {
     show_process_msg "Checking dependencies"
     checkDepends
 
     show_process_msg "Cloning into Mega.nz-Bot repository"
     git clone https://github.com/Itz-fork/Mega.nz-Bot || show_error_msg "Unable to clone the Mega.nz-Bot repository"
-    
+
     show_process_msg "Changing the directory to 'Mega.nz-Bot'"
     cd Mega.nz-Bot || show_error_msg "'Mega.nz-Bot' folder not found"
 
@@ -72,7 +72,8 @@ function install {
     pip3 install -r requirements.txt &> /dev/null || show_error_msg "Unable to install requirements"
 
     show_success_msg "Installation"
-}
 
+    echo -e "$White Please edit 'config.py' file according to your own values before runnig the bot! $Reset"
+}
 
 install
