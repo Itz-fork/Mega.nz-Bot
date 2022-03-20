@@ -23,10 +23,7 @@ basedir = Config.DOWNLOAD_LOCATION
 TG_MAX_FILE_SIZE = Config.TG_MAX_SIZE
 
 # Automatic Url Detect (From stackoverflow. Can't find link lol)
-MEGA_REGEX = (r"^((?:https?:)?\/\/)"
-              r"?((?:www)\.)"
-              r"?((?:mega\.nz))"
-              r"(\/)([-a-zA-Z0-9()@:%_\+.~#?&//=]*)([\w\-]+)(\S+)?$")
+MEGA_REGEX = "https?:\/\/mega\.nz\/(?:[^\/\s]+\/)+"
 
 # Github Repo (Don't remove this)
 GITHUB_REPO=InlineKeyboardMarkup(
