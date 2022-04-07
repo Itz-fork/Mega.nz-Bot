@@ -32,7 +32,12 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### With Heroku
 
+---
+> Update 📢:
+> Since heroku is banning this repository again and again, I've given up on Heroku support. So from now on this repo does NOT support heroku (Though file download function might work). It's recommended to deploy this on a vps
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://itz-fork.github.io/Redirect-to-Heroku?src=Itz-fork/Mega.nz-Bot)
+---
 
 > Notice ⚠️:
 > This (Main) repo doesn't contain the [Dockerfile](https://github.com/Itz-fork/X-Bin-Patch/blob/main/Dockerfile) which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
