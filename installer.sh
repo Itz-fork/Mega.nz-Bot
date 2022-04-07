@@ -90,7 +90,7 @@ function genConfig() {
     # Optional vars
 
     while true; do
-        read -p "Do you want to make your public? (y/n) " is_pb
+        read -p "Do you want to make your bot public? (y/n) " is_pb
         case $is_pb in
             y|Y | n|N)
                 break; shift ;;

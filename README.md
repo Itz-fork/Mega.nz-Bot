@@ -1,16 +1,14 @@
 # Mega.nz-Bot
-A Simple Telegram Bot written in Python using Pyrogram Library to Do [Somethings](https://github.com/Itz-fork/Mega.nz-Bot#features) Related to [Mega.nz](https://mega.nz/) Cloud Storage.
+A simple telegram bot written in Python using Pyrogram framework to help you to manage [Mega.nz](https://mega.nz/) cloud storage with telegram.
 
 
 # Features
-- All Mega.nz Files / Folder Links supported (For folder links use `/megadl` command)
-- No login required
-- Auto Detect File Type Before Upload to Telegram
-- Can be used as Private or Public Bot
-- Mega User Account Supported
-- Upload Files From Telegram / Direct Link to Mega.nz
-- Import Files From Public Mega.nz Url
-- Inline Mode [Still In Development Stage: BETA]
+- ⚡ Download, Upload & Import files easily
+- 📱 Mega.nz user account support
+- 🙅‍♂️ No login required
+- 🖇️ Almost all file / folder links are supported
+- 🛡️ Can be used as either public or private bot
+- 🕵️‍♂️ Inline Mode [Still In Development Stage: BETA]
 
 
 # Deploy
@@ -25,10 +23,14 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 **Non Mandatory Vars,**
 - `IS_PUBLIC_BOT` - Set this to 'True' if you want to set Download Function as Public. Default to 'False'
-- `LOGS_CHANNEL` - Make a private channel and forward a message from that channel to [@ChannelidHEXbot](https://t.me/ChannelidHEXbot) and Get this. (Recomended to add this variable). If you're hosting your bot Heroku, after deploying the bot delete `LOGS_CHANNEL` var. Else you'll get some errors
+- `LOGS_CHANNEL` - To get this, follow these steps,
+    - Make a private channel
+    - Send a message and copy it's link
+    - The link'll be something like `https://t.me/c/12345/1`. Simply copy the `12345` part from it and add `-100` to the beginning of it. Now it'll be something like `-10012345`. That's your channel id!
 - `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
 - `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
 
+Check out [sample config file](https://github.com/Itz-fork/Mega.nz-Bot/blob/main/config.sample) if you aren't using heroku 🤗
 
 ### With Heroku
 
@@ -60,17 +62,11 @@ cd Mega.nz-Bot
 - Install Requirements,
 ```
 pip3 install -r requirements.txt
-# Install the 'megatools' and 'ffmpeg'packages
-sudo apt install megatools ffmpeg
 ```
-- Fill Config Vars, </br>
-For PCs - Use Normal Text Editor to Fill Config Vars </br>
-For Vps - If you haven't installed nano yet, Read This - [How to install Nano in your computer/Vps](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9)
-
-Fill Config vars with your own values. If you don't know  how to get them, Read This - [How to Get Config Values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)
-```
-sudo nano config.py
-```
+- Install [megatools](https://megatools.megous.com/), [ffmpeg](https://ffmpeg.org/download.html) according to your system
+- Fill config vars with your own values ([How to get config Values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)),
+    - If you have GUI system use a normal text editor like notepad, sublime text etc.
+    - For CLI systems, [install nano](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9) and edit the config file using `sudo nano config.py` command.
 - Run the Bot,
 ```
 bash startup.sh
@@ -78,4 +74,4 @@ bash startup.sh
 
 
 # Support
-<a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white"></a>
+[![Support Group](https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Nexa_bots)

@@ -1,0 +1,13 @@
+class Config(object):
+    APP_ID = YOUR_API_ID
+    API_HASH = "YOUR_API_HASH"
+    BOT_TOKEN = "YOUR_BOT_TOKEN"
+    AUTH_USERS = set(int(x) for x in "TELEGRAM_IDS_OF_AUTH_USERS".split(" "))
+    IS_PUBLIC_BOT = False # Set this to True if you want to make your bot public
+    LOGS_CHANNEL = YOUR_LOG_CHANNEL_ID
+    # DON'T CHANGE THESE 2 VARS
+    DOWNLOAD_LOCATION = "./NexaBots"
+    TG_MAX_SIZE = 2040108421
+    # Mega User Account
+    MEGA_EMAIL = "YOUR_MEGA_NZ_ACCOUNT'S_EMAIL"
+    MEGA_PASSWORD = "YOUR_MEGA_NZ_ACCOUNT'S_PASSWORD"

@@ -5,7 +5,8 @@ import math
 import time
 
 from megadl import meganzbot as client
-from config import Config, ERROR_TEXT
+from config import Config
+from megadl.data import ERROR_TEXT
 
 
 # Credits: SpEcHiDe's AnyDL-Bot for Progress bar

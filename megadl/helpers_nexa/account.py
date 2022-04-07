@@ -2,7 +2,8 @@
 # Don't kang this else your dad is gae
 
 from mega import Mega
-from config import Config, PROCESS_TEXT, LOGIN_ERROR_TEXT, LOGGED_AS_USER
+from config import Config
+from megadl.data import PROCESS_TEXT, LOGIN_ERROR_TEXT, LOGGED_AS_USER
 
 # Mega user account credentials
 mega = Mega()
