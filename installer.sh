@@ -50,6 +50,23 @@ function install_git() {
     esac
 }
 
+function install_pip3() {
+    case $OS_TYPE in
+        Zorin* )
+            sudo apt install python3-pip; shift ;;
+        Debian* )
+            sudo apt install python3-pip; shift ;;
+        Ubuntu* )
+            sudo apt install python3-pip; shift ;;
+        Fedora* )
+            sudo dnf install python3-pip; shift ;;
+        Arch* )
+            sudo pacman -S python-pip; shift ;;
+        *)
+            show_error_msg "Your system deosn't match the current list of Oses. Please install 'pip3' from - https://pip.pypa.io/en/stable/installation/"
+    esac
+}
+
 function install_megatools() {
     case $OS_TYPE in
         Zorin* )
@@ -90,7 +107,8 @@ function checkDepends() {
             show_error_msg "Ffmpeg is not installed. Visit - https://ffmpeg.org/download.html"
     # Checks if pip3 is installed
     elif ! $is_pip3 ; then
-        show_error_msg "Pip3 is not installed"
+        show_process_msg "Installing pip3"
+        install_pip3
     # Checks if megatools is installed
     elif ! $is_megatools ; then
         show_process_msg "Installing megatools"
