@@ -1,12 +1,13 @@
 #!/usr/bin/bash
 
+# Distro name
+OS_TYPE=$( (lsb_release -ds || cat /etc/*release || uname -om) 2>/dev/null | head -n1)
 
 # Colors
 White="\033[1;37m"
 Red="\033[1;31m"
 Green="\033[1;32m"
 Reset="\033[0m"
-
 
 
 function show_process_msg() {
@@ -32,6 +33,45 @@ Mega.nz-Bot Installer - v1.0
 "
 
 
+function install_git() {
+    case $OS_TYPE in
+        Zorin* )
+            sudo apt install megatools; shift ;;
+        Debian* )
+            sudo apt install megatools; shift ;;
+        Ubuntu* )
+            sudo apt install megatools; shift ;;
+        Fedora* )
+            sudo dnf install megatools; shift ;;
+        Arch* )
+            sudo pacman -S git; shift ;;
+        *)
+            show_error_msg "Your system deosn't match the current list of Oses. Please install 'git' from - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
+    esac
+}
+
+function install_megatools() {
+    case $OS_TYPE in
+        Zorin* )
+            sudo apt install git-all; shift ;;
+        Debian* )
+            sudo apt install git-all; shift ;;
+        Ubuntu* )
+            sudo apt install git-all; shift ;;
+        Fedora* )
+            sudo dnf install git; shift ;;
+        Arch* )
+            git clone https://aur.archlinux.org/megatools.git
+            cd megatools || show_error_msg "megatools dir doesn't exists rn! Tf did you do?"
+            makepkg -si
+            cd ..
+            rm -rf megatools; shift ;;
+        *)
+            show_error_msg "Your system deosn't match the current list of Oses. Please install 'megatools' from - https://megatools.megous.com/"
+    esac
+}
+
+
 function checkDepends() {
     show_process_msg "Checking dependencies"
 
@@ -42,9 +82,7 @@ function checkDepends() {
     # Checks if git is installed
     if ! $is_git ; then
         show_process_msg "Installing git"
-        sudo apt install git-all ||
-            sudo pacman -S git ||
-                show_error_msg "Git is not installed. Visit - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
+        install_git
     # Checks if ffmpeg is installed
     elif ! $is_ffmpeg ; then
         show_process_msg "Installing ffmpeg"
@@ -56,9 +94,7 @@ function checkDepends() {
     # Checks if megatools is installed
     elif ! $is_megatools ; then
         show_process_msg "Installing megatools"
-        sudo apt install megatools ||
-            sudo pacman -S megatools ||
-                show_error_msg "Your system deosn't use 'pacman' or 'apt' as the package manager. Please install 'megatools' from - https://megatools.megous.com/"
+        install_megatools
     fi
 }
 
