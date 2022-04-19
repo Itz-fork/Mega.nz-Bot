@@ -146,17 +146,16 @@ function genConfig() {
     while true; do
         read -p "Do you want to make your bot public? (y/n) " is_pb
         case $is_pb in
-            y|Y | n|N)
+            y|Y)
+                is_public="True"
+                break; shift ;;
+            n|N)
+                is_public="False"
                 break; shift ;;
             *)
                 show_error_msg "Invalid option - $is_pb !" "n"
         esac
     done
-    if [[ $is_pb == [yY] ]]; then
-        is_public="True"
-    else
-        is_public="False"
-    fi
 
     while true; do
         read -p "Do you want to setup mega account credentials? (y/n) " is_mauth
