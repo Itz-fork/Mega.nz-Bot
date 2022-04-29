@@ -11,6 +11,10 @@ echo "
 Copyright (c) 2021 Itz-fork | @NexaBotsUpdates
 "
 
+# Colors
+White="\033[1;37m"
+Reset="\033[0m"
+
 # Helper functions to show process / error messages
 function show_process_msg() {
     echo -e "$White ==> $1 $Reset"
@@ -28,13 +32,13 @@ OS_TYPE=$( (lsb_release -ds || cat /etc/*release || uname -om) 2>/dev/null | hea
 function install_megatools() {
     case $OS_TYPE in
         Zorin* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Debian* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Ubuntu* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Fedora* )
-            sudo dnf install git; shift ;;
+            sudo dnf install megatools; shift ;;
         Arch* )
             git clone https://aur.archlinux.org/megatools.git
             cd megatools || show_error_msg "megatools dir doesn't exists rn! Tf did you do?"
@@ -64,7 +68,7 @@ function check_depends() {
 }
 
 function run() {
-    echo ">> Starting the main repo"
+    show_process_msg "Starting the main repo"
     python3 -m megadl
 }
 
