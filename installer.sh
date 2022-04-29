@@ -28,7 +28,7 @@ function show_error_msg() {
 
 echo -e "$White
 
-Mega.nz-Bot Installer - v1.0
+Mega.nz-Bot Installer - v1.1
 
 "
 
@@ -36,13 +36,13 @@ Mega.nz-Bot Installer - v1.0
 function install_git() {
     case $OS_TYPE in
         Zorin* )
-            sudo apt install megatools; shift ;;
+            sudo apt install git-all; shift ;;
         Debian* )
-            sudo apt install megatools; shift ;;
+            sudo apt install git-all; shift ;;
         Ubuntu* )
-            sudo apt install megatools; shift ;;
+            sudo apt install git-all; shift ;;
         Fedora* )
-            sudo dnf install megatools; shift ;;
+            sudo dnf install git; shift ;;
         Arch* )
             sudo pacman -S git; shift ;;
         *)
@@ -70,13 +70,13 @@ function install_pip3() {
 function install_megatools() {
     case $OS_TYPE in
         Zorin* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Debian* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Ubuntu* )
-            sudo apt install git-all; shift ;;
+            sudo apt install megatools; shift ;;
         Fedora* )
-            sudo dnf install git; shift ;;
+            sudo dnf install megatools; shift ;;
         Arch* )
             git clone https://aur.archlinux.org/megatools.git
             cd megatools || show_error_msg "megatools dir doesn't exists rn! Tf did you do?"
