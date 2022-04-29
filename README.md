@@ -30,11 +30,11 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 - `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
 - `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
 
-Check out [sample config file](https://github.com/Itz-fork/Mega.nz-Bot/blob/main/config.sample) if you aren't using heroku 🤗
+Check out [config.sample file](https://github.com/Itz-fork/Mega.nz-Bot/blob/main/config.sample) if you aren't using heroku 🤗
 
 ### With Heroku
 > Notice ⚠️:
-> This (Main) repo doesn't contain the [Dockerfile](https://github.com/Itz-fork/X-Bin-Patch/blob/main/Dockerfile) which is needed to deploy on Heroku. Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide in-order to deploy this bot Heroku.
+> Please refer the [Deployment](https://github.com/Itz-fork/X-Bin-Patch#deployment) guide inorder to deploy this bot Heroku. THIS REPO ISN'T FUCKING COMPATIBLE WITH HEROKU!
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
 
@@ -61,7 +61,7 @@ cd Mega.nz-Bot
 ```
 - Install Requirements,
 ```
-pip3 install -r requirements.txt
+pip3 install -U -r requirements.txt
 ```
 - Install [megatools](https://megatools.megous.com/), [ffmpeg](https://ffmpeg.org/download.html) according to your system
 - Fill config vars with your own values ([How to get config Values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)),

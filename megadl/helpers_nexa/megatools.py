@@ -14,12 +14,12 @@ class MegaTools:
     Project: https://github.com/Itz-fork/Mega.nz-Bot
     """
 
-    def __init__(self, check_conf=True) -> None:
+    def __init__(self, cache_first=True) -> None:
         self.config = "cache/config.ini"
-        if check_conf:
-            self.genConfig()
+        if cache_first and not os.path.isfile(self.config):
+                self.genConfig()
         else:
-            print("\nConfig validation was not performed as 'check_conf=False'. Program won't work if the config was missing or corrupted!\n")
+            print("\nConfig validation was not performed as 'cache_first=False'. Program won't work if the config was missing or corrupted!\n")
     
     def genConfig(self, sp_limit="0"):
         """
@@ -103,7 +103,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             link: string - Mega.nz link of the content
             path (optional): string - Path to where the content need to be downloaded
         """
-        cmd = f"megadl --config {self.config} --no-progress --limit-speed 0 --path {path} {link}"
+        cmd = f"megadl --config {self.config} --no-progress --path {path} {link}"
         await self.__runCommands(cmd)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
