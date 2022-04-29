@@ -4,10 +4,11 @@
 import os
 
 from pyrogram import idle
-from . import meganzbot
 from megadl.helpers_nexa.mega_help import check_logs
-from config import Config
+from . import meganzbot
 from .data import B_START_TEXT, PROCESS_TEXT, START_TEXT
+from config import Config
+
 
 if __name__ == "__main__":
     print(B_START_TEXT.format("Your Mega.nz-Bot is Starting! Please Wait..."))

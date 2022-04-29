@@ -4,6 +4,7 @@
 import math
 import time
 
+from pyrogram.enums import chat_type
 from megadl import meganzbot as client
 from config import Config
 from megadl.data import ERROR_TEXT
@@ -82,13 +83,11 @@ def TimeFormatter(milliseconds: int) -> str:
 # Checking log channel
 def check_logs():
     if Config.LOGS_CHANNEL:
-        c_info = client.get_chat(chat_id=Config.LOGS_CHANNEL)
-        if c_info.type != "channel":
-            print(ERROR_TEXT.format("Chat is not a channel"))
-            return
-        elif c_info.username is not None:
-            print(ERROR_TEXT.format("Chat is not private"))
-            return
+        c = client.get_chat(chat_id=Config.LOGS_CHANNEL)
+        if c.type != chat_type.ChatType.CHANNEL:
+            return print(ERROR_TEXT.format("Chat is not a channel"))
+        elif c.username is not None:
+            return print(ERROR_TEXT.format("Chat is not private"))
         else:
             client.send_message(chat_id=Config.LOGS_CHANNEL, text="`Mega.nz-Bot has Successfully Started!` \n\n**Powered by @NexaBotsUpdates**")
     else:

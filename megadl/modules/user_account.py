@@ -11,15 +11,15 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from functools import partial
 from asyncio import get_running_loop
 
-from .mega_dl import GITHUB_REPO, basedir
-from megadl.helpers_nexa.megatools import MegaTools
+from .mega_dl import basedir
 from megadl.helpers_nexa.account import m
+from megadl.helpers_nexa.megatools import MegaTools
+from megadl.helpers_nexa.decorators import is_public
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram, humanbytes, send_errors, send_logs
 from config import Config
 
 
 # Get Mega user Account info
-
 def USER_ACC_INFO():
   try:
     get_user = m.get_user()
@@ -52,9 +52,8 @@ def USER_ACC_INFO():
     return f"Error: \n{e}"
 
 @Client.on_message(filters.command("info") & filters.private)
+@is_public
 async def accinfo(_, message: Message):
-  if message.from_user.id not in Config.AUTH_USERS:
-    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   acc_info_msg = await message.reply_text("`Processing ⚙️...`")
   if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
     return await acc_info_msg.edit("`Setup an User Account to Use this Feature!`")
@@ -64,11 +63,10 @@ async def accinfo(_, message: Message):
 
 
 @Client.on_message(filters.command("upload") & filters.private)
+@is_public
 async def uptomega(client: Client, message: Message):
-  the_uid = message.from_user.id
-  the_cid = message.chat.id
-  if the_uid not in Config.AUTH_USERS:
-    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
+  uid = message.from_user.id
+  cid = message.chat.id
   megauplaod_msg = await message.reply_text("`Processing ⚙️...`")
   if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
     return await megauplaod_msg.edit("`Setup an User Account to Use this Feature!`")
@@ -78,14 +76,14 @@ async def uptomega(client: Client, message: Message):
   mcli = MegaTools()
   if todownfile.media is None:
     try:
-      direct_link_path = f"{basedir}/{the_uid}"
+      direct_link_path = f"{basedir}/{uid}"
       url = todownfile.text
       if os.path.isdir(direct_link_path):
         return await megauplaod_msg.edit("`Already One Process is Going On. Please wait until it's finished!`")
       else:
         os.makedirs(direct_link_path)
         megaupmsg = await megauplaod_msg.edit("**Starting to Download The Content to My Server! This may take while 😴**")
-        send_logs(user_id=the_uid, mchat_id=the_cid, mega_url=url, upload_logs=True)
+        await send_logs(user_id=uid, mchat_id=cid, mega_url=url, upload_logs=True)
         toupload = wget.download(url, out=direct_link_path)
         link = await mcli.upload(toupload)
         await megaupmsg.edit(f"**Successfully Uploaded To Mega.nz** \n\n**Link:** `{link}` \n\n**Powered by @NexaBotsUpdates**", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("📥 Mega.nz Link 📥", url=f"{link}")]]))
@@ -97,7 +95,7 @@ async def uptomega(client: Client, message: Message):
     start_time = time.time()
     await megauplaod_msg.delete()
     megaupmsg = await message.reply_text("**Starting to Download The Content to My Server! This may take while 😴**")
-    await send_logs(user_id=the_uid, mchat_id=the_cid, up_file=todownfile, upload_logs=True)
+    await send_logs(user_id=uid, mchat_id=cid, up_file=todownfile, upload_logs=True)
     toupload = await client.download_media(message=todownfile, progress=progress_for_pyrogram, progress_args=("**Trying to Download!** \n", megaupmsg, start_time))
     await megaupmsg.edit("**Successfully Downloaded the File!**")
     await megaupmsg.edit("**Trying to Upload to Mega.nz! This may take while 😴**")
@@ -112,9 +110,8 @@ async def uptomega(client: Client, message: Message):
 
 # Import files from a public url
 @Client.on_message(filters.command("import") & filters.private)
+@is_public
 async def importurlf(_, message: Message):
-  if message.from_user.id not in Config.AUTH_USERS:
-    return await message.reply_text("**Sorry this bot isn't a Public Bot 🥺! But You can make your own bot ☺️, Click on Below Button!**", reply_markup=GITHUB_REPO)
   importing_msg = await message.reply_text("`Processing ⚙️...`")
   reply_msg = message.reply_to_message
   try:

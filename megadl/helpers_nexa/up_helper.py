@@ -3,10 +3,10 @@
 
 import os
 import re
-import filetype
 import subprocess
 
 from time import time
+from filetype import guess
 from megadl.helpers_nexa.mega_help import progress_for_pyrogram
 from megadl import meganzbot as Client
 
@@ -21,7 +21,7 @@ async def get_vid_duration(input_video):
 
 async def guess_and_send(input_file, chat_id, message, thumb_path="cache"):
     start_time = time()
-    guessedfilemime = filetype.guess(f"{input_file}")
+    guessedfilemime = guess(f"{input_file}")
     try:
         mention = (await Client.get_me()).mention
     except:

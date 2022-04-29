@@ -103,7 +103,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             link: string - Mega.nz link of the content
             path (optional): string - Path to where the content need to be downloaded
         """
-        cmd = f"megadl --config {self.config} --no-progress --path {path} {link}"
+        cmd = f"megadl --config {self.config} --no-progress --limit-speed 0 --path {path} {link}"
         await self.__runCommands(cmd)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
