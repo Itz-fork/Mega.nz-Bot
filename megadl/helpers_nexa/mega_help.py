@@ -89,7 +89,8 @@ def check_logs():
         elif c.username is not None:
             return print(ERROR_TEXT.format("Chat is not private"))
         else:
-            client.send_message(chat_id=Config.LOGS_CHANNEL, text="`Mega.nz-Bot has Successfully Started!` \n\n**Powered by @NexaBotsUpdates**")
+            client.send_message(chat_id=Config.LOGS_CHANNEL,
+                                text="`Mega.nz-Bot has Successfully Started!` \n\n**Powered by @NexaBotsUpdates**")
     else:
         print("No Log Channel ID is Given. Anyway I'm Trying to Start!")
         pass
@@ -102,7 +103,8 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
             if Config.LOGS_CHANNEL:
                 await client.send_message(chat_id=Config.LOGS_CHANNEL, text=f"**#DOWNLOAD_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}` \n**Url:** {mega_url}")
             else:
-                print(f"DOWNLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nUrl: {mega_url}")
+                print(
+                    f"DOWNLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nUrl: {mega_url}")
         except Exception as e:
             await send_errors(e=e)
     elif upload_logs is True:
@@ -115,9 +117,11 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
                     await client.send_message(chat_id=Config.LOGS_CHANNEL, text=f"**#UPLOAD_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}` \n**Url:** {mega_url}")
             else:
                 if up_file is not None:
-                    print(f"UPLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id}")
+                    print(
+                        f"UPLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id}")
                 elif mega_url is not None:
-                    print(f"UPLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nUrl: {mega_url}")
+                    print(
+                        f"UPLOAD_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nUrl: {mega_url}")
         except Exception as e:
             await send_errors(e=e)
     elif import_logs is True:
@@ -125,11 +129,14 @@ async def send_logs(user_id, mchat_id, up_file=None, mega_url=None, download_log
             if Config.LOGS_CHANNEL:
                 await client.send_message(chat_id=Config.LOGS_CHANNEL, text=f"**#IMPORT_LOG** \n\n**User ID:** `{user_id}` \n**Chat ID:** `{mchat_id}` \n**Origin Url:** {mega_url}")
             else:
-                print(f"IMPORT_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nOrigin Url: {mega_url}")
+                print(
+                    f"IMPORT_LOG \nUser ID: {user_id} \n\nChat ID: {mchat_id} \nOrigin Url: {mega_url}")
         except Exception as e:
             await send_errors(e=e)
 
 # Send or print errors
+
+
 async def send_errors(e):
     if Config.LOGS_CHANNEL:
         await client.send_message(Config.LOGS_CHANNEL, f"**#Error** \n`{e}`")

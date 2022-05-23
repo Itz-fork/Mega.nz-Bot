@@ -19,8 +19,6 @@ from megadl.helpers_nexa.up_helper import guess_and_send
 from megadl.helpers_nexa.megatools import MegaTools
 from config import Config
 
-# path we gonna give the download
-basedir = Config.DOWNLOAD_LOCATION
 
 # Automatic Url Detect (From stackoverflow. Can't find link lol)
 MEGA_REGEX = "https?:\/\/mega\.nz\/(?:[^\/\s]+\/)+"
@@ -47,7 +45,7 @@ async def megadl_megapy(_, message: Message):
     url = message.text.split(None, 1)[1]
     userpath = str(message.from_user.id)
     the_chat_id = str(message.chat.id)
-    megadl_path = basedir + "/" + userpath
+    megadl_path = Config.DOWNLOAD_LOCATION + "/" + userpath
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
     if os.path.isdir(megadl_path):
         return await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
@@ -64,7 +62,7 @@ async def megadl_megapy(_, message: Message):
     except Exception as e:
         if os.path.isdir(megadl_path):
             await download_msg.edit(f"**Error:** `{e}`")
-            shutil.rmtree(basedir + "/" + userpath)
+            shutil.rmtree(Config.DOWNLOAD_LOCATION + "/" + userpath)
             await send_errors(e)
         return
 
@@ -89,7 +87,7 @@ async def megadl_megapy(_, message: Message):
         await download_msg.edit(f"**Error:** \n`{e}`")
         await send_errors(e)
     try:
-        shutil.rmtree(basedir + "/" + userpath)
+        shutil.rmtree(Config.DOWNLOAD_LOCATION + "/" + userpath)
         print("Successfully Removed Downloaded File and the folder!")
     except Exception as e:
         return await send_errors(e)
@@ -104,7 +102,7 @@ async def megadl_megatools(_, message: Message):
         return await message.reply("`This isn't a mega url!`")
     userpath = str(message.from_user.id)
     the_chat_id = str(message.chat.id)
-    megadl_path = basedir + "/" + userpath
+    megadl_path = Config.DOWNLOAD_LOCATION + "/" + userpath
     # Temp fix for the https://github.com/Itz-fork/Mega.nz-Bot/issues/11
     if os.path.isdir(megadl_path):
         return await message.reply_text("`Already One Process is Going On. Please wait until it's finished!`")
@@ -114,12 +112,12 @@ async def megadl_megatools(_, message: Message):
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴** \n\n`Note: You can't cancel this!`")
         await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
         mcli = MegaTools()
-        dl_files = await mcli.download(url, megadl_path)
+        dl_files = await mcli.download(url, download_msg.chat.id, download_msg.id, path=megadl_path)
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         if os.path.isdir(megadl_path):
             await download_msg.edit(f"**Error:** `{e}`")
-            shutil.rmtree(basedir + "/" + userpath)
+            shutil.rmtree(Config.DOWNLOAD_LOCATION + "/" + userpath)
             await send_errors(e)
         return
     try:
@@ -141,7 +139,7 @@ async def megadl_megatools(_, message: Message):
         await download_msg.edit(f"**Error:** \n`{e}`")
         await send_errors(e)
     try:
-        shutil.rmtree(basedir + "/" + userpath)
+        shutil.rmtree(Config.DOWNLOAD_LOCATION + "/" + userpath)
         print("Successfully Removed Downloaded File and the folder!")
     except Exception as e:
         await send_errors(e)

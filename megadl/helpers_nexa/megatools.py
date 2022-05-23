@@ -6,6 +6,8 @@ import subprocess
 
 from functools import partial
 from asyncio import get_running_loop
+
+from megadl import meganzbot
 from config import Config
 
 
@@ -22,7 +24,7 @@ class MegaTools:
         if cache_first and not os.path.isfile(self.config):
             self.genConfig()
         else:
-            print("\nConfig validation was not performed as 'cache_first=False'. Program won't work if the config was missing or corrupted!\n")
+            print("\nConfig validation wasn't performed as 'cache_first=False'. Program won't work if the config was missing or corrupted!\n")
 
     def genConfig(self, sp_limit=0):
         """
@@ -54,14 +56,23 @@ CreatePreviews = false
         f.write(conf_temp)
         f.close()
 
-    def __shellExec(self, cmd):
+    def __shellExec(self, cmd, rdata=None):
         run = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, shell=True)
-        shell_ouput = run.stdout.read()[:-1].decode("utf-8")
-        cc = self.__checkErrors(shell_ouput)
-        if cc == "retry":
-            return self.__shellExec(cmd)
-        return shell_ouput
+                               stderr=subprocess.PIPE, shell=True, encoding="utf-8")
+        if rdata and rdata[0]:
+            # Live process info update
+            while run.poll() is None:
+                rsh_out = run.stdout.readline()
+                if rsh_out != "":
+                    meganzbot.edit_message_text(
+                        rdata[1],
+                        rdata[2],
+                        f"**Process info:** \n`{rsh_out}`"
+                    )
+        else:
+            sh_out = run.stdout.read()[:-1]
+            self.__checkErrors(sh_out)
+            return sh_out
 
     def __genErrorMsg(self, bs):
         return f"""
@@ -100,18 +111,19 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
                 "Operation cancelled due to an unknown error."))
 
         else:
-            return True
+            return
 
-    async def download(self, link, path="MegaDownloads"):
+    async def download(self, *dargs, path="MegaDownloads"):
         """
         Download file/folder from given link
 
         Arguments:
             link: string - Mega.nz link of the content
+            *dargs - Chat id and message id
             path (optional): string - Path to where the content need to be downloaded
         """
-        cmd = f"megadl --config {self.config} --no-progress --path {path} {link}"
-        await self.runCmd(cmd)
+        cmd = f"megadl --config {self.config} --path {path} {dargs[0]}"
+        await self.runCmd(cmd, True, dargs[1], dargs[2])
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
     async def makeDir(self, path):
@@ -124,40 +136,41 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         cmd = f"megamkdir --config {self.config} /Root/{path}"
         await self.runCmd(cmd)
 
-    async def upload(self, path, m_path="MegaBot"):
+    async def upload(self, *uargs, m_path="MegaBot"):
         """
         Upload files
 
         Arguments:
             path: string - Path to the file that needs to be uploaded
+            *uargs - Chat id and message id
             m_path (optional): string - Custom path to where the files need to be uploaded
         """
-        if not os.path.isfile(path):
+        if not os.path.isfile(uargs[0]):
             raise UploadFailed(self.__genErrorMsg(
                 "Given path isn't belong to a file."))
         # Checks if the remote upload path is exists
         if not f"/Root/{m_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
             await self.makeDir(m_path)
-        ucmd = f"megaput --config {self.config} --no-progress --disable-previews --no-ask-password --path /Root/{m_path} {path}"
-        await self.runCmd(ucmd)
-        lcmd = f"megaexport --config {self.config} /Root/MegaBot/{os.path.basename(path)}"
+        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path /Root/{m_path} {uargs[0]}"
+        await self.runCmd(ucmd, True, uargs[1], uargs[2])
+        lcmd = f"megaexport --config {self.config} /Root/MegaBot/{os.path.basename(uargs[0])}"
         ulink = await self.runCmd(lcmd)
         if not ulink:
             raise UploadFailed(self.__genErrorMsg(
                 "Upload failed due to an unknown error."))
         return ulink
 
-    async def runCmd(self, cmd):
+    async def runCmd(self, cmd, *args):
         """
         Run synchronous functions in a non-blocking coroutine
 
         Arguments
-            cmd (type: str) - Command to execute
+            cmd: str - Command to execute
         """
         loop = get_running_loop()
         return await loop.run_in_executor(
             None,
-            partial(self.__shellExec, cmd)
+            partial(self.__shellExec, cmd, args)
         )
 
 

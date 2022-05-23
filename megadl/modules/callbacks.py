@@ -6,7 +6,6 @@ import shutil
 from pyrogram import Client, filters, __version__ as pyrogram_version
 from pyrogram.types import Message, CallbackQuery
 
-from .mega_dl import basedir
 from megadl.helpers_nexa.mega_help import send_errors
 from megadl.data import get_buttons, get_msg
 from config import Config
@@ -57,7 +56,7 @@ async def meganz_cb(megabot: Client, query: CallbackQuery):
     elif query.data == "cancelvro":
         userpath = str(query.from_user.id)
         try:
-            shutil.rmtree(basedir + "/" + userpath)
+            shutil.rmtree(Config.DOWNLOAD_LOCATION + "/" + userpath)
             await query.message.delete()
             await query.message.reply_text("`Process Cancelled by User`")
         except Exception as e:

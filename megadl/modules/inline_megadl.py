@@ -35,14 +35,16 @@ async def inline_megadl(client, query):
                     title="About Mega.nz-Bot",
                     description="A Simple Bot to Do More with Mega.nz",
                     thumb_url="https://telegra.ph/file/583f46da57641b90c28f9.png",
-                    input_message_content=InputTextMessageContent(aboutinlinemsg, disable_web_page_preview=True),
+                    input_message_content=InputTextMessageContent(
+                        aboutinlinemsg, disable_web_page_preview=True),
                     reply_markup=await get_buttons("start"),
                 ),
                 InlineQueryResultArticle(
                     title="Get Help",
                     description="Click here if you don't know how to use this bot.",
                     thumb_url="https://telegra.ph/file/92df448c01c9a46ec32b3.png",
-                    input_message_content=InputTextMessageContent(helpinlinemsg, disable_web_page_preview=True),
+                    input_message_content=InputTextMessageContent(
+                        helpinlinemsg, disable_web_page_preview=True),
                     reply_markup=await get_buttons("inline"),
                 )
             )
@@ -53,7 +55,7 @@ async def inline_megadl(client, query):
                 switch_pm_parameter="inline",
                 cache_time=15)
             return
-        
+
         elif megadl_q.split()[0] == "details":
             inline_down_butotns = []
             if not Config.IS_PUBLIC_BOT:
@@ -69,11 +71,11 @@ async def inline_megadl(client, query):
                 pass
             if len(megadl_q.split()) < 2:
                 await client.answer_inline_query(
-                query.id,
-                results=answers,
-                switch_pm_text=f"Usage: your_mega_link_here",
-                switch_pm_parameter="inline",
-                cache_time=10)
+                    query.id,
+                    results=answers,
+                    switch_pm_text=f"Usage: your_mega_link_here",
+                    switch_pm_parameter="inline",
+                    cache_time=10)
                 return
             # Getting file size before download
             try:
@@ -86,11 +88,11 @@ async def inline_megadl(client, query):
                 readable_f_size = humanbytes(mega_f_size)
             except Exception as e:
                 await client.answer_inline_query(
-                        query.id,
-                        results=answers,
-                        switch_pm_text="An Error Happend!",
-                        switch_pm_parameter="inline",
-                        cache_time=10)
+                    query.id,
+                    results=answers,
+                    switch_pm_text="An Error Happend!",
+                    switch_pm_parameter="inline",
+                    cache_time=10)
                 send_errors(e)
                 return
             details_inline_msg = f"""
@@ -110,7 +112,8 @@ async def inline_megadl(client, query):
                 InlineQueryResultArticle(
                     title="Got Requested Url's Details",
                     description="Hey, I got your mega.nz url details. Click here to see them",
-                    input_message_content=InputTextMessageContent(details_inline_msg, disable_web_page_preview=True),
+                    input_message_content=InputTextMessageContent(
+                        details_inline_msg, disable_web_page_preview=True),
                     reply_markup=INLINE_DWN_B,
                 )
             )
@@ -120,23 +123,23 @@ async def inline_megadl(client, query):
                 switch_pm_text=f"@{(await client.get_me()).username}'s Inline Functions!",
                 switch_pm_parameter="inline",
                 cache_time=20)
-        
+
         elif megadl_q.split()[0] == "info":
             if query.from_user.id not in Config.AUTH_USERS:
                 await client.answer_inline_query(
-                query.id,
-                results=answers,
-                switch_pm_text=f"Not Authorized to Use This Bot!",
-                switch_pm_parameter="inline",
-                cache_time=10)
+                    query.id,
+                    results=answers,
+                    switch_pm_text=f"Not Authorized to Use This Bot!",
+                    switch_pm_parameter="inline",
+                    cache_time=10)
                 return
             if not Config.MEGA_EMAIL or not Config.MEGA_PASSWORD:
                 await client.answer_inline_query(
-                query.id,
-                results=answers,
-                switch_pm_text=f"Setup an User Account to Use this Feature!",
-                switch_pm_parameter="inline",
-                cache_time=10)
+                    query.id,
+                    results=answers,
+                    switch_pm_text=f"Setup an User Account to Use this Feature!",
+                    switch_pm_parameter="inline",
+                    cache_time=10)
                 return
             loop = get_running_loop()
             inf = await loop.run_in_executor(None, partial(USER_ACC_INFO))
