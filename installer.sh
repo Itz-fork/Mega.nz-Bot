@@ -1,7 +1,5 @@
 #!/usr/bin/bash
 
-# Distro name
-OS_TYPE=$( (lsb_release -ds || cat /etc/*release || uname -om) 2>/dev/null | head -n1)
 
 # Colors
 White="\033[1;37m"
@@ -34,58 +32,32 @@ Mega.nz-Bot Installer - v1.1
 
 
 function install_git() {
-    case $OS_TYPE in
-        Zorin* )
-            sudo apt install git-all; shift ;;
-        Debian* )
-            sudo apt install git-all; shift ;;
-        Ubuntu* )
-            sudo apt install git-all; shift ;;
-        Fedora* )
-            sudo dnf install git; shift ;;
-        Arch* )
-            sudo pacman -S git; shift ;;
-        *)
-            show_error_msg "Your system deosn't match the current list of Oses. Please install 'git' from - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
-    esac
+    sudo apt install git-all ||
+        sudo pacman -S git ||
+            sudo dnf install git ||
+                show_error_msg "Your system deosn't match the current list of Oses. Please install 'git' from - https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"
 }
 
 function install_pip3() {
-    case $OS_TYPE in
-        Zorin* )
-            sudo apt install python3-pip; shift ;;
-        Debian* )
-            sudo apt install python3-pip; shift ;;
-        Ubuntu* )
-            sudo apt install python3-pip; shift ;;
-        Fedora* )
-            sudo dnf install python3-pip; shift ;;
-        Arch* )
-            sudo pacman -S python-pip; shift ;;
-        *)
-            show_error_msg "Your system deosn't match the current list of Oses. Please install 'pip3' from - https://pip.pypa.io/en/stable/installation/"
-    esac
+    sudo apt install python3-pip ||
+        sudo pacman -S python-pip ||
+            sudo dnf install python3-pip ||
+                show_error_msg "Your system deosn't match the current list of Oses. Please install 'pip3' from - https://pip.pypa.io/en/stable/installation/"
+}
+
+function _aur_megatools() {
+    git clone https://aur.archlinux.org/megatools.git
+    cd megatools || show_error_msg "megatools dir doesn't exists rn! Tf did you do?"
+    makepkg -si
+    cd ..
+    rm -rf megatools
 }
 
 function install_megatools() {
-    case $OS_TYPE in
-        Zorin* )
-            sudo apt install megatools; shift ;;
-        Debian* )
-            sudo apt install megatools; shift ;;
-        Ubuntu* )
-            sudo apt install megatools; shift ;;
-        Fedora* )
-            sudo dnf install megatools; shift ;;
-        Arch* )
-            git clone https://aur.archlinux.org/megatools.git
-            cd megatools || show_error_msg "megatools dir doesn't exists rn! Tf did you do?"
-            makepkg -si
-            cd ..
-            rm -rf megatools; shift ;;
-        *)
-            show_error_msg "Your system deosn't match the current list of Oses. Please install 'megatools' from - https://megatools.megous.com/"
-    esac
+    sudo apt install megatools ||
+        _aur_megatools ||
+            sudo dnf install megatools ||
+                show_error_msg "Your system deosn't match the current list of Oses. Please install 'megatools' from - https://megatools.megous.com/"
 }
 
 
@@ -125,7 +97,7 @@ function install() {
     cd Mega.nz-Bot || show_error_msg "'Mega.nz-Bot' folder not found"
 
     show_process_msg "Installing Requirements using pip3"
-    pip3 install -r requirements.txt &> /dev/null || show_error_msg "Unable to install requirements"
+    pip3 install -r -U requirements.txt &> /dev/null || show_error_msg "Unable to install requirements"
 
     show_success_msg "Installation"
 }
@@ -196,12 +168,17 @@ EOF
 }
 
 
+function run_bot() {
+    show_process_msg "Starting the bot"
+    python3 -m megadl
+}
+
+
 function main() {
     checkDepends
     install
     genConfig
-
-    bash startup.sh
+    run_bot
 }
 
 main

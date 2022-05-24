@@ -1,12 +1,12 @@
 # Mega.nz-Bot
-A simple telegram bot written in Python using Pyrogram framework to help you to manage [Mega.nz](https://mega.nz/) cloud storage with telegram.
+A simple telegram bot written in Python using Pyrogram framework which helps you to download, upload and import [*F](#notes) files / folders from [Mega.nz](https://mega.nz/) cloud storage with telegram.
 
 
 # Features
 - ⚡ Download, Upload & Import files easily
 - 📱 Mega.nz user account support
 - 🙅‍♂️ No login required
-- 🖇️ Almost all file / folder links are supported
+- 🖇️ Almost all file / folder links are supported [*P](#notes)
 - 🛡️ Can be used as either public or private bot
 - 🕵️‍♂️ Inline Mode [Still In Development Stage: BETA]
 
@@ -42,7 +42,7 @@ Check out [config.sample file](https://github.com/Itz-fork/Mega.nz-Bot/blob/main
 ### With VPS/PC
 ---
 **Tip 💡:**
-If you're using a linux distro with `apt` or `pacman` package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot). To do so run the following command,
+If you're using a linux distro with `apt`, `pacman` or `dnf` package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot). To do so run the following command,
 
 ```bash
 curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
@@ -71,6 +71,11 @@ pip3 install -U -r requirements.txt
 ```
 bash startup.sh
 ```
+
+
+# Notes
+- `*F` - Only download and upload functions support folder links. Currently import function supports only for files
+- `*P` - Public content only
 
 
 # Support
