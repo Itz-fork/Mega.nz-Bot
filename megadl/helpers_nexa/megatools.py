@@ -26,6 +26,73 @@ class MegaTools:
         else:
             print("\nConfig validation wasn't performed as 'cache_first=False'. Program won't work if the config was missing or corrupted!\n")
 
+    async def download(self, *dargs, path="MegaDownloads"):
+        """
+        Download file/folder from given link
+
+        Arguments:
+            link: string - Mega.nz link of the content
+            *dargs - Chat id and message id
+            path (optional): string - Path to where the content need to be downloaded
+        """
+        if await self.__is_account():
+            cmd = f"megadl --config {self.config} --path {path} {dargs[0]}"
+        else:
+            cmd = f"megadl --path {path} {dargs[0]}"
+        await self.runCmd(cmd, True, dargs[1], dargs[2])
+        return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
+
+    async def makeDir(self, path):
+        """
+        Make directories
+
+        Arguments:
+            path: string - Name of the directory
+        """
+        cmd = f"megamkdir --config {self.config} /Root/{path}"
+        await self.runCmd(cmd)
+
+    async def upload(self, *uargs, m_path="MegaBot"):
+        """
+        Upload files
+
+        Arguments:
+            *uargs - Chat id and message id
+            m_path (optional): string - Custom path to where the files need to be uploaded
+        """
+        if not os.path.isfile(uargs[0]):
+            raise UploadFailed(self.__genErrorMsg(
+                "Given path isn't belong to a file."))
+        # Checks if the remote upload path is exists
+        if not f"/Root/{m_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
+            await self.makeDir(m_path)
+        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path /Root/{m_path} {uargs[0]}"
+        await self.runCmd(ucmd, True, uargs[1], uargs[2])
+        lcmd = f"megaexport --config {self.config} /Root/{m_path}/{os.path.basename(uargs[0])}"
+        ulink = await self.runCmd(lcmd)
+        if not ulink:
+            raise UploadFailed(self.__genErrorMsg(
+                "Upload failed due to an unknown error."))
+        return ulink
+
+    async def runCmd(self, cmd, *args):
+        """
+        Run synchronous functions in a non-blocking coroutine
+
+        Arguments
+            cmd: str - Command to execute
+        """
+        loop = get_running_loop()
+        return await loop.run_in_executor(
+            None,
+            partial(self.__shellExec, cmd, args)
+        )
+
+    async def __is_account(self):
+        if Config.MEGA_EMAIL and Config.MEGA_PASSWORD:
+            return True
+        return False
+
     def genConfig(self, sp_limit=0):
         """
         Function to generate 'config.ini' file
@@ -115,65 +182,6 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
 
         else:
             return
-
-    async def download(self, *dargs, path="MegaDownloads"):
-        """
-        Download file/folder from given link
-
-        Arguments:
-            link: string - Mega.nz link of the content
-            *dargs - Chat id and message id
-            path (optional): string - Path to where the content need to be downloaded
-        """
-        cmd = f"megadl --config {self.config} --path {path} {dargs[0]}"
-        await self.runCmd(cmd, True, dargs[1], dargs[2])
-        return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
-
-    async def makeDir(self, path):
-        """
-        Make directories
-
-        Arguments:
-            path: string - Name of the directory
-        """
-        cmd = f"megamkdir --config {self.config} /Root/{path}"
-        await self.runCmd(cmd)
-
-    async def upload(self, *uargs, m_path="MegaBot"):
-        """
-        Upload files
-
-        Arguments:
-            *uargs - Chat id and message id
-            m_path (optional): string - Custom path to where the files need to be uploaded
-        """
-        if not os.path.isfile(uargs[0]):
-            raise UploadFailed(self.__genErrorMsg(
-                "Given path isn't belong to a file."))
-        # Checks if the remote upload path is exists
-        if not f"/Root/{m_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
-            await self.makeDir(m_path)
-        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path /Root/{m_path} {uargs[0]}"
-        await self.runCmd(ucmd, True, uargs[1], uargs[2])
-        lcmd = f"megaexport --config {self.config} /Root/{m_path}/{os.path.basename(uargs[0])}"
-        ulink = await self.runCmd(lcmd)
-        if not ulink:
-            raise UploadFailed(self.__genErrorMsg(
-                "Upload failed due to an unknown error."))
-        return ulink
-
-    async def runCmd(self, cmd, *args):
-        """
-        Run synchronous functions in a non-blocking coroutine
-
-        Arguments
-            cmd: str - Command to execute
-        """
-        loop = get_running_loop()
-        return await loop.run_in_executor(
-            None,
-            partial(self.__shellExec, cmd, args)
-        )
 
 
 # Errors
