@@ -64,11 +64,14 @@ CreatePreviews = false
             while run.poll() is None:
                 rsh_out = run.stdout.readline()
                 if rsh_out != "":
-                    meganzbot.edit_message_text(
-                        rdata[1],
-                        rdata[2],
-                        f"**Process info:** \n`{rsh_out}`"
-                    )
+                    try:
+                        meganzbot.edit_message_text(
+                            rdata[1],
+                            rdata[2],
+                            f"**Process info:** \n`{rsh_out}`"
+                        )
+                    except:
+                        pass
         else:
             sh_out = run.stdout.read()[:-1]
             self.__checkErrors(sh_out)
