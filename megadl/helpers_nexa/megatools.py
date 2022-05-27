@@ -66,9 +66,9 @@ class MegaTools:
         # Checks if the remote upload path is exists
         if not f"/Root/{m_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
             await self.makeDir(m_path)
-        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path /Root/{m_path} \"{uargs[0]}\""
+        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path \"/Root/{m_path}\" \"{uargs[0]}\""
         await self.runCmd(ucmd, True, uargs[1], uargs[2])
-        lcmd = f"megaexport --config {self.config} /Root/{m_path}/{os.path.basename(uargs[0])}"
+        lcmd = f"megaexport --config {self.config} \"/Root/{m_path}/{os.path.basename(uargs[0])}\""
         ulink = await self.runCmd(lcmd)
         if not ulink:
             raise UploadFailed(self.__genErrorMsg(
