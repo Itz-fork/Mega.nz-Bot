@@ -144,7 +144,6 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         Upload files
 
         Arguments:
-            path: string - Path to the file that needs to be uploaded
             *uargs - Chat id and message id
             m_path (optional): string - Custom path to where the files need to be uploaded
         """
@@ -156,7 +155,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
             await self.makeDir(m_path)
         ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path /Root/{m_path} {uargs[0]}"
         await self.runCmd(ucmd, True, uargs[1], uargs[2])
-        lcmd = f"megaexport --config {self.config} /Root/MegaBot/{os.path.basename(uargs[0])}"
+        lcmd = f"megaexport --config {self.config} /Root/{m_path}/{os.path.basename(uargs[0])}"
         ulink = await self.runCmd(lcmd)
         if not ulink:
             raise UploadFailed(self.__genErrorMsg(
