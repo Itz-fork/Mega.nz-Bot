@@ -1,12 +1,12 @@
 # Mega.nz-Bot
-A simple telegram bot written in Python using Pyrogram framework which helps you to download, upload and import [*F](#notes) files / folders from [Mega.nz](https://mega.nz/) cloud storage with telegram.
+A simple telegram bot written in Python using Pyrogram framework which helps you to download, upload and import [^1] files / folders from [Mega.nz](https://mega.nz/) cloud storage with telegram.
 
 
 # Features
 - ⚡ Download, Upload & Import files easily
 - 📱 Mega.nz user account support
 - 🙅‍♂️ No login required
-- 🖇️ Almost all file / folder links are supported [*P](#notes)
+- 🖇️ Almost all file / folder links are supported [^2]
 - 🛡️ Can be used as either public or private bot
 - 🕵️‍♂️ Inline Mode [Still In Development Stage: BETA]
 
@@ -38,7 +38,6 @@ Check out [config.sample file](https://github.com/Itz-fork/Mega.nz-Bot/blob/main
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
 
-
 ### With VPS/PC
 ---
 **Tip 💡:**
@@ -64,18 +63,17 @@ cd Mega.nz-Bot
 pip3 install -U -r requirements.txt
 ```
 - Install [megatools](https://megatools.megous.com/), [ffmpeg](https://ffmpeg.org/download.html) according to your system
-- Fill config vars with your own values ([How to get config Values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)),
+- Fill config vars with your own values ([How to get config values](https://github.com/Itz-fork/Mega.nz-Bot#config-vars-)),
     - If you have GUI system use a normal text editor like notepad, sublime text etc.
-    - For CLI systems, [install nano](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9) and edit the config file using `sudo nano config.py` command.
+    - For CLI systems, [use nano](https://gist.github.com/Itz-fork/fd11c08ef7464bdae3663a1f9c77c9e9) and edit the config file using `nano config.py` command.
 - Run the Bot,
 ```
 bash startup.sh
 ```
 
 
-# Notes
-- `*F` - Only download and upload functions support folder links. Currently import function supports only for files
-- `*P` - Public content only
+[^1]: Only download and upload functions support folder links. Currently import function supports only for files
+[^2]: Public content only
 
 
 # Support
