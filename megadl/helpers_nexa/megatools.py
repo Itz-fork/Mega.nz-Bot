@@ -60,6 +60,8 @@ class MegaTools:
             *uargs - Chat id and message id
             m_path (optional): string - Custom path to where the files need to be uploaded
         """
+        if not await self.__is_account():
+            raise NoMegaAccountFound("Mega.nz email or password is missing")
         if not os.path.isfile(uargs[0]):
             raise UploadFailed(self.__genErrorMsg(
                 "Given path isn't belong to a file."))
@@ -195,6 +197,10 @@ class UnableToCreateDirectory(Exception):
 
 
 class UploadFailed(Exception):
+    pass
+
+
+class NoMegaAccountFound(Exception):
     pass
 
 
