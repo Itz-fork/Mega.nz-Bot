@@ -19,83 +19,87 @@ class MegaTools:
     Project: https://github.com/Itz-fork/Mega.nz-Bot
     """
 
-    def __init__(self, cache_first=True) -> None:
+    def __init__(self, cache_first:bool = True) -> None:
         self.config = "cache/config.ini"
         if cache_first and not os.path.isfile(self.config):
             self.genConfig()
         else:
             print("\nConfig validation wasn't performed as 'cache_first=False'. Program won't work if the config was missing or corrupted!\n")
 
-    async def download(self, *dargs, path="MegaDownloads"):
+    async def download(self, url: str, chat_id: int, message_id: int, path: str = "MegaDownloads"):
         """
         Download file/folder from given link
 
         Arguments:
-            link: string - Mega.nz link of the content
-            *dargs - Chat id and message id
-            path (optional): string - Path to where the content need to be downloaded
+            - url: string - Mega.nz link of the content
+            - chat_id: integer - Telegram chat id of the user
+            - message_id: integer - Id of the progress message
+            - path (optional): string - Custom path to where the files need to be downloaded
         """
         if await self.__is_account():
-            cmd = f"megadl --config {self.config} --path {path} {dargs[0]}"
+            cmd = f"megadl --config {self.config} --path {path} {url}"
         else:
-            cmd = f"megadl --path {path} {dargs[0]}"
-        await self.runCmd(cmd, True, dargs[1], dargs[2])
+            cmd = f"megadl --path {path} {url}"
+        await self.runCmd(cmd, chat_id=chat_id, message_id=message_id)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
-    async def makeDir(self, path):
+    async def makeDir(self, path: str):
         """
         Make directories
 
         Arguments:
-            path: string - Name of the directory
+
+            - path: string - Name of the directory
         """
         cmd = f"megamkdir --config {self.config} /Root/{path}"
         await self.runCmd(cmd)
 
-    async def upload(self, *uargs, m_path="MegaBot"):
+    async def upload(self, file_path: str, chat_id: int, message_id: int, to_path: str = "MegaBot"):
         """
         Upload files
 
         Arguments:
-            *uargs - Chat id and message id
-            m_path (optional): string - Custom path to where the files need to be uploaded
+
+            - file_path: string - Path to the file
+            - chat_id: integer - Telegram chat id of the user
+            - message_id: integer - Id of the progress message
+            - to_path (optional): string - Custom path to where the files need to be uploaded
         """
         if not await self.__is_account():
-            raise NoMegaAccountFound("Mega.nz email or password is missing")
-        if not os.path.isfile(uargs[0]):
+            raise MegaAccountNotFound
+        if not os.path.isfile(file_path):
             raise UploadFailed(self.__genErrorMsg(
-                "Given path isn't belong to a file."))
+                "Given path doesn't belong to a file."))
         # Checks if the remote upload path is exists
-        if not f"/Root/{m_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
-            await self.makeDir(m_path)
-        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path \"/Root/{m_path}\" \"{uargs[0]}\""
-        await self.runCmd(ucmd, True, uargs[1], uargs[2])
-        lcmd = f"megaexport --config {self.config} \"/Root/{m_path}/{os.path.basename(uargs[0])}\""
+        if not f"/Root/{to_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
+            await self.makeDir(to_path)
+        ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path \"/Root/{to_path}\" \"{file_path}\""
+        await self.runCmd(ucmd, chat_id=chat_id, message_id=message_id)
+        lcmd = f"megaexport --config {self.config} \"/Root/{to_path}/{os.path.basename(file_path)}\""
         ulink = await self.runCmd(lcmd)
         if not ulink:
             raise UploadFailed(self.__genErrorMsg(
                 "Upload failed due to an unknown error."))
         return ulink
 
-    async def runCmd(self, cmd, *args):
+    async def runCmd(self, cmd: str, *args, **kwargs):
         """
         Run synchronous functions in a non-blocking coroutine
 
         Arguments
-            cmd: str - Command to execute
+
+            - cmd: string - Command to execute
         """
         loop = get_running_loop()
         return await loop.run_in_executor(
             None,
-            partial(self.__shellExec, cmd, args)
+            partial(self.__shellExec, cmd, *args, **kwargs)
         )
 
     async def __is_account(self):
-        if Config.MEGA_EMAIL and Config.MEGA_PASSWORD:
-            return True
-        return False
+        return True if Config.MEGA_EMAIL and Config.MEGA_PASSWORD else False
 
-    def genConfig(self, sp_limit=0):
+    def genConfig(self, sp_limit: int = 0):
         """
         Function to generate 'config.ini' file
 
@@ -125,20 +129,20 @@ CreatePreviews = false
         f.write(conf_temp)
         f.close()
 
-    def __shellExec(self, cmd, rdata=None):
-        run = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, shell=True, encoding="utf-8")
-        if rdata and rdata[0]:
+    def __shellExec(self, cmd: str, show_updates: bool = True, chat_id: int = None, message_id: int = None):
+        try:
+            run = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE, shell=True, encoding="utf-8")
+        except FileNotFoundError:
+            raise MegatoolsNotFound
+        if show_updates:
             # Live process info update
             while run.poll() is None:
                 rsh_out = run.stdout.readline()
                 if rsh_out != "":
                     try:
                         meganzbot.edit_message_text(
-                            rdata[1],
-                            rdata[2],
-                            f"**Process info:** \n`{rsh_out}`"
-                        )
+                            chat_id, message_id, f"**Process info:** \n`{rsh_out}`")
                     except:
                         pass
         else:
@@ -157,8 +161,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
 
     def __checkErrors(self, out):
         if "not found" in out:
-            raise MegatoolsNotFound(
-                "'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/")
+            raise MegatoolsNotFound
 
         elif "Can't create directory" in out:
             raise UnableToCreateDirectory(self.__genErrorMsg(
@@ -175,8 +178,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
                 "Path to the file which need to be uploaded wasn't provided"))
 
         elif "Can't login to mega.nz" in out:
-            raise LoginError(self.__genErrorMsg(
-                "Unable to login to your mega.nz account."))
+            raise LoginError
 
         elif "ERROR" in out:
             raise UnknownError(self.__genErrorMsg(
@@ -189,24 +191,30 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
 # Errors
 
 class MegatoolsNotFound(Exception):
-    pass
+    def __init__(self) -> None:
+        super().__init__("'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/")
 
 
-class UnableToCreateDirectory(Exception):
-    pass
-
-
-class UploadFailed(Exception):
-    pass
-
-
-class NoMegaAccountFound(Exception):
-    pass
+class MegaAccountNotFound(Exception):
+    def __init__(self) -> None:
+        super().__init__("Mega.nz email or password is missing")
 
 
 class LoginError(Exception):
-    pass
+    def __init__(self) -> None:
+        super().__init__("Unable to login to your mega.nz account. \n\nYou can open a new issue if the problem persists - https://github.com/Itz-fork/Mega.nz-Bot/issues")
+
+
+class UnableToCreateDirectory(Exception):
+    def __init__(self, e) -> None:
+        super().__init__(e)
+
+
+class UploadFailed(Exception):
+    def __init__(self, e) -> None:
+        super().__init__(e)
 
 
 class UnknownError(Exception):
-    pass
+    def __init__(self, e) -> None:
+        super().__init__(e)

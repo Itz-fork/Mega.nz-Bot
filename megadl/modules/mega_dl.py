@@ -112,7 +112,7 @@ async def megadl_megatools(_, message: Message):
         download_msg = await message.reply_text("**Starting to Download The Content! This may take while 😴** \n\n`Note: You can't cancel this!`")
         await send_logs(user_id=userpath, mchat_id=the_chat_id, mega_url=url, download_logs=True)
         mcli = MegaTools()
-        dl_files = await mcli.download(url, download_msg.chat.id, download_msg.id, path=megadl_path)
+        dl_files = await mcli.download(url, download_msg.chat.id, download_msg.id, megadl_path)
         await download_msg.edit("**Successfully Downloaded The Content!**")
     except Exception as e:
         if os.path.isdir(megadl_path):
