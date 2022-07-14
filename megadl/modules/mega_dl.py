@@ -76,7 +76,7 @@ async def megadl_megapy(_, message: Message):
                 base_splt_out_dir = megadl_path + "splitted_files"
                 await download_msg.edit("`Large File Detected, Trying to split it!`")
                 loop = get_running_loop()
-                await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
+                await loop.run_in_executor(None, partial(split_files(mg_file, base_splt_out_dir)))
                 split_out_dir = [val for sublist in [[os.path.join(
                     i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
                 for spl_f in split_out_dir:
@@ -127,7 +127,7 @@ async def megadl_megatools(_, message: Message):
                 base_splt_out_dir = megadl_path + "splitted_files"
                 await download_msg.edit("`Large file detected, Trying to split!`")
                 loop = get_running_loop()
-                await loop.run_in_executor(None, partial(split_files(input_file=mg_file, out_base_path=base_splt_out_dir)))
+                await loop.run_in_executor(None, partial(split_files(mg_file, base_splt_out_dir)))
                 split_out_dir = [val for sublist in [[os.path.join(
                     i[0], j) for j in i[2]] for i in os.walk(megadl_path)] for val in sublist]
                 for spl_f in split_out_dir:
