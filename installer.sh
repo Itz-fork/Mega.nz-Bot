@@ -97,7 +97,7 @@ function install() {
     cd Mega.nz-Bot || show_error_msg "'Mega.nz-Bot' folder not found"
 
     show_process_msg "Installing Requirements using pip3"
-    pip3 install -r -U requirements.txt &> /dev/null || show_error_msg "Unable to install requirements"
+    pip3 install -U -r requirements.txt &> /dev/null || show_error_msg "Unable to install requirements"
 
     show_success_msg "Installation"
 }
