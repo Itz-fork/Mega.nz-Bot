@@ -19,7 +19,7 @@ class MegaTools:
     Project: https://github.com/Itz-fork/Mega.nz-Bot
     """
 
-    def __init__(self, cache_first:bool = True) -> None:
+    def __init__(self, cache_first: bool = True) -> None:
         self.config = "cache/config.ini"
         if cache_first and not os.path.isfile(self.config):
             self.genConfig()
@@ -40,7 +40,7 @@ class MegaTools:
             cmd = f"megadl --config {self.config} --path {path} {url}"
         else:
             cmd = f"megadl --path {path} {url}"
-        await self.runCmd(cmd, chat_id=chat_id, message_id=message_id)
+        await self.runCmd(cmd, show_updates=True, chat_id=chat_id, message_id=message_id)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
     async def makeDir(self, path: str):
@@ -71,10 +71,10 @@ class MegaTools:
             raise UploadFailed(self.__genErrorMsg(
                 "Given path doesn't belong to a file."))
         # Checks if the remote upload path is exists
-        if not f"/Root/{to_path}" in await self.runCmd(f"megals --config {self.config} /Root"):
+        if not f"/Root/{to_path}" in await self.runCmd(f"megals --config {self.config} /Root/"):
             await self.makeDir(to_path)
         ucmd = f"megaput --config {self.config} --disable-previews --no-ask-password --path \"/Root/{to_path}\" \"{file_path}\""
-        await self.runCmd(ucmd, chat_id=chat_id, message_id=message_id)
+        await self.runCmd(ucmd, show_updates=True, chat_id=chat_id, msg_id=message_id)
         lcmd = f"megaexport --config {self.config} \"/Root/{to_path}/{os.path.basename(file_path)}\""
         ulink = await self.runCmd(lcmd)
         if not ulink:
@@ -129,7 +129,7 @@ CreatePreviews = false
         f.write(conf_temp)
         f.close()
 
-    def __shellExec(self, cmd: str, show_updates: bool = True, chat_id: int = None, message_id: int = None):
+    def __shellExec(self, cmd: str, show_updates: bool = False, chat_id: int = None, msg_id: int = None):
         try:
             run = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE, shell=True, encoding="utf-8")
@@ -142,7 +142,7 @@ CreatePreviews = false
                 if rsh_out != "":
                     try:
                         meganzbot.edit_message_text(
-                            chat_id, message_id, f"**Process info:** \n`{rsh_out}`")
+                            chat_id, msg_id, f"**Process info:** \n`{rsh_out}`")
                     except:
                         pass
         else:
@@ -183,7 +183,6 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         elif "ERROR" in out:
             raise UnknownError(self.__genErrorMsg(
                 "Operation cancelled due to an unknown error."))
-
         else:
             return
 
