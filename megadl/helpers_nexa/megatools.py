@@ -40,7 +40,7 @@ class MegaTools:
             cmd = f"megadl --config {self.config} --path {path} {url}"
         else:
             cmd = f"megadl --path {path} {url}"
-        await self.runCmd(cmd, show_updates=True, chat_id=chat_id, message_id=message_id)
+        await self.runCmd(cmd, show_updates=True, chat_id=chat_id, msg_id=message_id)
         return [val for sublist in [[os.path.join(i[0], j) for j in i[2]] for i in os.walk(path)] for val in sublist]
 
     async def makeDir(self, path: str):
