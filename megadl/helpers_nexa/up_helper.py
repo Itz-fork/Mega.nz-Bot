@@ -17,7 +17,7 @@ async def run_shell_cmds(command):
 
 async def get_vid_duration(input_video):
     result = await run_shell_cmds(f"ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {input_video}")
-    return int(float(result))
+    return int(float(result)) if result else None
 
 async def guess_and_send(input_file, chat_id, message, thumb_path="cache"):
     start_time = time()
