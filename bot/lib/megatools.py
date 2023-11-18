@@ -28,7 +28,6 @@ class MegaTools:
         url: str,
         chat_id: int,
         message_id: int,
-        private=False,
         path: str = "MegaDownloads",
     ) -> list:
         """
@@ -38,18 +37,17 @@ class MegaTools:
             - url: string - Mega.nz link of the content
             - chat_id: integer - Telegram chat id of the user
             - message_id: integer - Id of the progress message
-            - private: bool - Set to "True" if downloading files from account
             - path (optional): string - Custom path to where the files need to be downloaded
         """
-        if private:
-            # Private link downloads: Supports both file and folders
-            if match("https?:\/\/mega\.nz\/folder+", url):
-                cmd = f'megacopy --no-ask-password --config {self.config} -l "{path}" -r "{url}" --download'
-            else:
-                cmd = f'megaget --no-ask-password --config {self.config} --path "{path}" {url}'
-        else:
-            # Public link download: Supports both file and folders
+        # Public link download: Supports both file and folders
+        if match("https?:\/\/mega\.nz\/(file|folder|#)?.+", url):
             cmd = f'megadl --config {self.config} --path "{path}" {url}'
+
+        # Private link downloads: Supports both file and folders
+        if match("\/Root\/((.*)|([^\s]*))\.", url):
+            cmd = f'megaget --no-ask-password --config {self.config} --path "{path}" {url}'
+        else:
+            cmd = f'megacopy --no-ask-password --config {self.config} -l "{path}" -r "{url}" --download'
         await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
         return listfiles(path)
 
@@ -135,6 +133,9 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
     def __checkErrors(self, out):
         if "not found" in out:
             raise MegatoolsNotFound
+        
+        elif "already exists at" in out:
+            pass
 
         elif "Can't create directory" in out:
             raise UnableToCreateDirectory(

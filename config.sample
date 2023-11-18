@@ -4,7 +4,7 @@ class Config(object):
     BOT_TOKEN = "YOUR_BOT_TOKEN"
     AUTH_USERS = set(int(x) for x in "TELEGRAM_IDS_OF_AUTH_USERS".split(" "))
     # DON'T CHANGE THESE 2 VARS
-    DOWNLOAD_LOCATION = "./NexaBots"
+    DOWNLOAD_LOCATION = f"{getcwd()}/NexaBots"
     TG_MAX_SIZE = 2040108421
     # Mega User Account
     MEGA_EMAIL = "YOUR_MEGA_NZ_ACCOUNT'S_EMAIL"
