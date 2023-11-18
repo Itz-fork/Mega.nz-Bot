@@ -1,6 +1,6 @@
 # @Author: https://github.com/Itz-fork
 # @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.1
+# @Version: nightly-0.2
 # @Description: Helper class for pyrogram bots to interact with megatools cli
 
 import os
@@ -73,7 +73,7 @@ class MegaTools:
                 raise UploadFailed(
                     self.__genErrorMsg("Given path doesn't belong to a file.")
                 )
-            cmd = f'megaput --config {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" ""{path}""'
+            cmd = f'megaput --config {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" "{path}"'
         # For folders
         if os.path.isdir(path):
             if not os.path.isdir(path):
@@ -86,7 +86,7 @@ class MegaTools:
             await run_partial(run_on_shell, f"megals --config {self.config} /Root/")
         ):
             await run_partial(
-                run_on_shell, f"megamkdir --config {self.config} /Root/{to_path}"
+                run_on_shell, f'megamkdir --config {self.config} "/Root/{to_path}"'
             )
         # Upload
         await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
@@ -120,7 +120,6 @@ class MegaTools:
         except FileNotFoundError:
             pass
         sh_out = run.stdout.read()[:-1]
-        print(sh_out)
         self.__checkErrors(sh_out)
         return sh_out
 

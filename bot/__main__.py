@@ -1,6 +1,6 @@
 # @Author: https://github.com/Itz-fork
 # @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.1
+# @Version: nightly-0.2
 # @Description: __main__.py
 
 

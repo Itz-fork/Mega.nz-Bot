@@ -1,9 +1,9 @@
 # @Author: https://github.com/Itz-fork
 # @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.1
+# @Version: nightly-0.2
 # @Description: Responsible for upload function
 
-
+from time import time
 from pyrogram import Client, filters
 from pyrogram.types import (
     Message,
@@ -13,16 +13,19 @@ from pyrogram.types import (
 )
 
 from bot.lib.megatools import MegaTools
+from bot.lib.pyros import track_progress
 
 
 # Respond only to Documents/Photos/Videos/GIFs and Audio
-@Client.on_message(filters.document| filters.photo | filters.video | filters.animation | filters.audio)
+@Client.on_message(
+    filters.document | filters.photo | filters.video | filters.animation | filters.audio
+)
 async def to_up(_: Client, msg: Message):
     await msg.reply(
-        "Should' I download it?",
+        "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("Download ", callback_data=f"up_tgdl-{msg.id}")],
+                [InlineKeyboardButton("Download 💾", callback_data=f"up_tgdl-{msg.id}")],
                 [InlineKeyboardButton("Close ❌", callback_data="closeqcb")],
             ]
         ),
@@ -34,9 +37,19 @@ async def to_up_cb(_: Client, query: CallbackQuery):
     # Get message content
     qcid = query.message.chat.id
     qmid = query.message.id
+    strtim = time()
     msg = await _.get_messages(qcid, int(query.data.split("-")[1]))
-    dl_path = await _.download_media(msg)
+    dl_path = await _.download_media(
+        msg, progress=track_progress, progress_args=(_, [qcid, qmid], strtim)
+    )
     # Upload the file
     cli = MegaTools(_)
-    limk = await cli.upload(dl_path, qcid, query.message.id)
-    await _.edit_message_text(qcid, qmid, limk)
+    limk = await cli.upload(dl_path, qcid, qmid)
+    await _.edit_message_text(
+        qcid,
+        qmid,
+        "Your file has been uploaded to Mega.nz ✅",
+        reply_markup=InlineKeyboardMarkup(
+            [[InlineKeyboardButton("Visit 🔗", url=limk)]]
+        ),
+    )

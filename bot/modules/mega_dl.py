@@ -1,6 +1,6 @@
 # @Author: https://github.com/Itz-fork
 # @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.1
+# @Version: nightly-0.2
 # @Description: Responsible for download function
 
 
@@ -25,11 +25,11 @@ async def dl_from(_: Client, msg: Message):
     # Push info to temp db
     GLOB_TMP[msg.id] = [msg.text, f"{Config.DOWNLOAD_LOCATION}/{msg.id}"]
     await msg.reply(
-        "Should' I download it?",
+        "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("Download ", callback_data=f"dwn_mg-{msg.id}")],
-                [InlineKeyboardButton("Info ", callback_data=f"dwn_mg-{msg.id}")],
+                [InlineKeyboardButton("Download 💾", callback_data=f"dwn_mg-{msg.id}")],
+                [InlineKeyboardButton("Info ℹ️", callback_data=f"dwn_mg-{msg.id}")],
                 [InlineKeyboardButton("Close ❌", callback_data="closeqcb")],
             ]
         ),
@@ -49,13 +49,7 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
     # Download the file/folder
     resp = await query.edit_message_text(
         """
-    ──────▄▀▄─────▄▀▄
-    ─────▄█░░▀▀▀▀▀░░█▄ Hey!
-    ─▄▄──█░░░░░░░░░░░█──▄▄
-    █▄▄█─█░░▀░░┬░░▀░░█─█▄▄█
-    ════════════════════════
-
-    ║`Your download is starting...`║""",
+    📥 Your download is starting...""",
         reply_markup=None,
     )
     cli = MegaTools(client)
@@ -63,19 +57,21 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
     try:
         await query.edit_message_text(
             """
-            Done
+            🥳 Successfully downloaded the content
             """
         )
     except Exception as e:
         await query.edit_message_text(
             f"""
-            {e}
+            Oops 🫨, Somethig bad happend!
+
+            `{e}`
             """
         )
     # Send file(s) to the user
     await resp.edit(
         """
-        Uploading
+        🕔 Trying to upload now...
         """
     )
     for file in f_list:
@@ -92,13 +88,9 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
             splout = f"{dlid}/splitted"
             await splitit(file, splout)
             for file in listfiles(splout):
-                await send_as_guessed(client, file, qcid)
+                await send_as_guessed(client, file, qcid, resp.id)
             cleanup(splout)
         else:
-            await send_as_guessed(client, file, qcid)
-    await resp.edit(
-        """
-        Ight!
-        """
-    )
+            await send_as_guessed(client, file, qcid, resp.id)
+    await resp.delete()
     cleanup(dlid)
