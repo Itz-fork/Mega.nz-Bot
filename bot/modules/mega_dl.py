@@ -20,7 +20,7 @@ from bot.lib.megatools import MegaTools
 from bot.helpers.files import send_as_guessed, splitit, listfiles, cleanup
 
 
-@Client.on_message(filters.regex("https?:\/\/mega\.nz\/(file|folder)+"))
+@Client.on_message(filters.regex("https?:\/\/mega\.nz\/(file|folder|#)?.+"))
 async def dl_from(_: Client, msg: Message):
     # Push info to temp db
     GLOB_TMP[msg.id] = [msg.text, f"{Config.DOWNLOAD_LOCATION}/{msg.id}"]
