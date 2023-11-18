@@ -1,6 +1,10 @@
 # Mega.nz-Bot
 A simple telegram bot written in Python using Pyrogram framework which helps you to download, upload and import [^1] files / folders from [Mega.nz](https://mega.nz/) cloud storage with telegram.
 
+# Unmaintained
+
+> [!WARNING]
+> This branch is unmaintained! New version of the project can be found at: [`nightly`](https://github.com/Itz-fork/Mega.nz-Bot/tree/nightly) branch
 
 # Features
 - ⚡ Download, Upload & Import files easily
