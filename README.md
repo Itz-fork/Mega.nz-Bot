@@ -4,7 +4,7 @@ A simple telegram bot written in Python using Pyrogram framework which helps you
 # Unmaintained
 
 > [!WARNING]
-> This branch is unmaintained! New version of the project can be found at: [`nightly`](https://github.com/Itz-fork/Mega.nz-Bot/tree/nightly) branch
+> This branch is unmaintained! New version of the project can be found at: [`nightly`](https://github.com/Itz-fork/Mega.nz-Bot/tree/nightly) branch.
 
 # Features
 - ⚡ Download, Upload & Import files easily
