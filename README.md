@@ -16,7 +16,13 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 # Config Vars 📓
 Config vars are stored `.env` file at the root of the bot. Check [sample file](/.env.sample) for more info
 
-# Deployment
+
+# Deploy
+Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
+
+### Heroku
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
+
 ### local
 ---
 **Tip 💡:**
@@ -51,7 +57,9 @@ python3 -m megadl
 
 # Roadmap
 - [ ] Implement private mode
-- [ ] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)
+- [ ] Url to Mega.nz uploader
+- [x] Heroku support
+- [x] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)
 - [ ] Add better documentation
 
 
