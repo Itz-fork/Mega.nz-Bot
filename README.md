@@ -1,17 +1,27 @@
-# Mega.nz-Bot (Dev)
-A simple telegram bot to download / upload files to Mega.nz
+# Mega.nz-Bot (nightly 🌃)
+A simple telegram bot to download, upload files or folders from [Mega.nz](https://mega.nz/)
 
-## Features
 
-> [!NOTE]
-> This is the successor to the "Mega.nz-Bot/legacy". Not all of it's features are implemented as of now. Current version is: `nightly-0.2`
+# Features
+- Download, Upload fies/folders easily ⚡
+- No login required 🙅‍♂️
+- Support for Mega.nz user account 🗃️
+- Support for both private and public content 🤝
 
-- Download files/folders (supports both public and private content)
-- Upload files from telegram to Mega.nz
+> Note ⚠️️:
+> Please see [Roadmap](#Roadmap) for current feature implementations 🤗
+> This is the successor to the popular [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot/tree/legacy). So don't expect all of it's original features.
 
-## Requirements
 
-- `megatools`
-- `ffmpeg`
-- `ffprobe`
-- [python packages](/requirements.txt)
+# Config Vars 📓
+Config vars are stored `.env` file at the root of the bot. Check [sample file](/.env.sample) for more info
+
+
+# Roadmap
+- [ ] Implement private mode
+- [ ] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)
+- [ ] Add better documentation
+
+
+# Support
+[![Support Group](https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Nexa_bots)
