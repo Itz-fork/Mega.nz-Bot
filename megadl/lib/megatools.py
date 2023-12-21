@@ -7,8 +7,8 @@ import os
 import subprocess
 
 from re import match
-from bot.helpers.files import listfiles
-from bot.helpers.cors import run_partial, run_on_shell
+from megadl.helpers.files import listfiles
+from megadl.helpers.cors import run_partial, run_on_shell
 
 
 class MegaTools:

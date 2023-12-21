@@ -9,4 +9,4 @@ RUN mkdir /app/
 WORKDIR /app/
 RUN git clone -b nightly https://github.com/Itz-fork/Mega.nz-Bot.git /app
 RUN pip3 install -U -r requirements.txt
-CMD ["python3", "-m", "bot"]
+CMD ["python3", "-m", "megadl"]

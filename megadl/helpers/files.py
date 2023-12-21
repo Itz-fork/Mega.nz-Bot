@@ -12,8 +12,8 @@ from os import path, walk, makedirs, remove
 from filetype import guess
 from filesplit.split import Split
 
-from bot.lib.pyros import track_progress
-from bot.helpers.cors import run_partial, run_on_shell
+from megadl.lib.pyros import track_progress
+from megadl.helpers.cors import run_partial, run_on_shell
 
 
 # List all the files inside a dir

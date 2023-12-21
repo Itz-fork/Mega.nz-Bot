@@ -12,8 +12,8 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from bot.lib.megatools import MegaTools
-from bot.lib.pyros import track_progress
+from megadl.lib.megatools import MegaTools
+from megadl.lib.pyros import track_progress
 
 
 # Respond only to Documents/Photos/Videos/GIFs and Audio

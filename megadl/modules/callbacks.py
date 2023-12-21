@@ -8,7 +8,7 @@ from shutil import rmtree
 from pyrogram import Client, filters
 from pyrogram.types import CallbackQuery
 
-from bot import GLOB_TMP
+from megadl import GLOB_TMP
 
 
 @Client.on_callback_query(filters.regex(r"closeqcb"))

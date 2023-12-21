@@ -17,5 +17,6 @@ meganzbot = Client(
 )
 
 if __name__ == "__main__":
+    print("Mega.nz Bot is running...")
     meganzbot.start()
     idle()

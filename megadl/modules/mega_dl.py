@@ -15,9 +15,9 @@ from pyrogram.types import (
 )
 
 from config import Config
-from bot import GLOB_TMP
-from bot.lib.megatools import MegaTools
-from bot.helpers.files import send_as_guessed, splitit, listfiles, cleanup
+from megadl import GLOB_TMP
+from megadl.lib.megatools import MegaTools
+from megadl.helpers.files import send_as_guessed, splitit, listfiles, cleanup
 
 
 @Client.on_message(filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)"))
