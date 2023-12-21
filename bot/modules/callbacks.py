@@ -11,7 +11,7 @@ from pyrogram.types import CallbackQuery
 from bot import GLOB_TMP
 
 
-@Client.on_callback_query(filters.regex("closeqcb"))
+@Client.on_callback_query(filters.regex(r"closeqcb"))
 async def close_gb(_: Client, query: CallbackQuery):
     try:
         # Remove user from global temp db

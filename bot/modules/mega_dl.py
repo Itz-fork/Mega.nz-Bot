@@ -20,7 +20,7 @@ from bot.lib.megatools import MegaTools
 from bot.helpers.files import send_as_guessed, splitit, listfiles, cleanup
 
 
-@Client.on_message(filters.regex("(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)"))
+@Client.on_message(filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)"))
 async def dl_from(_: Client, msg: Message):
     # Push info to temp db
     GLOB_TMP[msg.id] = [msg.text, f"{Config.DOWNLOAD_LOCATION}/{msg.id}"]
@@ -36,7 +36,7 @@ async def dl_from(_: Client, msg: Message):
     )
 
 
-@Client.on_callback_query(filters.regex("dwn_mg?.+"))
+@Client.on_callback_query(filters.regex(r"dwn_mg?.+"))
 async def dl_from_cb(client: Client, query: CallbackQuery):
     # Access saved info
     dtmp = GLOB_TMP.pop(int(query.data.split("-")[1]))

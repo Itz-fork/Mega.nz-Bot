@@ -32,7 +32,7 @@ async def to_up(_: Client, msg: Message):
     )
 
 
-@Client.on_callback_query(filters.regex("up_tgdl?.+"))
+@Client.on_callback_query(filters.regex(r"up_tgdl?.+"))
 async def to_up_cb(_: Client, query: CallbackQuery):
     # Get message content
     qcid = query.message.chat.id
