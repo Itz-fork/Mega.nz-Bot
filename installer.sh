@@ -50,18 +50,20 @@ function setup_env() {
 
 # Install packages for the current system
 function pkg_installer() {
+    echo -e "${White}   > Installing ${1}${Reset}"
+
     case $PKGMN in
 
         pacman)
-            pacman -S $1 &> /dev/null || show_error "pacman: Unable to install ${1}"
+            sudo pacman -S $1 &> /dev/null || show_error "pacman: Unable to install ${1}"
             ;;
         
         apt)
-            apt install $1 &> /dev/null || show_error "apt: Unable to install ${1}"
+            sudo apt install $1 &> /dev/null || show_error "apt: Unable to install ${1}"
             ;;
         
         dnf)
-            dnf install $1 &> /dev/null || show_error "dnf: Unable to install ${1}"
+            sudo dnf install $1 &> /dev/null || show_error "dnf: Unable to install ${1}"
             ;;
         
         *)
@@ -92,16 +94,12 @@ function check_deps() {
     is_megatools=$(command -v megatools &> /dev/null)
 
     if ! $is_git ; then
-        show_process "Installing git"
         pkg_installer ${pkgs_git[$PKGMN]}
     elif ! $is_pip3 ; then
-        show_process "Installing pip"
         pkg_installer ${pkgs_pip[$PKGMN]}
     elif ! $is_ffmpeg ; then
-        show_process "Installing ffmpeg"
         pkg_installer ffmpeg
     elif ! $is_megatools ; then
-        show_process "Installing megatools"
         pkg_installer megatools
     fi
 
@@ -147,8 +145,9 @@ EOF
 
 
 function run_installer() {
-    echo -e "${White}${Un_Purple}Welcome to ${Red}Mega.nz-Bot${Reset}${White}${Un_Purple} Setup!"
+    echo -e "${White}${Un_Purple}Welcome to ${Red}Mega.nz-Bot${Reset}${White}${Un_Purple} Setup!${Reset}"
 
+    exit 0
     setup_env
     clone_repo
     check_deps
