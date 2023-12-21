@@ -1,8 +1,0 @@
-class Config(object):
-    APP_ID = "YOUR_API_ID"
-    API_HASH = "YOUR_API_HASH"
-    BOT_TOKEN = "YOUR_BOT_TOKEN"
-    AUTH_USERS = set(int(x) for x in "TELEGRAM_IDS_OF_AUTH_USERS".split(" "))
-    # DON'T CHANGE THESE 2 VARS
-    DOWNLOAD_LOCATION = f"{getcwd()}/NexaBots"
-    TG_MAX_SIZE = 2040108421

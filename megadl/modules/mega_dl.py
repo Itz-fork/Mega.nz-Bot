@@ -4,7 +4,7 @@
 # @Description: Responsible for download function
 
 
-from os import path, stat, makedirs
+from os import path, stat, makedirs, getenv
 
 from pyrogram import Client, filters
 from pyrogram.types import (
@@ -14,7 +14,6 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from config import Config
 from megadl import GLOB_TMP
 from megadl.lib.megatools import MegaTools
 from megadl.helpers.files import send_as_guessed, splitit, listfiles, cleanup
@@ -23,7 +22,7 @@ from megadl.helpers.files import send_as_guessed, splitit, listfiles, cleanup
 @Client.on_message(filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)"))
 async def dl_from(_: Client, msg: Message):
     # Push info to temp db
-    GLOB_TMP[msg.id] = [msg.text, f"{Config.DOWNLOAD_LOCATION}/{msg.id}"]
+    GLOB_TMP[msg.id] = [msg.text, f"{getenv('DOWNLOAD_LOCATION')}/{msg.id}"]
     await msg.reply(
         "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
@@ -75,6 +74,7 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
         """
     )
     for file in f_list:
+        print("yeah")
         # Split files larger than 2GB
         if stat(file).st_size > 2040108421:
             await client.edit_message_text(
@@ -93,4 +93,3 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
         else:
             await send_as_guessed(client, file, qcid, resp.id)
     await resp.delete()
-    cleanup(dlid)

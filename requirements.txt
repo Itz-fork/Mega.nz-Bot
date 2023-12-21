@@ -2,3 +2,4 @@ pyrogram
 Tgcrypto
 filesplit
 filetype
+python-dotenv

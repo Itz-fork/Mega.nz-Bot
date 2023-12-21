@@ -20,7 +20,10 @@ class MegaTools:
     """
 
     def __init__(self, tg_client) -> None:
-        self.config = f"{os.getcwd()}/mega.ini"
+        if os.getenv("USE_ENV"):
+            self.config = "--username $MEGA_EMAIL --password $MEGA_PASSWORD"
+        else:
+            self.config = f"--config {os.getcwd()}/mega.ini"
         self.client = tg_client
 
     async def download(
@@ -41,13 +44,13 @@ class MegaTools:
         """
         # Public link download: Supports both file and folders
         if match(r"https?:\/\/mega\.nz\/(file|folder|#)?.+", url):
-            cmd = f'megadl --config {self.config} --path "{path}" {url}'
+            cmd = f'megadl {self.config} --path "{path}" {url}'
 
         # Private link downloads: Supports both file and folders
-        if match(r"\/Root\/((.*)|([^\s]*))\.", url):
-            cmd = f'megaget --no-ask-password --config {self.config} --path "{path}" {url}'
+        elif match(r"\/Root\/((.*)|([^\s]*))\.", url):
+            cmd = f'megaget --no-ask-password {self.config} --path "{path}" {url}'
         else:
-            cmd = f'megacopy --no-ask-password --config {self.config} -l "{path}" -r "{url}" --download'
+            cmd = f'megacopy --no-ask-password {self.config} -l "{path}" -r "{url}" --download'
         await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
         return listfiles(path)
 
@@ -71,27 +74,27 @@ class MegaTools:
                 raise UploadFailed(
                     self.__genErrorMsg("Given path doesn't belong to a file.")
                 )
-            cmd = f'megaput --config {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" "{path}"'
+            cmd = f'megaput {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" "{path}"'
         # For folders
         if os.path.isdir(path):
             if not os.path.isdir(path):
                 raise UploadFailed(
                     self.__genErrorMsg("Given path doesn't belong to a folder.")
                 )
-            cmd = f'megacopy --config {self.config} --no-ask-password -l "{path}" -r "/Root/{to_path}"'
+            cmd = f'megacopy {self.config} --no-ask-password -l "{path}" -r "/Root/{to_path}"'
         # Create remote upload path if it doesn't exist
         if not f"/Root/{to_path}" in (
-            await run_partial(run_on_shell, f"megals --config {self.config} /Root/")
+            await run_partial(run_on_shell, f"megals {self.config} /Root/")
         ):
             await run_partial(
-                run_on_shell, f'megamkdir --config {self.config} "/Root/{to_path}"'
+                run_on_shell, f'megamkdir {self.config} "/Root/{to_path}"'
             )
         # Upload
         await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
         # Generate link
         ulink = await run_partial(
             run_on_shell,
-            f'megaexport --config {self.config} "/Root/{to_path}/{os.path.basename(path)}"',
+            f'megaexport {self.config} "/Root/{to_path}/{os.path.basename(path)}"',
         )
         if not ulink:
             raise UploadFailed(
@@ -100,6 +103,7 @@ class MegaTools:
         return ulink
 
     def __shellExec(self, cmd: str, chat_id: int = None, msg_id: int = None):
+        print(cmd)
         run = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
