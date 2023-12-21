@@ -40,11 +40,11 @@ class MegaTools:
             - path (optional): string - Custom path to where the files need to be downloaded
         """
         # Public link download: Supports both file and folders
-        if match("https?:\/\/mega\.nz\/(file|folder|#)?.+", url):
+        if match(r"https?:\/\/mega\.nz\/(file|folder|#)?.+", url):
             cmd = f'megadl --config {self.config} --path "{path}" {url}'
 
         # Private link downloads: Supports both file and folders
-        if match("\/Root\/((.*)|([^\s]*))\.", url):
+        if match(r"\/Root\/((.*)|([^\s]*))\.", url):
             cmd = f'megaget --no-ask-password --config {self.config} --path "{path}" {url}'
         else:
             cmd = f'megacopy --no-ask-password --config {self.config} -l "{path}" -r "{url}" --download'
