@@ -20,7 +20,7 @@ class MegaTools:
     """
 
     def __init__(self, tg_client) -> None:
-        if os.getenv("USE_ENV"):
+        if os.getenv("USE_ENV") in ["True", "true"]:
             self.config = "--username $MEGA_EMAIL --password $MEGA_PASSWORD"
         else:
             self.config = f"--config {os.getcwd()}/mega.ini"
