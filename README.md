@@ -66,7 +66,7 @@ python3 -m megadl
 
 # Roadmap
 - [ ] Implement private mode
-- [ ] Url to Mega.nz uploader
+- [ ] Implement DDL to Mega.nz uploader
 - [ ] Better CLI output parser
 - [x] Heroku support
 - [x] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)

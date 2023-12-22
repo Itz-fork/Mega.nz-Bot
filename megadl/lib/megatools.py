@@ -4,11 +4,15 @@
 # Description: Helper class for pyrogram bots to interact with megatools cli
 
 import os
+import requests
 import subprocess
 
-from re import match
+
+from re import search, match
+from megadl.lib.pyros import humanbytes
 from megadl.helpers.files import listfiles
 from megadl.helpers.sysfncs import run_partial, run_on_shell
+from megadl.helpers.crypt import base64_to_a32, base64_url_decode, decrypt_attr
 
 
 class MegaTools:
@@ -101,6 +105,25 @@ class MegaTools:
                 self.__genErrorMsg("Upload failed due to an unknown error.")
             )
         return ulink
+    
+    @staticmethod
+    def file_info(url: str) -> list[str]:
+        """
+        Return basic info of a public file
+
+        Arguments:
+            - url: string - Mega.nz link of the file
+        """
+        file_id = search(r"(?<=/file/)(.*)(?=#)", url).group(0)
+        file_key = search(r"(?<=#)(.*)", url).group(0)
+        data = requests.post(
+            "https://g.api.mega.co.nz/cs", json=[{"a": "g", "ad": 1, "p": file_id}]
+        ).json()[0]
+        key = base64_to_a32(file_key)
+        tk = (key[0] ^ key[4], key[1] ^ key[5], key[2] ^ key[6], key[3] ^ key[7])
+        fsize = humanbytes(data["s"])
+        fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
+        return [fsize, fname]
 
     def __shellExec(self, cmd: str, chat_id: int = None, msg_id: int = None):
         print(cmd)
@@ -137,7 +160,7 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
     def __checkErrors(self, out):
         if "not found" in out:
             raise MegatoolsNotFound
-        
+
         elif "already exists at" in out:
             pass
 

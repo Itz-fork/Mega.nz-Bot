@@ -19,7 +19,9 @@ from megadl.lib.megatools import MegaTools
 from megadl.helpers.files import send_as_guessed, splitit, listfiles, cleanup
 
 
-@Client.on_message(filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)"))
+@Client.on_message(
+    filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)")
+)
 async def dl_from(_: Client, msg: Message):
     # Push info to temp db
     GLOB_TMP[msg.id] = [msg.text, f"{getenv('DOWNLOAD_LOCATION')}/{msg.id}"]
@@ -28,7 +30,7 @@ async def dl_from(_: Client, msg: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Download 💾", callback_data=f"dwn_mg-{msg.id}")],
-                [InlineKeyboardButton("Info ℹ️", callback_data=f"dwn_mg-{msg.id}")],
+                [InlineKeyboardButton("Info ℹ️", callback_data=f"info_mg-{msg.id}")],
                 [InlineKeyboardButton("Close ❌", callback_data="closeqcb")],
             ]
         ),
@@ -47,18 +49,12 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
         makedirs(dlid)
     # Download the file/folder
     resp = await query.edit_message_text(
-        """
-    📥 Your download is starting...""",
-        reply_markup=None,
+        "Your download is starting 📥...", reply_markup=None
     )
     cli = MegaTools(client)
     f_list = await cli.download(url, qcid, resp.id, path=dlid)
     try:
-        await query.edit_message_text(
-            """
-            🥳 Successfully downloaded the content
-            """
-        )
+        await query.edit_message_text("Successfully downloaded the content 🥳")
     except Exception as e:
         await query.edit_message_text(
             f"""
@@ -68,21 +64,16 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
             """
         )
     # Send file(s) to the user
-    await resp.edit(
-        """
-        🕔 Trying to upload now...
-        """
-    )
+    await resp.edit("Trying to upload now 📤...")
     for file in f_list:
-        print("yeah")
         # Split files larger than 2GB
         if stat(file).st_size > 2040108421:
             await client.edit_message_text(
                 qcid,
                 resp.id,
                 """
-            The file you're trying to upload exceeds telegram limits.
-            Trying to split the files...
+                The file you're trying to upload exceeds telegram limits 😬.
+                Trying to split the files 🔪...
                 """,
             )
             splout = f"{dlid}/splitted"
@@ -92,4 +83,22 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
             cleanup(splout)
         else:
             await send_as_guessed(client, file, qcid, resp.id)
+    cleanup(dlid)
     await resp.delete()
+
+
+@Client.on_callback_query(filters.regex(r"info_mg?.+"))
+async def info_from_cb(_: Client, query: CallbackQuery):
+    url = GLOB_TMP.pop(int(query.data.split("-")[1]))[0]
+    size, name = MegaTools.file_info(url)
+    await query.edit_message_text(
+        f"""
+》 **File Details**
+
+**📛 Name:** `{name}`
+**🗂 Size:** `{size}`
+**📎 URL:** `{url}`
+
+""",
+        reply_markup=None,
+    )
