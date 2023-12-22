@@ -1,7 +1,7 @@
-# @Author: https://github.com/Itz-fork
-# @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.2
-# @Description: Responsible for download function
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: Responsible for download function
 
 
 from os import path, stat, makedirs, getenv

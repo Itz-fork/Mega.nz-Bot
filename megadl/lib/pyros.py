@@ -1,7 +1,7 @@
-# @Author: https://github.com/Itz-fork
-# @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.2
-# @Description: Contains pyrogram tools
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: Contains pyrogram tools
 
 from time import time
 from math import floor
@@ -35,9 +35,12 @@ async def track_progress(current, total, client, ides, start):
             estimated_total_time if estimated_total_time != "" else "0 s",
         )
         try:
-            await client.edit_message_text(ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**")
+            await client.edit_message_text(
+                ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**"
+            )
         except:
             pass
+
 
 def TimeFormatter(milliseconds: int) -> str:
     seconds, milliseconds = divmod(int(milliseconds), 1000)

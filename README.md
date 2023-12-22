@@ -13,17 +13,26 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 > This is the successor to the popular [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot/tree/legacy). So don't expect all of it's original features.
 
 
-# Config Vars 📓
-Config vars are stored `.env` file at the root of the bot. Check [sample file](/.env.sample) for more info
-
-
 # Deploy
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
+
+## Config Vars 📓
+Config vars are stored `.env` file at the root of the bot. Check [sample file](/.env.sample) for more info
+
+**Mandatory Vars,**
+- `APP_ID` - Your APP_ID. Get it from [my.telegram.org](my.telegram.org)
+- `API_HASH` - Your API_ID. Get it from [my.telegram.org](my.telegram.org)
+- `BOT_TOKEN` - Your Bot Token From [@BotFather](https://t.me/BotFather)
+
+**Non Mandatory Vars,**
+- `USE_ENV` - Set this to `True` if you aren't using mega config file (`mega.ini`). Defaults to `False`
+- `MEGA_EMAIL` - Fill this if you want to use your own Mega Account. This is your Mega account Email
+- `MEGA_PASSWORD` - Fill this if you want to use your own Mega Account. This is your Mega account Password
 
 ### Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
 
-### local
+### Local
 ---
 **Tip 💡:**
 If you're using a linux distro with `apt`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot).

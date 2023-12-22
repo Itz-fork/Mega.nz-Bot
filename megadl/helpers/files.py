@@ -1,7 +1,7 @@
-# @Author: https://github.com/Itz-fork
-# @Project: https://github.com/Itz-fork/Mega.nz-Bot
-# @Version: nightly-0.2
-# @Description: Contains code related to fs functions
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: Contains code related to fs functions
 
 from time import time
 from shutil import rmtree
@@ -13,7 +13,7 @@ from filetype import guess
 from filesplit.split import Split
 
 from megadl.lib.pyros import track_progress
-from megadl.helpers.cors import run_partial, run_on_shell
+from megadl.helpers.sysfncs import run_partial, run_on_shell
 
 
 # List all the files inside a dir
