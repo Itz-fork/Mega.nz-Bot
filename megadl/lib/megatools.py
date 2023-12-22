@@ -105,7 +105,7 @@ class MegaTools:
                 self.__genErrorMsg("Upload failed due to an unknown error.")
             )
         return ulink
-    
+
     @staticmethod
     def file_info(url: str) -> list[str]:
         """
@@ -114,8 +114,19 @@ class MegaTools:
         Arguments:
             - url: string - Mega.nz link of the file
         """
-        file_id = search(r"(?<=/file/)(.*)(?=#)", url).group(0)
-        file_key = search(r"(?<=#)(.*)", url).group(0)
+        file_id = None
+        file_key = None
+        # for mega.nz/file/
+        if "/file/" in url:
+            file_id = search(r"(?<=/file/)(.*)(?=#)", url)[0]
+            file_key = search(r"(?<=#)(.*)", url)[0]
+        # for mega.nz/#!...!....
+        elif "/#!" in url:
+            _udta = search(r"(?<=!)(.*)", url)[0].split("!")
+            file_id = _udta[0]
+            file_key = _udta[1]
+        else:
+            return "undefined", "undefined"
         data = requests.post(
             "https://g.api.mega.co.nz/cs", json=[{"a": "g", "ad": 1, "p": file_id}]
         ).json()[0]
