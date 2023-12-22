@@ -3,4 +3,5 @@ Tgcrypto
 filesplit
 filetype
 python-dotenv
+requests
 pycryptodome
