@@ -53,6 +53,7 @@ class MegaTools:
         # Private link downloads: Supports both file and folders
         elif match(r"\/Root\/((.*)|([^\s]*))\.", url):
             cmd = f'megaget --no-ask-password {self.config} --path "{path}" {url}'
+
         else:
             cmd = f'megacopy --no-ask-password {self.config} -l "{path}" -r "{url}" --download'
         await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
@@ -74,18 +75,14 @@ class MegaTools:
         cmd = ""
         # For files
         if os.path.isfile(path):
-            if not os.path.isfile(path):
-                raise UploadFailed(
-                    self.__genErrorMsg("Given path doesn't belong to a file.")
-                )
             cmd = f'megaput {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" "{path}"'
         # For folders
-        if os.path.isdir(path):
-            if not os.path.isdir(path):
-                raise UploadFailed(
-                    self.__genErrorMsg("Given path doesn't belong to a folder.")
-                )
+        elif os.path.isdir(path):
             cmd = f'megacopy {self.config} --no-ask-password -l "{path}" -r "/Root/{to_path}"'
+        else:
+            raise UploadFailed(
+                self.__genErrorMsg("Given path doesn't belong to a file or folder.")
+            )
         # Create remote upload path if it doesn't exist
         if not f"/Root/{to_path}" in (
             await run_partial(run_on_shell, f"megals {self.config} /Root/")
