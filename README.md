@@ -56,7 +56,7 @@ pip3 install -U -r requirements.txt
 python3 -m megadl
 ```
 
-#### Config vars
+### Config vars
 Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
 
 # Roadmap
