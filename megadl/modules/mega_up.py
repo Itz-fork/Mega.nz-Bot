@@ -12,6 +12,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
+from megadl.helpers.files import cleanup
 from megadl.lib.megatools import MegaTools
 from megadl.lib.pyros import track_progress
 
@@ -53,3 +54,4 @@ async def to_up_cb(_: Client, query: CallbackQuery):
             [[InlineKeyboardButton("Visit 🔗", url=limk)]]
         ),
     )
+    cleanup(dl_path)
