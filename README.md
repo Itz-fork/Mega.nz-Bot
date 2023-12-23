@@ -3,14 +3,14 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 
 
 # Features
-- Download, Upload fies/folders easily ⚡
+- Download, Upload files/folders easily ⚡
 - No login required 🙅‍♂️
 - Support for Mega.nz user account 🗃️
 - Support for both private and public content 🤝
 
 > Note ⚠️️:
 > Please see [Roadmap](#Roadmap) for current feature implementations 🤗
-> This is the successor to the popular [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot/tree/legacy). So don't expect all of it's original features.
+> This is the successor to the popular [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot/tree/legacy) but don't expect all of it's original features.
 
 
 # Deploy
