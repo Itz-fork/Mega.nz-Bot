@@ -103,6 +103,10 @@ function check_deps() {
         pkg_installer megatools
     fi
 
+    show_process "Setting up python virtual environment"
+    python3 -m venv .venv
+    source .venv/bin/activate
+
     pip3 install -U -r requirements.txt ||
         pip install -U -r requirements.txt ||
             show_error "python: Unable to install requirements"
@@ -137,6 +141,7 @@ MEGA_EMAIL=$mega_email
 MEGA_PASSWORD=$mega_password
 
 DOWNLOAD_LOCATION=${PWD}/NexaBots
+CHUNK_SIZE=10240
 TG_MAX_SIZE=2040108421
 EOF
 
