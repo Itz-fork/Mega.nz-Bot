@@ -77,13 +77,13 @@ async def send_as_guessed(client, file, chat_id, mid):
             )
             vid_dur = int(float(_sh))
             # Generate thumbnail for the video
-            _tmpth = f"MegaDownloads/Thumbnails/{chat_id}"
-            _thumb = f"{_tmpth}_{mid}.png"
+            _tmpth = f"MegaDownloads/Thumbnails"
+            _thumb = f"{_tmpth}/{{chat_id}}_{mid}.png"
             if not path.isdir(_tmpth):
                 makedirs(_tmpth)
             _sh = await run_partial(
                 run_on_shell,
-                f"ffmpeg -i {file}, -ss {timedelta(seconds=int(vid_dur/10))} -vframes 1 {_thumb}",
+                f"ffmpeg -i {file} -ss {timedelta(seconds=int(vid_dur/10))} -vframes 1 {_thumb}",
             )
             await client.send_video(
                 chat_id,
