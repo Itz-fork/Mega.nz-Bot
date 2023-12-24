@@ -152,7 +152,6 @@ EOF
 function run_installer() {
     echo -e "${White}${Un_Purple}Welcome to ${Red}Mega.nz-Bot${Reset}${White}${Un_Purple} Setup!${Reset}"
 
-    exit 0
     setup_env
     clone_repo
     check_deps
