@@ -4,9 +4,9 @@
 # Description: Responsible for download function
 
 
-from os import path, stat, makedirs, getenv
+from os import path, makedirs
 
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import (
     Message,
     CallbackQuery,
@@ -14,17 +14,18 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from megadl import GLOB_TMP
+from megadl import MeganzClient, GLOB_TMP
 from megadl.lib.megatools import MegaTools
-from megadl.helpers.files import send_as_guessed, splitit, listfiles, cleanup
+from megadl.helpers.files import cleanup
 
 
-@Client.on_message(
+@MeganzClient.on_message(
     filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)")
 )
-async def dl_from(_: Client, msg: Message):
+@MeganzClient.handle_checks
+async def dl_from(_: MeganzClient, msg: Message):
     # Push info to temp db
-    GLOB_TMP[msg.id] = [msg.text, f"{getenv('DOWNLOAD_LOCATION')}/{msg.id}"]
+    GLOB_TMP[msg.id] = [msg.text, f"{_.dl_loc}/{msg.id}"]
     await msg.reply(
         "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
@@ -37,8 +38,9 @@ async def dl_from(_: Client, msg: Message):
     )
 
 
-@Client.on_callback_query(filters.regex(r"dwn_mg?.+"))
-async def dl_from_cb(client: Client, query: CallbackQuery):
+@MeganzClient.on_callback_query(filters.regex(r"dwn_mg?.+"))
+@MeganzClient.handle_checks
+async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     # Access saved info
     dtmp = GLOB_TMP.pop(int(query.data.split("-")[1]))
     url = dtmp[0]
@@ -65,30 +67,14 @@ async def dl_from_cb(client: Client, query: CallbackQuery):
         )
     # Send file(s) to the user
     await resp.edit("Trying to upload now 📤...")
-    for file in f_list:
-        # Split files larger than 2GB
-        if stat(file).st_size > 2040108421:
-            await client.edit_message_text(
-                qcid,
-                resp.id,
-                """
-                The file you're trying to upload exceeds telegram limits 😬.
-                Trying to split the files 🔪...
-                """,
-            )
-            splout = f"{dlid}/splitted"
-            await splitit(file, splout)
-            for file in listfiles(splout):
-                await send_as_guessed(client, file, qcid, resp.id)
-            cleanup(splout)
-        else:
-            await send_as_guessed(client, file, qcid, resp.id)
+    await client.send_files(f_list, qcid, resp.id)
     cleanup(dlid)
     await resp.delete()
 
 
-@Client.on_callback_query(filters.regex(r"info_mg?.+"))
-async def info_from_cb(_: Client, query: CallbackQuery):
+@MeganzClient.on_callback_query(filters.regex(r"info_mg?.+"))
+@MeganzClient.handle_checks
+async def info_from_cb(_: MeganzClient, query: CallbackQuery):
     url = GLOB_TMP.pop(int(query.data.split("-")[1]))[0]
     size, name = MegaTools.file_info(url)
     await query.edit_message_text(

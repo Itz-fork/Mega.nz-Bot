@@ -77,7 +77,7 @@ async def send_as_guessed(client, file, chat_id, mid):
             )
             vid_dur = int(float(_sh))
             # Generate thumbnail for the video
-            _tmpth = f"MegaDownloads/Thumbnails"
+            _tmpth = f"{client.tmp_loc}/thumbnails"
             _thumb = f"{_tmpth}/{{chat_id}}_{mid}.png"
             if not path.isdir(_tmpth):
                 makedirs(_tmpth)

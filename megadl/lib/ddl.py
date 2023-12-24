@@ -4,10 +4,11 @@
 # Description: Helper class for downloading direct download links
 
 import os
+
 from time import time
 from re import match, sub
-from aiofiles import open as async_open
 from aiohttp import ClientSession
+from aiofiles import open as async_open
 
 from .pyros import track_progress
 

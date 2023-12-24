@@ -4,12 +4,15 @@
 # Description: Contains all the commands of the bot
 
 
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import Message
 
+from megadl import MeganzClient
 
-@Client.on_message(filters.command("start"))
-async def start_msg(_: Client, msg: Message):
+
+@MeganzClient.on_message(filters.command("start"))
+@MeganzClient.handle_checks
+async def start_msg(_: MeganzClient, msg: Message):
     await msg.reply_text(
         f"""
     Hi `{msg.from_user.first_name}`, this is your personal Mega.nz bot!

@@ -3,9 +3,8 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Responsible for upload function
 
-from os import getenv
 from time import time
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import (
     Message,
     CallbackQuery,
@@ -13,6 +12,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
+from megadl import MeganzClient
 from megadl.lib.ddl import Downloader
 from megadl.lib.megatools import MegaTools
 from megadl.lib.pyros import track_progress
@@ -21,7 +21,7 @@ from megadl.helpers.files import cleanup
 
 
 # Respond only to Documents, Photos, Videos, GIFs, Audio and to urls other than mega
-@Client.on_message(
+@MeganzClient.on_message(
     filters.document
     | filters.photo
     | filters.video
@@ -31,7 +31,8 @@ from megadl.helpers.files import cleanup
         r"((http|https)://)(www.)?(?!mega)[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)"
     )
 )
-async def to_up(_: Client, msg: Message):
+@MeganzClient.handle_checks
+async def to_up(_: MeganzClient, msg: Message):
     await msg.reply(
         "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
@@ -43,8 +44,9 @@ async def to_up(_: Client, msg: Message):
     )
 
 
-@Client.on_callback_query(filters.regex(r"up_tgdl?.+"))
-async def to_up_cb(client: Client, query: CallbackQuery):
+@MeganzClient.on_callback_query(filters.regex(r"up_tgdl?.+"))
+@MeganzClient.handle_checks
+async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     # Get message content
     qcid = query.message.chat.id
     qmid = query.message.id
@@ -62,9 +64,7 @@ async def to_up_cb(client: Client, query: CallbackQuery):
         )
     else:
         dl = Downloader()
-        dl_path = await dl.download(
-            msg.text, getenv("DOWNLOAD_LOCATION"), client, (qcid, qmid)
-        )
+        dl_path = await dl.download(msg.text, client.dl_loc, client, (qcid, qmid))
     # Upload the file
     cli = MegaTools(client)
     limk = await cli.upload(dl_path, qcid, qmid)

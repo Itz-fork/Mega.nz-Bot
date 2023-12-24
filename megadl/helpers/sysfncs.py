@@ -27,8 +27,6 @@ def run_on_shell(cmd):
     """
     Run shell commands and get it's output
     """
-    print(cmd)
     run = Popen(cmd, stdout=PIPE, stderr=PIPE, shell=True)
     shout = run.stdout.read()[:-1].decode("utf-8")
-    print(shout)
     return shout

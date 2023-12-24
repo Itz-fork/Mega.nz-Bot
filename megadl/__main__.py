@@ -4,26 +4,17 @@
 # Description: __main__.py
 
 
-from os import getenv
-from dotenv import load_dotenv
-from pyrogram import Client, idle
+from pyrogram import idle
 
-# .env
-print("Loading env...")
-load_dotenv()
+from . import MeganzClient
 
-# Pyrogram client
-meganzbot = Client(
-    name="MegaBot",
-    bot_token=getenv("BOT_TOKEN"),
-    api_id=getenv("APP_ID"),
-    api_hash=getenv("API_HASH"),
-    plugins=dict(root="megadl/modules"),
-    sleep_threshold=10,
-)
+# Custom pyrogram client
+meganzbot = MeganzClient()
 
 # Run the bot
 if __name__ == "__main__":
-    print("Mega.nz Bot is running...")
+    print("Mega.nz Bot is starting...")
+
+    # start the bot
     meganzbot.start()
     idle()

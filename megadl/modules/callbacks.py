@@ -5,14 +5,15 @@
 
 from shutil import rmtree
 
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
-from megadl import GLOB_TMP
+from megadl import MeganzClient, GLOB_TMP
 
 
-@Client.on_callback_query(filters.regex(r"closeqcb"))
-async def close_gb(_: Client, query: CallbackQuery):
+@MeganzClient.on_callback_query(filters.regex(r"closeqcb"))
+@MeganzClient.handle_checks
+async def close_gb(_: MeganzClient, query: CallbackQuery):
     try:
         # Remove user from global temp db
         dtmp = GLOB_TMP.pop(int(query.data.split("-")[1]))
@@ -21,7 +22,6 @@ async def close_gb(_: Client, query: CallbackQuery):
     except:
         pass
     await query.edit_message_text(
-        """
-    Process was canceled by the user""",
+        "Process was canceled by the user",
         reply_markup=None,
     )
