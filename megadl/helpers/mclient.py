@@ -40,7 +40,15 @@ class MeganzClient(Client):
 
         print("> Loading config")
         load_dotenv()
-        self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
+
+        # set DOWNLOAD_LOCATION variable
+        # if USE_ENV is True it'll use currend dir + NexaBots
+        # otherwise use location defined in .env file by user
+        if os.getenv("USE_ENV") in ["True", "true"]:
+            self.dl_loc = f"{os.getcwd()}/NexaBots"
+        else:
+            self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
+        
         self.tmp_loc = f"{self.dl_loc}/temps"
 
         print("> Initializing client")
