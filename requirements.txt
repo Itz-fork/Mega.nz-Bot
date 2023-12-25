@@ -6,4 +6,6 @@ python-dotenv
 requests
 aiofiles
 aiohttp[speedups]
+pymongo
+dnspython
 pycryptodome

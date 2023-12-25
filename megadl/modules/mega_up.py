@@ -56,6 +56,7 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     await client.edit_message_text(
         qcid, qmid, "Trying to download the file 📬", reply_markup=None
     )
+
     # Download files accordingly
     dl_path = None
     if msg.media:
@@ -65,8 +66,16 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     else:
         dl = Downloader()
         dl_path = await dl.download(msg.text, client.dl_loc, client, (qcid, qmid))
+
     # Upload the file
-    cli = MegaTools(client)
+    conf = None
+    if client.is_public:
+        udoc = await client.database.is_there(qcid)
+        print(udoc)
+        if udoc:
+            conf = f"--username {udoc['email']} --password {udoc['password']}"
+    cli = MegaTools(client, conf)
+
     limk = await cli.upload(dl_path, qcid, qmid)
     await client.edit_message_text(
         qcid,

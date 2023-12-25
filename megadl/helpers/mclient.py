@@ -3,7 +3,9 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Contains code related to custom pyrogram.Client
 
+import functools
 import os
+import asyncio
 import logging
 
 from typing import Callable
@@ -11,7 +13,9 @@ from dotenv import load_dotenv
 from asyncio import sleep as xsleep
 from pyrogram.types import Message
 from pyrogram import Client, errors
+from pyrogram.handlers import MessageHandler
 
+from .database import Users
 from .files import send_as_guessed, cleanup, splitit, listfiles
 
 
@@ -32,15 +36,11 @@ class MeganzClient(Client):
     """
 
     version = "v2-nightly"
+    database = Users() if os.getenv("MONGO_URI") else None
     dl_loc = None
     tmp_loc = None
 
     def __init__(self):
-        print("--------------------")
-
-        print("> Loading config")
-        load_dotenv()
-
         # set DOWNLOAD_LOCATION variable
         # if USE_ENV is True it'll use currend dir + NexaBots
         # otherwise use location defined in .env file by user
@@ -48,9 +48,10 @@ class MeganzClient(Client):
             self.dl_loc = f"{os.getcwd()}/NexaBots"
         else:
             self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
-        
+
         self.tmp_loc = f"{self.dl_loc}/temps"
 
+        # Initializing pyrogram
         print("> Initializing client")
         super().__init__(
             "MegaBot",
@@ -61,6 +62,12 @@ class MeganzClient(Client):
             sleep_threshold=10,
         )
 
+        # Initializing mongodb
+        print("> Initializing database")
+        self.is_public = True if self.database else False
+        if not self.database:
+            print("     Warning: Mongodb url not found")
+
         # creating directories
         print("> Creating directories")
         if not os.path.isdir(self.dl_loc):
@@ -69,18 +76,26 @@ class MeganzClient(Client):
         if not os.path.isdir(self.tmp_loc):
             os.makedirs(self.tmp_loc)
 
+        # other stuff
+        print("> Setting up additional functions")
+        self.add_handler(MessageHandler(self.ilistner))
+        self.tasks = {}
+
         print("--------------------")
 
     @classmethod
     def handle_checks(self, func: Callable) -> Callable:
         """
-        Decorator to handle,
-            - errors
-            - private mode
+        Decorator to run middleware
         """
 
         async def fn_run(client: Client, msg: Message):
+            print("oo")
             try:
+                # db functions
+                if self.database:
+                    await self.database.add(msg.from_user.id)
+
                 return await func(client, msg)
             # Floodwait handling
             except errors.FloodWait as e:
@@ -91,6 +106,33 @@ class MeganzClient(Client):
                 logging.warning(_emsg.format(self.version, func.__module__, e))
 
         return fn_run
+
+    async def ask(self, chat_id: int, text: str, *args, **kwargs):
+        await self.send_message(chat_id, text, *args, **kwargs)
+        woop = asyncio.get_running_loop()
+        futr = woop.create_future()
+
+        futr.add_done_callback(
+            functools.partial(lambda _, uid: self.tasks.pop(uid, None), chat_id)
+        )
+        self.tasks[chat_id] = {"task": futr}
+
+        # wait for 1 min
+        try:
+            return await asyncio.wait_for(futr, 60.0)
+        except asyncio.TimeoutError:
+            await self.send_message(
+                chat_id, "Task was cancelled as you haven't answered for 1 minute"
+            )
+            self.tasks.pop(chat_id, None)
+            return None
+
+    async def ilistner(self, _, msg: Message):
+        lstn = self.tasks.get(msg.chat.id)
+        if lstn and not lstn["task"].done():
+            print(msg.text)
+            lstn["task"].set_result(msg)
+        return msg.continue_propagation()
 
     async def send_files(self, files: list[str], chat_id: int, msg_id: int):
         """

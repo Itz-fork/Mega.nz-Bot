@@ -8,13 +8,9 @@ from pyrogram import idle
 
 from . import MeganzClient
 
-# Custom pyrogram client
-meganzbot = MeganzClient()
-
 # Run the bot
 if __name__ == "__main__":
-    print("Mega.nz Bot is starting...")
-
-    # start the bot
+    # Custom pyrogram client
+    meganzbot = MeganzClient()
     meganzbot.start()
     idle()

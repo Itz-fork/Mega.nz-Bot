@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains all the commands of the bot
+# Description: Contains all the general commands of the bot
 
 
 from pyrogram import filters

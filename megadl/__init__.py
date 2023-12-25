@@ -3,6 +3,16 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: __init__.py
 
+# start msg
+print("Mega.nz Bot is starting...")
+
+
+# loading config
+from dotenv import load_dotenv
+print("--------------------")
+print("> Loading config")
+load_dotenv()
+
 from .helpers.mclient import MeganzClient
 
 # Dict to act as a temp key value database

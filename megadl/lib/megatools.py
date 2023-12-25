@@ -23,8 +23,10 @@ class MegaTools:
     Project: https://github.com/Itz-fork/Mega.nz-Bot
     """
 
-    def __init__(self, tg_client) -> None:
-        if os.getenv("USE_ENV") in ["True", "true"]:
+    def __init__(self, tg_client, pre_conf=None) -> None:
+        if pre_conf:
+            self.config = f"--config {os.getcwd()}/mega.ini {pre_conf}"
+        elif os.getenv("USE_ENV") in ["True", "true"]:
             self.config = "--username $MEGA_EMAIL --password $MEGA_PASSWORD"
         else:
             self.config = f"--config {os.getcwd()}/mega.ini"
@@ -75,7 +77,7 @@ class MegaTools:
         cmd = ""
         # For files
         if os.path.isfile(path):
-            cmd = f'megaput {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}" "{path}"'
+            cmd = f'megaput {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}/" "{path}"'
         # For folders
         elif os.path.isdir(path):
             cmd = f'megacopy {self.config} --no-ask-password -l "{path}" -r "/Root/{to_path}"'

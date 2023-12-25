@@ -46,14 +46,23 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     url = dtmp[0]
     dlid = dtmp[1]
     qcid = query.message.chat.id
+
     # Create unique download folder
     if not path.isdir(dlid):
         makedirs(dlid)
+
     # Download the file/folder
     resp = await query.edit_message_text(
         "Your download is starting 📥...", reply_markup=None
     )
-    cli = MegaTools(client)
+
+    conf = None
+    if client.is_public:
+        udoc = await client.database.is_there(qcid)
+        if udoc:
+            conf = f"--username {udoc['email']} --password {udoc['password']}"
+    cli = MegaTools(client, conf)
+
     f_list = await cli.download(url, qcid, resp.id, path=dlid)
     try:
         await query.edit_message_text("Successfully downloaded the content 🥳")
