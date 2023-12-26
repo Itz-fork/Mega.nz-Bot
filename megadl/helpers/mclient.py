@@ -3,13 +3,12 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Contains code related to custom pyrogram.Client
 
-import functools
 import os
 import asyncio
 import logging
+import functools
 
 from typing import Callable
-from dotenv import load_dotenv
 from asyncio import sleep as xsleep
 from pyrogram.types import Message
 from pyrogram import Client, errors
