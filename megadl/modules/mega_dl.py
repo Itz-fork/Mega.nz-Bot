@@ -86,7 +86,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
 @MeganzClient.handle_checks
 async def info_from_cb(_: MeganzClient, query: CallbackQuery):
     url = GLOB_TMP.pop(int(query.data.split("-")[1]))[0]
-    size, name = MegaTools.file_info(url)
+    size, name = await MegaTools.file_info(url)
     await query.edit_message_text(
         f"""
 》 **File Details**
