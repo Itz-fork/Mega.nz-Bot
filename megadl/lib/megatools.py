@@ -4,11 +4,11 @@
 # Description: Helper class for pyrogram bots to interact with megatools cli
 
 import os
-import requests
 import subprocess
 
 
 from re import search, match
+from aiohttp import ClientSession
 from megadl.lib.pyros import humanbytes
 from megadl.helpers.files import listfiles
 from megadl.helpers.sysfncs import run_partial, run_on_shell
@@ -35,7 +35,6 @@ class MegaTools:
         # regexes
         self.rgx_pubf = r"https?:\/\/mega\.nz\/(file|folder|#)?.+"
         self.rgx_prvf = r"\/Root\/((.*)|([^\s]*))\."
-
 
     async def download(
         self,
@@ -111,7 +110,7 @@ class MegaTools:
         return ulink
 
     @staticmethod
-    def file_info(url: str) -> list[str]:
+    async def file_info(url: str) -> list[str]:
         """
         Return basic info of a public file
 
@@ -120,6 +119,7 @@ class MegaTools:
         """
         file_id = None
         file_key = None
+        data = None
         # for mega.nz/file/
         if "/file/" in url:
             file_id = search(r"(?<=/file/)(.*)(?=#)", url)[0]
@@ -131,9 +131,12 @@ class MegaTools:
             file_key = _udta[1]
         else:
             return "undefined", "undefined"
-        data = requests.post(
-            "https://g.api.mega.co.nz/cs", json=[{"a": "g", "ad": 1, "p": file_id}]
-        ).json()[0]
+
+        async with ClientSession() as session:
+            async with session.post(
+                "https://g.api.mega.co.nz/cs", json=[{"a": "g", "ad": 1, "p": file_id}]
+            ) as resp:
+                data = (await resp.json())[0]
         key = base64_to_a32(file_key)
         tk = (key[0] ^ key[4], key[1] ^ key[5], key[2] ^ key[6], key[3] ^ key[7])
         fsize = humanbytes(data["s"])

@@ -3,7 +3,6 @@ Tgcrypto
 filesplit
 filetype
 python-dotenv
-requests
 aiofiles
 aiohttp[speedups]
 pymongo
