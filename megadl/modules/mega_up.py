@@ -68,6 +68,7 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
         dl_path = await dl.download(msg.text, client.dl_loc, client, (qcid, qmid))
 
     # Upload the file
+    # weird workaround to add support for private mode
     conf = None
     if client.is_public:
         udoc = await client.database.is_there(qcid)

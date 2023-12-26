@@ -56,6 +56,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
         "Your download is starting 📥...", reply_markup=None
     )
 
+    # weird workaround to add support for private mode
     conf = None
     if client.is_public:
         udoc = await client.database.is_there(qcid)

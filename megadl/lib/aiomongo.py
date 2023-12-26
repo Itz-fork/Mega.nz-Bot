@@ -1,5 +1,5 @@
 from os import getenv
-from typing import Any, Optional, Sequence, Type, Union
+from typing import Any
 from bson.codec_options import TypeRegistry
 from pymongo.collection import Collection
 from pymongo.mongo_client import MongoClient

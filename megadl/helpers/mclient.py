@@ -78,7 +78,7 @@ class MeganzClient(Client):
 
         # other stuff
         print("> Setting up additional functions")
-        self.add_handler(MessageHandler(self.ilistner))
+        self.add_handler(MessageHandler(self.use_listner))
         self.tasks = {}
 
         print("--------------------")
@@ -90,7 +90,6 @@ class MeganzClient(Client):
         """
 
         async def fn_run(client: Client, msg: Message):
-            print("oo")
             try:
                 # db functions
                 if self.database:
@@ -127,7 +126,7 @@ class MeganzClient(Client):
             self.tasks.pop(chat_id, None)
             return None
 
-    async def ilistner(self, _, msg: Message):
+    async def use_listner(self, _, msg: Message):
         lstn = self.tasks.get(msg.chat.id)
         if lstn and not lstn["task"].done():
             print(msg.text)
