@@ -43,14 +43,14 @@ def TimeFormatter(milliseconds: int) -> str:
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
 
-    if days > 0:
-        return f"{days}d"
-    elif hours > 0:
-        return f"{hours}h"
-    elif minutes > 0:
+    if minutes > 0:
         return f"{minutes}m"
     elif seconds > 0:
         return f"{seconds}s"
+    elif hours > 0:
+        return f"{hours}h"
+    elif days > 0:
+        return f"{days}d"
     else:
         return f"{milliseconds}ms"
 
