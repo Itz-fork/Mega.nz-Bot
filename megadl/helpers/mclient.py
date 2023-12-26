@@ -10,6 +10,8 @@ import functools
 
 from typing import Callable
 from asyncio import sleep as xsleep
+from cryptography.fernet import Fernet
+
 from pyrogram.types import Message
 from pyrogram import Client, errors
 from pyrogram.handlers import MessageHandler
@@ -43,8 +45,9 @@ class MeganzClient(Client):
         # set DOWNLOAD_LOCATION variable
         # if USE_ENV is True it'll use currend dir + NexaBots
         # otherwise use location defined in .env file by user
+        self.cwd = os.getcwd()
         if os.getenv("USE_ENV") in ["True", "true"]:
-            self.dl_loc = f"{os.getcwd()}/NexaBots"
+            self.dl_loc = f"{self.cwd}/NexaBots"
         else:
             self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
 
@@ -63,8 +66,27 @@ class MeganzClient(Client):
 
         # Initializing mongodb
         print("> Initializing database")
+        self.cipher = None
         self.is_public = True if self.database else False
-        if not self.database:
+
+        if self.is_public:
+            # check if private key exists as a file
+            key_loc = f"{os.getcwd()}/cipher.key"
+            if os.path.isfile(key_loc):
+                with open(key_loc, "r") as f:
+                    key = f.read().encode()
+                    self.cipher = Fernet(key)
+            # check if private key exists as an env var
+            elif os.getenv("CIPHER_KEY"):
+                self.cipher = Fernet(os.getenv("CIPHER_KEY").encode())
+            # otherwise exit with error code 1
+            # although we can generate a new key that's not a good idea
+            # because if deployer lose it, it'll make all the existing data useless
+            # too much black magic leads to chaos
+            else:
+                logging.warning("Unable to find encryption key")
+                exit(1)
+        else:
             print("     Warning: Mongodb url not found")
 
         # creating directories

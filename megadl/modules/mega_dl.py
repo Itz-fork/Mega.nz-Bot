@@ -61,7 +61,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     if client.is_public:
         udoc = await client.database.is_there(qcid)
         if udoc:
-            conf = f"--username {udoc['email']} --password {udoc['password']}"
+            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
     cli = MegaTools(client, conf)
 
     f_list = await cli.download(url, qcid, resp.id, path=dlid)

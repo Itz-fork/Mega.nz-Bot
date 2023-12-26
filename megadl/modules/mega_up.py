@@ -72,9 +72,9 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     conf = None
     if client.is_public:
         udoc = await client.database.is_there(qcid)
-        print(udoc)
         if udoc:
-            conf = f"--username {udoc['email']} --password {udoc['password']}"
+            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
+
     cli = MegaTools(client, conf)
 
     limk = await cli.upload(dl_path, qcid, qmid)

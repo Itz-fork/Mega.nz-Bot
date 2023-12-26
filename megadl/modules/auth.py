@@ -4,9 +4,10 @@
 # Description: Contains commands related to mega auth
 
 
-from hashlib import sha256
 from pyrogram import filters
 from pyrogram.types import Message
+
+from cryptography.fernet import Fernet
 
 from megadl import MeganzClient
 
@@ -24,9 +25,9 @@ async def mega_logger(client: MeganzClient, msg: Message):
             "You must send your Mega.nz email and password in order to login"
         )
 
-    # Hash the email and password for security
-    email = sha256(email.text.encode()).hexdigest()
-    password = sha256(password.text.encode()).hexdigest()
+    # encrypt the email and password for security
+    email = client.cipher.encrypt(email.text.encode())
+    password = client.cipher.encrypt(password.text.encode())
 
     await client.database.mega_login(user_id, email, password)
 
