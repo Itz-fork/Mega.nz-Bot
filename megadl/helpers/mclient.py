@@ -129,7 +129,6 @@ class MeganzClient(Client):
     async def use_listner(self, _, msg: Message):
         lstn = self.tasks.get(msg.chat.id)
         if lstn and not lstn["task"].done():
-            print(msg.text)
             lstn["task"].set_result(msg)
         return msg.continue_propagation()
 
