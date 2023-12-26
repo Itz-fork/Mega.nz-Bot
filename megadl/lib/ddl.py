@@ -65,6 +65,7 @@ class Downloader:
         wpath = f"{wpath}/{os.path.basename(url)}"
 
         async with ClientSession() as session:
+            _chunksize = int(os.getenv("CHUNK_SIZE"))
             async with session.get(url, timeout=None, allow_redirects=True) as resp:
                 # Raise HttpStatusError on failed requests
                 if resp.status != 200:
@@ -74,9 +75,7 @@ class Downloader:
                 curr = 0
                 st = time()
                 async with async_open(wpath, mode="wb") as file:
-                    async for chunk in resp.content.iter_chunked(
-                        int(os.getenv("CHUNK_SIZE"))
-                    ):
+                    async for chunk in resp.content.iter_chunked(_chunksize):
                         await file.write(chunk)
                         curr += len(chunk)
                         # Make sure everything is present before calling track_progress

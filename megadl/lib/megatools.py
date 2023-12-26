@@ -32,6 +32,11 @@ class MegaTools:
             self.config = f"--config {os.getcwd()}/mega.ini"
         self.client = tg_client
 
+        # regexes
+        self.rgx_pubf = r"https?:\/\/mega\.nz\/(file|folder|#)?.+"
+        self.rgx_prvf = r"\/Root\/((.*)|([^\s]*))\."
+
+
     async def download(
         self,
         url: str,
@@ -49,11 +54,11 @@ class MegaTools:
             - path (optional): string - Custom path to where the files need to be downloaded
         """
         # Public link download: Supports both file and folders
-        if match(r"https?:\/\/mega\.nz\/(file|folder|#)?.+", url):
+        if match(self.rgx_pubf, url):
             cmd = f'megadl {self.config} --path "{path}" {url}'
 
         # Private link downloads: Supports both file and folders
-        elif match(r"\/Root\/((.*)|([^\s]*))\.", url):
+        elif match(self.rgx_prvf, url):
             cmd = f'megaget --no-ask-password {self.config} --path "{path}" {url}'
 
         else:
