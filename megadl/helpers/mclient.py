@@ -32,7 +32,7 @@ Error:
 
 class MeganzClient(Client):
     """
-    Custom pyrogram client for Megan.nz-Bot
+    Custom pyrogram client for Mega.nz-Bot
     """
 
     version = "v2-nightly"
