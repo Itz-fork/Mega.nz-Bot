@@ -7,8 +7,6 @@
 from pyrogram import filters
 from pyrogram.types import Message
 
-from cryptography.fernet import Fernet
-
 from megadl import MeganzClient
 
 
@@ -30,5 +28,15 @@ async def mega_logger(client: MeganzClient, msg: Message):
     password = client.cipher.encrypt(password.text.encode())
 
     await client.database.mega_login(user_id, email, password)
-
     await msg.reply("Successfully logged in!")
+
+
+@MeganzClient.on_message(filters.command("logout"))
+@MeganzClient.handle_checks
+async def mega_logoutter(client: MeganzClient, msg: Message):
+    really = await client.ask(msg.chat.id, "Are you sure you want to logout? (y/n)")
+    if really.text.lower() == "y":
+        await client.database.mega_logout(msg.chat.id)
+        await msg.reply("Successfully logged out!")
+    else:
+        await msg.reply("Logout cancelled!")
