@@ -23,17 +23,12 @@ async def track_progress(current, total, client, ides, start):
         estimated_total_time = TimeFormatter(milliseconds=estimated_total_time)
 
         progress = "[{0}{1}] \n**Process**: {2}%\n".format(
-            "".join(["█" for i in range(floor(percentage / 5))]),
-            "".join(["░" for i in range(20 - floor(percentage / 5))]),
+            "█" * floor(percentage / 5),
+            "░" * (20 - floor(percentage / 5)),
             round(percentage, 2),
         )
 
-        tmp = progress + "{0} of {1}\n**Speed:** {2}/s\n**ETA:** {3}\n".format(
-            humanbytes(current),
-            humanbytes(total),
-            humanbytes(speed),
-            estimated_total_time if estimated_total_time != "" else "0 s",
-        )
+        tmp = f"{progress}{humanbytes(current)} of {humanbytes(total)}\n**Speed:** {humanbytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n"
         try:
             await client.edit_message_text(
                 ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**"
@@ -47,13 +42,7 @@ def TimeFormatter(milliseconds: int) -> str:
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = (
-        ((str(days) + "d, ") if days else "")
-        + ((str(hours) + "h, ") if hours else "")
-        + ((str(minutes) + "m, ") if minutes else "")
-        + ((str(seconds) + "s, ") if seconds else "")
-        + ((str(milliseconds) + "ms, ") if milliseconds else "")
-    )
+    tmp = f"{days}d, {hours}h, {minutes}m, {seconds}s, {milliseconds}ms,"
     return tmp[:-2]
 
 
