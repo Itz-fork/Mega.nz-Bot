@@ -100,7 +100,8 @@ class MeganzClient(Client):
         # other stuff
         print("> Setting up additional functions")
         self.add_handler(MessageHandler(self.use_listner))
-        self.tasks = {}
+        self.listen_tasks = {}
+        self.mega_running = {}
 
         print("--------------------")
 
@@ -133,9 +134,9 @@ class MeganzClient(Client):
         futr = woop.create_future()
 
         futr.add_done_callback(
-            functools.partial(lambda _, uid: self.tasks.pop(uid, None), chat_id)
+            functools.partial(lambda _, uid: self.listen_tasks.pop(uid, None), chat_id)
         )
-        self.tasks[chat_id] = {"task": futr}
+        self.listen_tasks[chat_id] = {"task": futr}
 
         # wait for 1 min
         try:
@@ -144,11 +145,11 @@ class MeganzClient(Client):
             await self.send_message(
                 chat_id, "Task was cancelled as you haven't answered for 1 minute"
             )
-            self.tasks.pop(chat_id, None)
+            self.listen_tasks.pop(chat_id, None)
             return None
 
     async def use_listner(self, _, msg: Message):
-        lstn = self.tasks.get(msg.chat.id)
+        lstn = self.listen_tasks.get(msg.chat.id)
         if lstn and not lstn["task"].done():
             lstn["task"].set_result(msg)
         return msg.continue_propagation()

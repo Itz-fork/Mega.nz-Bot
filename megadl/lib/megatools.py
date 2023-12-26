@@ -42,6 +42,7 @@ class MegaTools:
         chat_id: int,
         message_id: int,
         path: str = "MegaDownloads",
+        **kwargs,
     ) -> list:
         """
         Download file/folder from given link
@@ -62,11 +63,18 @@ class MegaTools:
 
         else:
             cmd = f'megacopy --no-ask-password {self.config} -l "{path}" -r "{url}" --download'
-        await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
+        await run_partial(
+            self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id, **kwargs
+        )
         return listfiles(path)
 
     async def upload(
-        self, path: str, chat_id: int, message_id: int, to_path: str = "MegaBot"
+        self,
+        path: str,
+        chat_id: int,
+        message_id: int,
+        to_path: str = "MegaBot",
+        **kwargs,
     ) -> str:
         """
         Upload files/folders
@@ -97,7 +105,9 @@ class MegaTools:
                 run_on_shell, f'megamkdir {self.config} "/Root/{to_path}"'
             )
         # Upload
-        await run_partial(self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id)
+        await run_partial(
+            self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id, **kwargs
+        )
         # Generate link
         ulink = await run_partial(
             run_on_shell,
@@ -143,8 +153,7 @@ class MegaTools:
         fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
         return [fsize, fname]
 
-    def __shellExec(self, cmd: str, chat_id: int = None, msg_id: int = None):
-        print(cmd)
+    def __shellExec(self, cmd: str, chat_id: int = None, msg_id: int = None, **kwargs):
         run = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -152,13 +161,15 @@ class MegaTools:
             shell=True,
             encoding="utf-8",
         )
+        self.client.mega_running[chat_id] = run
+
         try:
             # Live process info update
             while run.poll() is None:
                 out = run.stdout.readline()
                 if out != "":
                     self.client.edit_message_text(
-                        chat_id, msg_id, f"**Process info:** \n`{out}`"
+                        chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
                     )
         except FileNotFoundError:
             pass

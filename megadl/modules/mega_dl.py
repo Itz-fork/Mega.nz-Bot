@@ -32,7 +32,7 @@ async def dl_from(_: MeganzClient, msg: Message):
             [
                 [InlineKeyboardButton("Download 💾", callback_data=f"dwn_mg-{msg.id}")],
                 [InlineKeyboardButton("Info ℹ️", callback_data=f"info_mg-{msg.id}")],
-                [InlineKeyboardButton("Close ❌", callback_data="closeqcb")],
+                [InlineKeyboardButton("Cancel ❌", callback_data="cancelqcb")],
             ]
         ),
     )
@@ -64,7 +64,17 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
             conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
     cli = MegaTools(client, conf)
 
-    f_list = await cli.download(url, qcid, resp.id, path=dlid)
+    f_list = await cli.download(
+        url,
+        qcid,
+        resp.id,
+        path=dlid,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("Cancel ❌", callback_data="cancelqcb")],
+            ]
+        ),
+    )
     try:
         await query.edit_message_text("Successfully downloaded the content 🥳")
     except Exception as e:

@@ -38,7 +38,7 @@ async def to_up(_: MeganzClient, msg: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Download 💾", callback_data=f"up_tgdl-{msg.id}")],
-                [InlineKeyboardButton("Close ❌", callback_data="closeqcb")],
+                [InlineKeyboardButton("Cancel ❌", callback_data="cancelqcb")],
             ]
         ),
     )

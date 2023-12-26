@@ -11,12 +11,16 @@ from pyrogram.types import CallbackQuery
 from megadl import MeganzClient, GLOB_TMP
 
 
-@MeganzClient.on_callback_query(filters.regex(r"closeqcb"))
+@MeganzClient.on_callback_query(filters.regex(r"cancelqcb"))
 @MeganzClient.handle_checks
-async def close_gb(_: MeganzClient, query: CallbackQuery):
+async def close_gb(client: MeganzClient, query: CallbackQuery):
     try:
         # Remove user from global temp db
         dtmp = GLOB_TMP.pop(int(query.data.split("-")[1]))
+        # cancel if user has a download running
+        running = client.mega_running.get(query.message.chat.id)
+        if running:
+            running.kill()
         # Remove download folder of the user
         rmtree(dtmp[1])
     except:
