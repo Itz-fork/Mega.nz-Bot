@@ -22,7 +22,7 @@ from .files import send_as_guessed, cleanup, splitit, listfiles
 _emsg = """
 ##### Mega.nz-Bot Error Handler #####
 
-Bot version: {}
+Version: {}
 Module: {}
 Error:
 {}
