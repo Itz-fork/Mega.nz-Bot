@@ -42,8 +42,17 @@ def TimeFormatter(milliseconds: int) -> str:
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     days, hours = divmod(hours, 24)
-    tmp = f"{days}d, {hours}h, {minutes}m, {seconds}s, {milliseconds}ms,"
-    return tmp[:-2]
+
+    if days > 0:
+        return f"{days}d"
+    elif hours > 0:
+        return f"{hours}h"
+    elif minutes > 0:
+        return f"{minutes}m"
+    elif seconds > 0:
+        return f"{seconds}s"
+    else:
+        return f"{milliseconds}ms"
 
 
 def humanbytes(size):
