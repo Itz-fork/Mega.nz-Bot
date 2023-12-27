@@ -20,9 +20,15 @@ class Users:
         if added:
             await self.mongoc.delete(self.coll, uid)
 
-    async def is_there(self, user_id: int):
+    async def is_there(self, user_id: int, use_acc: bool = False):
         uid = {"_id": user_id}
-        return await self.mongoc.find(self.coll, uid)
+        docu = await self.mongoc.find(self.coll, uid)
+        if use_acc:
+            email = docu["email"]
+            password = docu["password"]
+            return [email, password] if not "" in {email, password} else None
+        else:
+            return docu 
 
     # <<<<<<<<<< Mega functions >>>>>>>>>> #
 

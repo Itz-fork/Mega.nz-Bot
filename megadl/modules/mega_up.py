@@ -71,7 +71,11 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     # weird workaround to add support for private mode
     conf = None
     if client.is_public:
-        udoc = await client.database.is_there(qcid)
+        udoc = await client.database.is_there(qcid, True)
+        if not udoc:
+            return await query.edit_message_text(
+                "You need to be logged in first to download this file 😑"
+            )
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
 

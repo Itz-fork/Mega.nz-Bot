@@ -4,6 +4,7 @@
 # Description: Responsible for download function
 
 
+import re
 from os import path, makedirs
 
 from pyrogram import filters
@@ -38,6 +39,9 @@ async def dl_from(client: MeganzClient, msg: Message):
     )
 
 
+prv_rgx = r"(\/Root\/?.+)"
+
+
 @MeganzClient.on_callback_query(filters.regex(r"dwn_mg?.+"))
 @MeganzClient.handle_checks
 async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
@@ -60,9 +64,13 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     # weird workaround to add support for private mode
     conf = None
     if client.is_public:
-        udoc = await client.database.is_there(qcid)
+        udoc = await client.database.is_there(qcid, True)
+        if not udoc and re.match(prv_rgx, url):
+            return await query.edit_message_text(
+                "You need to be logged in first to download this file 😑"
+            )
         if udoc:
-            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
+            conf = f"--username {client.cipher.decrypt(udoc[0]).decode()} --password {client.cipher.decrypt(udoc[1]).decode()}"
     cli = MegaTools(client, conf)
 
     f_list = None
@@ -74,7 +82,11 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
             path=dlid,
             reply_markup=InlineKeyboardMarkup(
                 [
-                    [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_mid}")],
+                    [
+                        InlineKeyboardButton(
+                            "Cancel ❌", callback_data=f"cancelqcb-{_mid}"
+                        )
+                    ],
                 ]
             ),
         )
