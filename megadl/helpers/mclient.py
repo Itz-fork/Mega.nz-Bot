@@ -17,7 +17,7 @@ from pyrogram import Client, errors
 from pyrogram.handlers import MessageHandler
 
 from .database import Users
-from .files import send_as_guessed, cleanup, splitit, listfiles
+from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 
 
 _emsg = """
@@ -66,6 +66,7 @@ class MeganzClient(Client):
 
         # Initializing mongodb
         print("> Initializing database")
+        self.glob_tmp = {}
         self.cipher = None
         self.is_public = True if self.database else False
 
@@ -100,7 +101,7 @@ class MeganzClient(Client):
         # other stuff
         print("> Setting up additional functions")
         self.add_handler(MessageHandler(self.use_listner))
-        self.listen_tasks = {}
+        self.listening = {}
         self.mega_running = {}
 
         print("--------------------")
@@ -122,6 +123,9 @@ class MeganzClient(Client):
             except errors.FloodWait as e:
                 await xsleep(e.value)
                 return await func(client, msg)
+            # pyrogram message not modified error handling
+            except errors.MessageNotModified:
+                pass
             # Other exceptions
             except Exception as e:
                 logging.warning(_emsg.format(self.version, func.__module__, e))
@@ -134,9 +138,9 @@ class MeganzClient(Client):
         futr = woop.create_future()
 
         futr.add_done_callback(
-            functools.partial(lambda _, uid: self.listen_tasks.pop(uid, None), chat_id)
+            functools.partial(lambda _, uid: self.listening.pop(uid, None), chat_id)
         )
-        self.listen_tasks[chat_id] = {"task": futr}
+        self.listening[chat_id] = {"task": futr}
 
         # wait for 1 min
         try:
@@ -145,37 +149,53 @@ class MeganzClient(Client):
             await self.send_message(
                 chat_id, "Task was cancelled as you haven't answered for 1 minute"
             )
-            self.listen_tasks.pop(chat_id, None)
+            self.listening.pop(chat_id, None)
             return None
 
     async def use_listner(self, _, msg: Message):
-        lstn = self.listen_tasks.get(msg.chat.id)
+        lstn = self.listening.get(msg.chat.id)
         if lstn and not lstn["task"].done():
             lstn["task"].set_result(msg)
         return msg.continue_propagation()
+
+    async def full_cleanup(self, path: str, msg_id: int, chat_id: int = None):
+        """
+        Delete the file/folder and the message
+        """
+        fs_cleanup(path)
+        self.glob_tmp.pop(msg_id)
+        if chat_id and chat_id in self.mega_running:
+            self.mega_running.remove(chat_id)
 
     async def send_files(self, files: list[str], chat_id: int, msg_id: int):
         """
         Send files with automatic floodwait handling and file splitting
         """
-        for file in files:
-            # Split files larger than 2GB
-            if os.stat(file).st_size > int(os.getenv("TG_MAX_SIZE")):
-                await self.edit_message_text(
-                    chat_id,
-                    msg_id,
-                    """
-                    The file you're trying to upload exceeds telegram limits 😬.
-                    Trying to split the files 🔪...
-                    """,
-                )
-                splout = f"{self.tmp_loc}/splitted"
-                await splitit(file, splout)
-                for file in listfiles(splout):
+        if files:
+            for file in files:
+                # Split files larger than 2GB
+                if os.stat(file).st_size > int(os.getenv("TG_MAX_SIZE")):
+                    await self.edit_message_text(
+                        chat_id,
+                        msg_id,
+                        """
+                        The file you're trying to upload exceeds telegram limits 😬.
+                        Trying to split the files 🔪...
+                        """,
+                    )
+                    splout = f"{self.tmp_loc}/splitted"
+                    await splitit(file, splout)
+                    for file in listfiles(splout):
+                        await send_as_guessed(self, file, chat_id, msg_id)
+                    fs_cleanup(splout)
+                else:
                     await send_as_guessed(self, file, chat_id, msg_id)
-                cleanup(splout)
-            else:
-                await send_as_guessed(self, file, chat_id, msg_id)
+        else:
+            await self.edit_message_text(
+                chat_id,
+                msg_id,
+                "Couldn't find files to send. Maybe you've canceled the process?",
+            )
 
     async def send_document(self, *args, **kwargs):
         try:

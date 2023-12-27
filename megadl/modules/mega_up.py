@@ -17,8 +17,6 @@ from megadl.lib.ddl import Downloader
 from megadl.lib.megatools import MegaTools
 from megadl.lib.pyros import track_progress
 
-from megadl.helpers.files import cleanup
-
 
 # Respond only to Documents, Photos, Videos, GIFs, Audio and to urls other than mega
 @MeganzClient.on_message(
@@ -33,12 +31,13 @@ from megadl.helpers.files import cleanup
 )
 @MeganzClient.handle_checks
 async def to_up(_: MeganzClient, msg: Message):
+    _mid = msg.id
     await msg.reply(
         "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("Download 💾", callback_data=f"up_tgdl-{msg.id}")],
-                [InlineKeyboardButton("Cancel ❌", callback_data="cancelqcb")],
+                [InlineKeyboardButton("Download 💾", callback_data=f"up_tgdl-{_mid}")],
+                [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_mid}")],
             ]
         ),
     )
@@ -48,10 +47,11 @@ async def to_up(_: MeganzClient, msg: Message):
 @MeganzClient.handle_checks
 async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     # Get message content
+    _mid = int(query.data.split("-")[1])
     qcid = query.message.chat.id
     qmid = query.message.id
     strtim = time()
-    msg = await client.get_messages(qcid, int(query.data.split("-")[1]))
+    msg = await client.get_messages(qcid, _mid)
     # Status msg
     await client.edit_message_text(
         qcid, qmid, "Trying to download the file 📬", reply_markup=None
@@ -86,4 +86,4 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
             [[InlineKeyboardButton("Visit 🔗", url=limk)]]
         ),
     )
-    cleanup(dl_path)
+    await client.full_cleanup(dl_path, _mid)

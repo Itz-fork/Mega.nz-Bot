@@ -1,6 +1,5 @@
 from megadl.lib.aiomongo import AioMongo
 
-
 class Users:
     def __init__(self) -> None:
         self.mongoc = AioMongo()

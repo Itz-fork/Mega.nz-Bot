@@ -25,7 +25,7 @@ def listfiles(rpath: str):
 
 
 # Clean up function
-def cleanup(cpath):
+def fs_cleanup(cpath: str):
     if path.isfile(cpath):
         remove(cpath)
     elif path.isdir(cpath):

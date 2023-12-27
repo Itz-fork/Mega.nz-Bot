@@ -14,6 +14,3 @@ print("> Loading config")
 load_dotenv()
 
 from .helpers.mclient import MeganzClient
-
-# Dict to act as a temp key value database
-GLOB_TMP = {}

@@ -161,16 +161,21 @@ class MegaTools:
             shell=True,
             encoding="utf-8",
         )
-        self.client.mega_running[chat_id] = run
+        self.client.mega_running[chat_id] = run.pid
 
         try:
             # Live process info update
             while run.poll() is None:
                 out = run.stdout.readline()
                 if out != "":
-                    self.client.edit_message_text(
-                        chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
-                    )
+                    try:
+                        self.client.edit_message_text(
+                            chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
+                        )
+                        # run.terminate()
+                        # run.wait()
+                    except:
+                        pass
         except FileNotFoundError:
             pass
         sh_out = run.stdout.read()[:-1]

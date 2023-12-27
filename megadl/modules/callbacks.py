@@ -3,29 +3,30 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Contains global callbacks
 
-from shutil import rmtree
-
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
-from megadl import MeganzClient, GLOB_TMP
+from megadl import MeganzClient
+from megadl.helpers.sysfncs import kill_family
 
 
-@MeganzClient.on_callback_query(filters.regex(r"cancelqcb"))
+@MeganzClient.on_callback_query(filters.regex(r"cancelqcb?.+"))
 @MeganzClient.handle_checks
 async def close_gb(client: MeganzClient, query: CallbackQuery):
+    _mid = int(query.data.split("-")[1])
     try:
         # Remove user from global temp db
-        dtmp = GLOB_TMP.pop(int(query.data.split("-")[1]))
+        dtmp = client.glob_tmp.get(_mid)
         # cancel if user has a download running
-        running = client.mega_running.get(query.message.chat.id)
-        if running:
-            running.kill()
+        prcid = client.mega_running.get(query.message.chat.id)
+        if prcid:
+            await kill_family(prcid)
         # Remove download folder of the user
-        rmtree(dtmp[1])
+        if dtmp:
+            await client.full_cleanup(dtmp[1], _mid)
     except:
         pass
     await query.edit_message_text(
-        "Process was canceled by the user",
+        "Process was canceled by the user ❌",
         reply_markup=None,
     )
