@@ -14,14 +14,13 @@ from megadl import MeganzClient
 @MeganzClient.handle_checks
 async def mega_logger(client: MeganzClient, msg: Message):
     user_id = msg.chat.id
-    email = await client.ask(user_id, "Enter your Mega.nz email:")
-    password = await client.ask(user_id, "Enter your Mega.nz password:")
 
-    # if user doesn't reply
-    if None in (email, password):
-        return await msg.reply(
-            "You must send your Mega.nz email and password in order to login"
-        )
+    email = await client.ask(user_id, "Enter your Mega.nz email:")
+    if not email:
+        return await msg.reply("You must send your Mega.nz email in order to login")
+    password = await client.ask(user_id, "Enter your Mega.nz password:")
+    if not password:
+        return await msg.reply("You must send your Mega.nz password in order to login")
 
     # encrypt the email and password for security
     email = client.cipher.encrypt(email.text.encode())
