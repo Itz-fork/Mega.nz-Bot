@@ -60,7 +60,7 @@ python3 -m megadl
 Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
 
 # Roadmap
-- [ ] Implement private mode
+- [x] Implement private mode
 - [x] Implement DDL to Mega.nz uploader
 - [ ] Better CLI output parser
 - [x] Heroku support

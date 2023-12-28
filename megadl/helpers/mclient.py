@@ -37,14 +37,20 @@ class MeganzClient(Client):
     """
 
     version = "v2-nightly"
-    database = Users() if os.getenv("MONGO_URI") else None
     dl_loc = None
     tmp_loc = None
+    database = Users() if os.getenv("MONGO_URI") else None
+    auth_users = (
+        set(map(int, os.getenv("AUTH_USERS").split()))
+        if os.getenv("AUTH_USERS")
+        else None
+    )
 
     def __init__(self):
         # set DOWNLOAD_LOCATION variable
         # if USE_ENV is True it'll use currend dir + NexaBots
         # otherwise use location defined in .env file by user
+        print("> Setting up file locations")
         self.cwd = os.getcwd()
         if os.getenv("USE_ENV") in ["True", "true"]:
             self.dl_loc = f"{self.cwd}/NexaBots"
@@ -53,6 +59,12 @@ class MeganzClient(Client):
 
         self.tmp_loc = f"{self.dl_loc}/temps"
         self.mx_size = int(os.getenv("TG_MAX_SIZE", 2040108421))
+
+        if not os.path.isdir(self.dl_loc):
+            os.makedirs(self.dl_loc)
+
+        if not os.path.isdir(self.tmp_loc):
+            os.makedirs(self.tmp_loc)
 
         # Initializing pyrogram
         print("> Initializing client")
@@ -91,19 +103,11 @@ class MeganzClient(Client):
         else:
             print("     Warning: Mongodb url not found")
 
-        # creating directories
-        print("> Creating directories")
-        if not os.path.isdir(self.dl_loc):
-            os.makedirs(self.dl_loc)
-
-        if not os.path.isdir(self.tmp_loc):
-            os.makedirs(self.tmp_loc)
-
         # other stuff
         print("> Setting up additional functions")
-        self.add_handler(MessageHandler(self.use_listner))
         self.listening = {}
         self.mega_running = {}
+        self.add_handler(MessageHandler(self.use_listner))
 
         print("--------------------")
 
@@ -114,10 +118,22 @@ class MeganzClient(Client):
         """
 
         async def fn_run(client: Client, msg: Message):
+            is_auth = False
+            uid = msg.from_user.id
             try:
-                # db functions
-                if self.database:
-                    await self.database.add(msg.from_user.id)
+                if self.auth_users and self.database:
+                    await self.database.add(uid)
+                    is_auth = uid in self.auth_users
+
+                elif self.database:
+                    await self.database.add(uid)
+
+                elif self.auth_users:
+                    is_auth = uid in self.auth_users
+
+                if not is_auth:
+                    await msg.reply("You're not authorized to use this bot 😬")
+                    return msg.stop_propagation()
 
                 return await func(client, msg)
             # Floodwait handling
