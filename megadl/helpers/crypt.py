@@ -5,6 +5,7 @@
 
 # Ported from: https://github.com/Itz-fork/pyro-mega.py/blob/master/src/mega/crypto.py
 
+import re
 import json
 import base64
 import struct
@@ -29,7 +30,6 @@ def str_to_a32(b):
     if isinstance(b, str):
         b = makebyte(b)
     if len(b) % 4:
-        # pad to multiple of 4
         b += b"\0" * (4 - len(b) % 4)
     return struct.unpack(">%dI" % (len(b) / 4), b)
 
@@ -40,8 +40,7 @@ def base64_to_a32(s):
 
 def base64_url_decode(data):
     data += "=="[(2 - len(data) * 3) % 4 :]
-    for search, replace in (("-", "+"), ("_", "/"), (",", "")):
-        data = data.replace(search, replace)
+    data = re.sub(r'[-_,]', lambda x: {'-': '+', '_': '/', ',': ''}[x.group()], data)
     return base64.b64decode(data)
 
 
