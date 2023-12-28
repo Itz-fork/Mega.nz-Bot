@@ -66,7 +66,7 @@ Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
 - [ ] Better CLI output parser
 - [x] Heroku support
 - [x] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)
-- [ ] Add better documentation
+- [x] Add better documentation
 
 
 # Support
