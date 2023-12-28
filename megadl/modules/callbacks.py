@@ -17,10 +17,12 @@ async def close_gb(client: MeganzClient, query: CallbackQuery):
     try:
         # Remove user from global temp db
         dtmp = client.glob_tmp.get(_mid)
+        
         # cancel if user has a download running
         prcid = client.mega_running.get(query.message.chat.id)
         if prcid:
             await kill_family(prcid)
+
         # Remove download folder of the user
         if dtmp:
             await client.full_cleanup(dtmp[1], _mid)

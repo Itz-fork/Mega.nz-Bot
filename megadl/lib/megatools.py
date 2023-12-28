@@ -172,8 +172,6 @@ class MegaTools:
                         self.client.edit_message_text(
                             chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
                         )
-                        # run.terminate()
-                        # run.wait()
                     except:
                         pass
         except FileNotFoundError:

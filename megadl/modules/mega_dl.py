@@ -51,16 +51,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     url = dtmp[0]
     dlid = dtmp[1]
     qcid = query.message.chat.id
-
-    # Create unique download folder
-    if not path.isdir(dlid):
-        makedirs(dlid)
-
-    # Download the file/folder
-    resp = await query.edit_message_text(
-        "Your download is starting 📥...", reply_markup=None
-    )
-
+    
     # weird workaround to add support for private mode
     conf = None
     if client.is_public:
@@ -71,6 +62,16 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
             )
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc[0]).decode()} --password {client.cipher.decrypt(udoc[1]).decode()}"
+
+    # Create unique download folder
+    if not path.isdir(dlid):
+        makedirs(dlid)
+
+    # Download the file/folder
+    resp = await query.edit_message_text(
+        "Your download is starting 📥...", reply_markup=None
+    )
+
     cli = MegaTools(client, conf)
 
     f_list = None
@@ -105,7 +106,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     await resp.edit("Trying to upload now 📤...")
     await client.send_files(f_list, qcid, resp.id)
     await client.full_cleanup(dlid, _mid)
-    # await resp.delete()
+    await resp.delete()
 
 
 @MeganzClient.on_callback_query(filters.regex(r"info_mg?.+"))

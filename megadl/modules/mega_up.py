@@ -50,6 +50,18 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     _mid = int(query.data.split("-")[1])
     qcid = query.message.chat.id
     qmid = query.message.id
+
+    # weird workaround to add support for private mode
+    conf = None
+    if client.is_public:
+        udoc = await client.database.is_there(qcid, True)
+        if not udoc:
+            return await query.edit_message_text(
+                "You need to be logged in first to download this file 😑"
+            )
+        if udoc:
+            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
+
     strtim = time()
     msg = await client.get_messages(qcid, _mid)
     # Status msg
@@ -68,17 +80,6 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
         dl_path = await dl.download(msg.text, client.dl_loc, client, (qcid, qmid))
 
     # Upload the file
-    # weird workaround to add support for private mode
-    conf = None
-    if client.is_public:
-        udoc = await client.database.is_there(qcid, True)
-        if not udoc:
-            return await query.edit_message_text(
-                "You need to be logged in first to download this file 😑"
-            )
-        if udoc:
-            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
-
     cli = MegaTools(client, conf)
 
     limk = await cli.upload(dl_path, qcid, qmid)
