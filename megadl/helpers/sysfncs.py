@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains functions related to shell, async execution
+# Description: Shell, loops and other sys functions
 
 
 from functools import partial

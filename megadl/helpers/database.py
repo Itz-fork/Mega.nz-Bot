@@ -1,3 +1,8 @@
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: Database functions
+
 from megadl.lib.aiomongo import AioMongo
 
 class Users:

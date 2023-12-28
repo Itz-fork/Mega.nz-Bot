@@ -1,3 +1,8 @@
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: Async wrapper for pymongo's insert, find, update and delete operations
+
 from os import getenv
 from typing import Any
 from bson.codec_options import TypeRegistry

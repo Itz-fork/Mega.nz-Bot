@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains code related to custom pyrogram.Client
+# Description: Custom pyrogram client useful methods
 
 import os
 import asyncio
@@ -131,7 +131,9 @@ class MeganzClient(Client):
                     can_use = uid in self.auth_users
 
                 if not can_use:
-                    await msg.reply("You're not authorized to use this bot 😬")
+                    await msg.reply(
+                        "You're not authorized to use this bot 🙅‍♂️ \n\n**Join @NexaBotsUpdates ❤️**"
+                    )
                     return msg.stop_propagation()
 
                 return await func(client, msg)
@@ -163,7 +165,7 @@ class MeganzClient(Client):
             return await asyncio.wait_for(futr, 60.0)
         except asyncio.TimeoutError:
             await self.send_message(
-                chat_id, "Task was cancelled as you haven't answered for 1 minute"
+                chat_id, "Task was cancelled as you haven't answered for 1 minute 🥱"
             )
             self.listening.pop(chat_id, None)
             return None

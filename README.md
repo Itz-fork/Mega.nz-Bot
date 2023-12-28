@@ -11,11 +11,12 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 
 
 # Features
-- Download, Upload files/folders easily ⚡
-- No login required 🙅‍♂️
-- Support for Mega.nz user account 🗃️
-- Support for both private and public content 🤝
-- DDL to mega.nz upload 🖇
+- ⚡ Download, Upload files/folders easily
+- 🙅‍♂️ No login required*
+- 🗃️ Support for Mega.nz user account
+- 🤝 Support for both private and public content
+- 🛡 Can be used as either private or public bot
+- 🖇 Direct download link to mega.nz upload
 
 
 # Deploy

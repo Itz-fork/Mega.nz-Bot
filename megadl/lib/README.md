@@ -1,8 +1,9 @@
 # About
-Helper extensions for Mega.nz-Bot
+Helper libraries for Mega.nz-Bot
 
 
 # Extensions
-1. [`megatools`](megatools.py) - Extension for pyrogram bots to interact with megatools cli
-2. [`pyros`](pyros.py) - Helper tools for pyrogram
-3. [`ddl`](ddl.py) - Download files using direct download links
+- [`megatools`](megatools.py) - Wrapper for megatools cli with extended features
+- [`aiomongo`](aiomongo.py) - Async wrapper for pymongo's insert, find, update and delete operations
+- [`pyros`](pyros.py) - Tools and helper functions related to pyrogram
+- [`ddl`](ddl.py) - Downloader for direct download links and gdrive

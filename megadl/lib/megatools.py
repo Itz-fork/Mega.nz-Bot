@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Helper class for pyrogram bots to interact with megatools cli
+# Description: Wrapper for megatools cli with extended features
 
 import os
 import subprocess

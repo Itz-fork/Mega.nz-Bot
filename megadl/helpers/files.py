@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains code related to fs functions
+# Description: File system functions
 
 from time import time
 from shutil import rmtree

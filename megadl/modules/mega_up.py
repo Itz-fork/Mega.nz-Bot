@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Responsible for upload function
+# Description: Handle mega.nz upload function
 
 from time import time
 from pyrogram import filters
@@ -36,7 +36,7 @@ async def to_up(_: MeganzClient, msg: Message):
         "Select what you want to do 🤗",
         reply_markup=InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("Download 💾", callback_data=f"up_tgdl-{_mid}")],
+                [InlineKeyboardButton("Upload 🗃", callback_data=f"up_tgdl-{_mid}")],
                 [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_mid}")],
             ]
         ),
@@ -57,7 +57,7 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
         udoc = await client.database.is_there(qcid, True)
         if not udoc:
             return await query.edit_message_text(
-                "You need to be logged in first to download this file 😑"
+                "You must be logged in first to download this file 😑"
             )
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
@@ -66,7 +66,7 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     msg = await client.get_messages(qcid, _mid)
     # Status msg
     await client.edit_message_text(
-        qcid, qmid, "Trying to download the file 📬", reply_markup=None
+        qcid, qmid, "Trying to download the file 📥", reply_markup=None
     )
 
     # Download files accordingly
@@ -86,7 +86,7 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     await client.edit_message_text(
         qcid,
         qmid,
-        "Your file has been uploaded to Mega.nz ✅",
+        f"Your file has been uploaded to Mega.nz ✅ \n\nLink 🔗: `{limk}`",
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Visit 🔗", url=limk)]]
         ),

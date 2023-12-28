@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains commands related to mega auth
+# Description: Authorize mega account of users
 
 
 from pyrogram import filters

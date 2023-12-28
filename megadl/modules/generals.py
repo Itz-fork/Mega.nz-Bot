@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains all the general commands of the bot
+# Description: General commands of the bot
 
 
 from pyrogram import filters
@@ -17,7 +17,11 @@ async def start_msg(_: MeganzClient, msg: Message):
         f"""
 Hi `{msg.from_user.first_name}` 👋, I'm [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot)!
 
-I can help you download, upload files or folders from telegram. Not sure what to do? Check /help for more info 😇
+I can help you download, upload files or folders from telegram.
+Not sure what to do? Check /help for more info 😇
+
+
+**Made with ❤️ by @NexaBotsUpdates**
     """,
         disable_web_page_preview=True,
     )

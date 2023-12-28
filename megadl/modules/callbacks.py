@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains global callbacks
+# Description: Callbacks that can be used globally
 
 from pyrogram import filters
 from pyrogram.types import CallbackQuery

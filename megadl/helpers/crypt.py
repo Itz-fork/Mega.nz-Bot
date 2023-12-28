@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Contains code related to decryption functions
+# Description: Decryption functions
 
 # Ported from: https://github.com/Itz-fork/pyro-mega.py/blob/master/src/mega/crypto.py
 

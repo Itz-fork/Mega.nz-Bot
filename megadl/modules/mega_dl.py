@@ -1,7 +1,7 @@
 # Copyright (c) 2023 Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
-# Description: Responsible for download function
+# Description: Handle mega.nz download function
 
 
 import re
@@ -58,7 +58,7 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
         udoc = await client.database.is_there(qcid, True)
         if not udoc and re.match(prv_rgx, url):
             return await query.edit_message_text(
-                "You need to be logged in first to download this file 😑"
+                "You must be logged in first to download this file 😑"
             )
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc[0]).decode()} --password {client.cipher.decrypt(udoc[1]).decode()}"
