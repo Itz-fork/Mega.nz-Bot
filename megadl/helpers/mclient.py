@@ -52,6 +52,7 @@ class MeganzClient(Client):
             self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
 
         self.tmp_loc = f"{self.dl_loc}/temps"
+        self.mx_size = int(os.getenv("TG_MAX_SIZE", 2040108421))
 
         # Initializing pyrogram
         print("> Initializing client")
@@ -174,7 +175,7 @@ class MeganzClient(Client):
         if files:
             for file in files:
                 # Split files larger than 2GB
-                if os.stat(file).st_size > int(os.getenv("TG_MAX_SIZE")):
+                if os.stat(file).st_size > self.mx_size:
                     await self.edit_message_text(
                         chat_id,
                         msg_id,
@@ -194,7 +195,7 @@ class MeganzClient(Client):
             await self.edit_message_text(
                 chat_id,
                 msg_id,
-                "Couldn't find files to send. Maybe you've canceled the process?",
+                "Couldn't find files to send. Maybe you've canceled the process 🤔?",
             )
 
     async def send_document(self, *args, **kwargs):
