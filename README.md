@@ -60,14 +60,6 @@ python3 -m megadl
 ### Config vars
 Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
 
-# Roadmap
-- [x] Implement private mode
-- [x] Implement DDL to Mega.nz uploader
-- [ ] Better CLI output parser
-- [x] Heroku support
-- [x] Port [installer](https://github.com/Itz-fork/Mega.nz-Bot/blob/legacy/startup.sh)
-- [x] Add better documentation
-
 
 # Support
 [![Support Group](https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Nexa_bots)

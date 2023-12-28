@@ -4,7 +4,7 @@
 # Description: __init__.py
 
 # start msg
-print("Mega.nz Bot is starting...")
+print("Mega.nz Bot - Cypher is starting...")
 
 
 # loading config

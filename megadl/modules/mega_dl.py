@@ -102,6 +102,8 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
             `{e}`
             """
         )
+    # update download count
+    await client.database.plus_fl_count(qcid, downloads=len(f_list))
     # Send file(s) to the user
     await resp.edit("Trying to upload now 📤...")
     await client.send_files(f_list, qcid, resp.id)

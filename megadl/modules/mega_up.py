@@ -68,6 +68,8 @@ async def to_up_cb(client: MeganzClient, query: CallbackQuery):
     await client.edit_message_text(
         qcid, qmid, "Trying to download the file 📥", reply_markup=None
     )
+    # update upload count
+    await client.database.plus_fl_count(qcid, uploads=1)
 
     # Download files accordingly
     dl_path = None
