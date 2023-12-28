@@ -42,8 +42,8 @@ class MeganzClient(Client):
     database = Users() if os.getenv("MONGO_URI") else None
     auth_users = (
         set(map(int, os.getenv("AUTH_USERS").split()))
-        if os.getenv("AUTH_USERS")
-        else None
+        if os.getenv("AUTH_USERS") and os.getenv("AUTH_USERS") != "*"
+        else "*"
     )
 
     def __init__(self):
@@ -118,20 +118,19 @@ class MeganzClient(Client):
         """
 
         async def fn_run(client: Client, msg: Message):
-            is_auth = False
+            can_use = False
             uid = msg.from_user.id
             try:
-                if self.auth_users and self.database:
-                    await self.database.add(uid)
-                    is_auth = uid in self.auth_users
-
-                elif self.database:
+                if self.database:
                     await self.database.add(uid)
 
-                elif self.auth_users:
-                    is_auth = uid in self.auth_users
+                if self.auth_users == "*":
+                    can_use = True
 
-                if not is_auth:
+                else:
+                    can_use = uid in self.auth_users
+
+                if not can_use:
                     await msg.reply("You're not authorized to use this bot 😬")
                     return msg.stop_propagation()
 
