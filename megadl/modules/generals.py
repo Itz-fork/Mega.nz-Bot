@@ -36,13 +36,13 @@ async def help_msg(_: MegaCypher, msg: Message):
   Send /login command and enter your details when I ask you. Don't worry we encrypt your data before sending it anywhere 🤗
 
 **How to download from mega link?**
-  It's very easy. Just send the link you want to download and I'll download it for you 😉
+  It's very easy. Just send the link you want to download and I'll download it for you 😉.
+  For private content you need to login first then send path to the file or folder you want to download starting with `/Root/<path-to-dl>`.
 
 **How to upload files to Mega.nz?**
   Just send me the files and I'll ask you whether you want to upload it or not. Same goes for direct download links 😎
 
 
-  
 **Made with ❤️ by @NexaBotsUpdates**
       """
     )

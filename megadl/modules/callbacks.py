@@ -3,6 +3,7 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Callbacks that can be used globally
 
+import asyncio
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
@@ -13,22 +14,28 @@ from megadl.helpers.sysfncs import kill_family
 @MegaCypher.on_callback_query(filters.regex(r"cancelqcb?.+"))
 @MegaCypher.run_checks
 async def close_gb(client: MegaCypher, query: CallbackQuery):
-    _mid = int(query.data.split("-")[1])
+    usr = int(query.data.split("-")[1])
     try:
         # Remove user from global temp db
-        dtmp = client.glob_tmp.get(_mid)
-        
+        dtmp = client.glob_tmp.get(usr)
+
         # cancel if user has a download running
-        prcid = client.mega_running.get(query.message.chat.id)
-        if prcid:
-            await kill_family(prcid)
+        # this cancels both mega and ddl downloads/uploads
+        # it should'nt be a problem since user can do either of those task at a time
+        mg_prc = client.mega_running.get(usr)
+        dl_prc = client.ddl_running.get(usr)
+        if mg_prc:
+            await kill_family(mg_prc)
+        if dl_prc:
+            dl_prc.cancel()
+            await asyncio.sleep(0)
 
         # Remove download folder of the user
         if dtmp:
-            await client.full_cleanup(dtmp[1], _mid)
-    except:
-        pass
+            await client.full_cleanup(dtmp[1], usr)
+    except Exception as e:
+        print(e)
     await query.edit_message_text(
-        "Process was canceled by the user ❌",
+        "`Process was canceled by the user ❌`",
         reply_markup=None,
     )

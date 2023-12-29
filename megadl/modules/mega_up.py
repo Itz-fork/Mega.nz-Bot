@@ -15,7 +15,7 @@ from pyrogram.types import (
 from megadl import MegaCypher
 from megadl.lib.ddl import Downloader
 from megadl.lib.megatools import MegaTools
-from megadl.lib.pyros import track_progress
+from megadl.helpers.pyros import track_progress
 
 
 # Respond only to Documents, Photos, Videos, GIFs, Audio and to urls other than mega
@@ -37,7 +37,11 @@ async def up_to(_: MegaCypher, msg: Message):
         reply_markup=InlineKeyboardMarkup(
             [
                 [InlineKeyboardButton("Upload 🗃", callback_data=f"up_tgdl-{_mid}")],
-                [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_mid}")],
+                [
+                    InlineKeyboardButton(
+                        "Cancel ❌", callback_data=f"cancelqcb-{msg.from_user.id}"
+                    )
+                ],
             ]
         ),
     )
@@ -48,16 +52,17 @@ async def up_to(_: MegaCypher, msg: Message):
 async def to_up_cb(client: MegaCypher, query: CallbackQuery):
     # Get message content
     _mid = int(query.data.split("-")[1])
-    qcid = query.message.chat.id
     qmid = query.message.id
+    qcid = query.message.chat.id
+    qusr = query.from_user.id
 
     # weird workaround to add support for private mode
     conf = None
     if client.is_public:
-        udoc = await client.database.is_there(qcid, True)
+        udoc = await client.database.is_there(qusr, True)
         if not udoc:
             return await query.edit_message_text(
-                "You must be logged in first to download this file 😑"
+                "`You must be logged in first to download this file 😑`"
             )
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
@@ -65,11 +70,9 @@ async def to_up_cb(client: MegaCypher, query: CallbackQuery):
     strtim = time()
     msg = await client.get_messages(qcid, _mid)
     # Status msg
-    await client.edit_message_text(
-        qcid, qmid, "Trying to download the file 📥", reply_markup=None
-    )
+    await query.edit_message_text("`Trying to download the file 📥`", reply_markup=None)
     # update upload count
-    await client.database.plus_fl_count(qcid, uploads=1)
+    await client.database.plus_fl_count(qusr, uploads=1)
 
     # Download files accordingly
     dl_path = None
@@ -78,19 +81,24 @@ async def to_up_cb(client: MegaCypher, query: CallbackQuery):
             msg, progress=track_progress, progress_args=(client, [qcid, qmid], strtim)
         )
     else:
-        dl = Downloader()
-        dl_path = await dl.download(msg.text, client.dl_loc, client, (qcid, qmid))
+        dl = Downloader(client)
+        dl_path = await dl.download(
+            msg.text,
+            client.dl_loc,
+            (qcid, qmid, qusr),
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{qusr}")]]
+            ),
+        )
 
     # Upload the file
     cli = MegaTools(client, conf)
 
-    limk = await cli.upload(dl_path, qcid, qmid)
-    await client.edit_message_text(
-        qcid,
-        qmid,
-        f"Your file has been uploaded to Mega.nz ✅ \n\nLink 🔗: `{limk}`",
+    limk = await cli.upload(dl_path, qusr, qcid, qmid)
+    await query.edit_message_text(
+        f"`Your file has been uploaded to Mega.nz ✅`\n**Link 🔗:** `{limk}`",
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("Visit 🔗", url=limk)]]
         ),
     )
-    await client.full_cleanup(dl_path, _mid)
+    await client.full_cleanup(dl_path, _mid, qusr)

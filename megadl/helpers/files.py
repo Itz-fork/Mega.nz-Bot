@@ -12,7 +12,7 @@ from os import path, walk, makedirs, remove
 from filetype import guess
 from filesplit.split import Split
 
-from megadl.lib.pyros import track_progress
+from megadl.helpers.pyros import track_progress
 from megadl.helpers.sysfncs import run_partial, run_on_shell
 
 
@@ -33,7 +33,7 @@ def fs_cleanup(cpath: str):
 
 
 # Guess the file type and send it accordingly
-async def send_as_guessed(client, file, chat_id, mid):
+async def send_as_guessed(client, file, chat_id, mid, **kwargs):
     """
     Upload the file to telegram as the way it should
     """
@@ -41,7 +41,13 @@ async def send_as_guessed(client, file, chat_id, mid):
     strtim = time()
     # Send file as a document if the file type could't be guessed
     if not ftype:
-        await client.send_document(chat_id, file)
+        await client.send_document(
+            chat_id,
+            file,
+            progress=track_progress,
+            progress_args=(client, [chat_id, mid], strtim),
+            **kwargs,
+        )
     else:
         fmime = ftype.mime
         # GIFs
@@ -51,6 +57,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 file,
                 progress=track_progress,
                 progress_args=(client, [chat_id, mid], strtim),
+                **kwargs,
             )
         # Images
         elif isit(r"\bimage\b", fmime):
@@ -59,6 +66,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 file,
                 progress=track_progress,
                 progress_args=(client, [chat_id, mid], strtim),
+                **kwargs,
             )
         # Audio
         elif isit(r"\baudio\b", fmime):
@@ -67,6 +75,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 file,
                 progress=track_progress,
                 progress_args=(client, [chat_id, mid], strtim),
+                **kwargs,
             )
         # Video
         elif isit(r"\bvideo\b", fmime):
@@ -92,6 +101,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 thumb=_thumb,
                 progress=track_progress,
                 progress_args=(client, [chat_id, mid], strtim),
+                **kwargs,
             )
         # Document
         else:
@@ -100,6 +110,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 file,
                 progress=track_progress,
                 progress_args=(client, [chat_id, mid], strtim),
+                **kwargs,
             )
 
 

@@ -25,7 +25,7 @@ async def admin_user_info(client: MegaCypher, msg: Message):
 
     _user = await client.database.is_there(buid)
     if not _user:
-        return await msg.reply("Unable to find user in database!")
+        return await msg.reply("Unable to find user in the database 🔎")
 
     status = _user["status"]
     is_ban = status["banned"]
@@ -33,7 +33,13 @@ async def admin_user_info(client: MegaCypher, msg: Message):
     dl_count = _user["total_downloads"]
     up_count = _user["total_uploads"]
 
-    ban_status = f"`Banned`\n      ↳ `{ban_rsn}`" if is_ban else "`Active`"
+    ban_status = (
+        f"`Banned`\n      ↳ `{ban_rsn}`"
+        if is_ban
+        else "Admin"
+        if buid in client.auth_users
+        else "`Active`"
+    )
     await msg.reply(
         f"""
 **User Info**
@@ -63,6 +69,9 @@ async def admin_ban_user(client: MegaCypher, msg: Message):
         reason = _splt[2] if len(_splt) >= 3 else "No reason given"
     except:
         return await msg.reply("Provide a user id to ban \n\nEx: `/ban 12345 spamming`")
+
+    if buid in client.auth_users:
+        return await msg.reply("Why do you want to ban an admin 😶‍🌫️?")
 
     await client.database.ban_user(buid, reason)
     await msg.reply(f"Banned user `{buid}`")

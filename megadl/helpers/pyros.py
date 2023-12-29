@@ -9,7 +9,7 @@ from math import floor
 
 # Porogress bar for pyrogram
 # Credits: SpEcHiDe's AnyDL-Bot
-async def track_progress(current, total, client, ides, start):
+async def track_progress(current, total, client, ides, start, **kwargs):
     now = time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
@@ -31,7 +31,7 @@ async def track_progress(current, total, client, ides, start):
         tmp = f"{progress}{humanbytes(current)} of {humanbytes(total)}\n**Speed:** {humanbytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n"
         try:
             await client.edit_message_text(
-                ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**"
+                ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**", **kwargs
             )
         except:
             pass

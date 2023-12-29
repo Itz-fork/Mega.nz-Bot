@@ -4,13 +4,14 @@
 # Description: Downloader for direct download links and gdrive
 
 import os
+import asyncio
 
 from time import time
 from re import match, sub
 from aiohttp import ClientSession
 from aiofiles import open as async_open
 
-from .pyros import track_progress
+from ..helpers.pyros import track_progress
 
 
 class Downloader:
@@ -20,27 +21,35 @@ class Downloader:
     Supports
         - Direct download links
         - Google Drive links (shared files)
+
+    Arguments:
+        - `client` - Pyrogram client object
     """
 
-    def __init__(self) -> None:
+    def __init__(self, client) -> None:
         self.gdrive_regex = r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=sharing"
+        self.tg_client = client
 
-    async def download(self, url: str, path: str, client, ides: tuple[int, int]) -> str:
+    async def download(
+        self, url: str, path: str, ides: tuple[int, int, int], **kwargs
+    ) -> str:
         """
         Download a file from direct / gdrive link
 
-        Parameters:
+        Arguments:
 
             - `url` - Url to the file
             - `path` - Output path
-            - `client` - Pyrogram client object
-            - `ides` - Tuple of ids (chat_id, msg_id)
+            - `ides` - Tuple of ids (chat_id, msg_id, user_id)
         """
         if match(self.gdrive_regex, url):
-            gurl = await self._parse_gdrive(url)
-            return await self.from_ddl(url=gurl, path=path, client=client, ides=ides)
-        else:
-            return await self.from_ddl(url=url, path=path, client=client, ides=ides)
+            url = await self._parse_gdrive(url)
+
+        dl_task = asyncio.create_task(
+            self.from_ddl(url=url, path=path, ides=(ides[0], ides[1]), **kwargs)
+        )
+        self.tg_client.ddl_running[ides[2]] = dl_task
+        return await dl_task
 
     async def _parse_gdrive(self, url: str):
         return sub(
@@ -49,14 +58,15 @@ class Downloader:
             url,
         )
 
-    async def from_ddl(self, url: str, path: str, client, ides: tuple[int, int]) -> str:
+    async def from_ddl(
+        self, url: str, path: str, ides: tuple[int, int], **kwargs
+    ) -> str:
         """
         Download files from a direct download link
 
         Arguments:
             - `url` - Url of the file
             - `path` - Output path
-            - `client` - Pyrogram client object
             - `ides` - chat id and message id where the action takes place (chat_id, msg_id)
         """
         # Create folder if it doesn't exist
@@ -79,8 +89,12 @@ class Downloader:
                         await file.write(chunk)
                         curr += len(chunk)
                         # Make sure everything is present before calling track_progress
-                        if None not in {ides, client, total}:
-                            await track_progress(curr, total, client, ides, st)
+                        if None not in {ides, self.tg_client, total}:
+                            await track_progress(
+                                curr, total, self.tg_client, ides, st, **kwargs
+                            )
+
+                        await asyncio.sleep(0)
             return wpath
 
 

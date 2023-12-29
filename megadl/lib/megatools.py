@@ -9,7 +9,7 @@ import subprocess
 
 from re import search, match
 from aiohttp import ClientSession
-from megadl.lib.pyros import humanbytes
+from megadl.helpers.pyros import humanbytes
 from megadl.helpers.files import listfiles
 from megadl.helpers.sysfncs import run_partial, run_on_shell
 from megadl.helpers.crypt import base64_to_a32, base64_url_decode, decrypt_attr
@@ -25,11 +25,13 @@ class MegaTools:
 
     def __init__(self, tg_client, pre_conf=None) -> None:
         if pre_conf:
-            self.config = f"--config {os.getcwd()}/mega.ini {pre_conf}"
+            self.config = f"--config {tg_client.cwd}/mega.ini {pre_conf}"
         elif os.getenv("USE_ENV") in ["True", "true"]:
             self.config = "--username $MEGA_EMAIL --password $MEGA_PASSWORD"
+        elif os.path.isfile(f"{tg_client.cwd}/mega.ini"):
+            self.config = f"--config {tg_client.cwd}/mega.ini"
         else:
-            self.config = f"--config {os.getcwd()}/mega.ini"
+            self.config = ""
         self.client = tg_client
 
         # regexes
@@ -39,6 +41,7 @@ class MegaTools:
     async def download(
         self,
         url: str,
+        user_id: int,
         chat_id: int,
         message_id: int,
         path: str = "MegaDownloads",
@@ -49,6 +52,7 @@ class MegaTools:
 
         Arguments:
             - url: string - Mega.nz link of the content
+            - user_id: integer - Telegram user id of the user
             - chat_id: integer - Telegram chat id of the user
             - message_id: integer - Id of the progress message
             - path (optional): string - Custom path to where the files need to be downloaded
@@ -64,13 +68,19 @@ class MegaTools:
         else:
             cmd = f'megacopy --no-ask-password {self.config} -l "{path}" -r "{url}" --download'
         await run_partial(
-            self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id, **kwargs
+            self.__shellExec,
+            cmd,
+            user_id=user_id,
+            chat_id=chat_id,
+            msg_id=message_id,
+            **kwargs,
         )
         return listfiles(path)
 
     async def upload(
         self,
         path: str,
+        user_id: int,
         chat_id: int,
         message_id: int,
         to_path: str = "MegaBot",
@@ -82,14 +92,15 @@ class MegaTools:
         Arguments:
 
             - path: string - Path to the file or folder
-            - chat_id: integer - Telegram chat id of the user
+            - user_id: integer - Telegram user id of the user
+            - chat_id: integer - Telegram chat id of the process (could be either private or group id)
             - message_id: integer - Id of the progress message
             - to_path (optional): string - Custom path to where the files need to be uploaded
         """
         cmd = ""
         # For files
         if os.path.isfile(path):
-            cmd = f'megaput {self.config} --disable-previews --no-ask-password --path "/Root/{to_path}/" "{path}"'
+            cmd = f'megaput {self.config} --no-ask-password --path "/Root/{to_path}/" "{path}"'
         # For folders
         elif os.path.isdir(path):
             cmd = f'megacopy {self.config} --no-ask-password -l "{path}" -r "/Root/{to_path}"'
@@ -106,7 +117,12 @@ class MegaTools:
             )
         # Upload
         await run_partial(
-            self.__shellExec, cmd, chat_id=chat_id, msg_id=message_id, **kwargs
+            self.__shellExec,
+            cmd,
+            user_id=user_id,
+            chat_id=chat_id,
+            msg_id=message_id,
+            **kwargs,
         )
         # Generate link
         ulink = await run_partial(
@@ -153,7 +169,9 @@ class MegaTools:
         fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
         return [fsize, fname]
 
-    def __shellExec(self, cmd: str, chat_id: int = None, msg_id: int = None, **kwargs):
+    def __shellExec(
+        self, cmd: str, user_id: int, chat_id: int = None, msg_id: int = None, **kwargs
+    ):
         run = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
@@ -161,7 +179,7 @@ class MegaTools:
             shell=True,
             encoding="utf-8",
         )
-        self.client.mega_running[chat_id] = run.pid
+        self.client.mega_running[user_id] = run.pid
 
         try:
             # Live process info update
@@ -192,7 +210,10 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
     def __checkErrors(self, out):
         if "not found" in out:
             raise MegatoolsNotFound
-
+        
+        elif "File already exists" in out:
+            raise FileAlreadyExists()
+    
         elif "already exists at" in out:
             pass
 
@@ -236,6 +257,11 @@ class MegatoolsNotFound(Exception):
             "'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/"
         )
 
+class FileAlreadyExists(Exception):
+    def __init__(self) -> None:
+        super().__init__(
+            "File you're trying to upload already exists in your account under 'MegaBot' folder"
+        )
 
 class LoginError(Exception):
     def __init__(self) -> None:

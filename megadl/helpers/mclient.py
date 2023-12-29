@@ -88,11 +88,8 @@ class MeganzClient(Client):
             if len(_auths.split("|")) > 2
             else set(map(int, _auths.split("|")[1].split())).union({"*"})
         )
-
-        self.use_logs = (
-            {"dl_from", "up_to"} if os.getenv("USE_LOGS") in {"True", "true"} else set()
-        )
         self.log_chat = int(os.getenv("LOG_CHAT")) if os.getenv("LOG_CHAT") else None
+        self.use_logs = {"dl_from", "up_to"}
         self.is_public = True if self.database else False
 
         if self.is_public:
@@ -119,6 +116,7 @@ class MeganzClient(Client):
         print("> Setting up additional functions")
         self.listening = {}
         self.mega_running = {}
+        self.ddl_running = {}
         self.add_handler(MessageHandler(self.use_listner))
 
         print("--------------------")
@@ -132,6 +130,19 @@ class MeganzClient(Client):
             can_use = False
             uid = msg.from_user.id
             try:
+                if func.__name__ in self.use_logs:
+                    # return if user has already started a process
+                    if uid in self.mega_running or uid in self.ddl_running:
+                        return await msg.reply(
+                            "`You've already started a process. Wait until it's finished before starting another one 🥱`"
+                        )
+                    # send logs to the log chat if available
+                    if self.log_chat:
+                        _frwded = await msg.forward(chat_id=self.log_chat)
+                        await _frwded.reply(
+                            f"**#UPLOAD_LOG** \n\n**From:** `{uid}` \n**Get history:** `/info {uid}`"
+                        )
+
                 # Check auth users
                 if self.database:
                     await self.database.add(uid)
@@ -143,17 +154,9 @@ class MeganzClient(Client):
 
                 if not can_use:
                     await msg.reply(
-                        "You're not authorized to use this bot 🙅‍♂️ \n\n**Join @NexaBotsUpdates ❤️**"
+                        "`You're not authorized to use this bot 🙅‍♂️` \n\n**Join @NexaBotsUpdates ❤️**"
                     )
                     return msg.stop_propagation()
-
-                # send logs if needed
-                if func.__name__ in self.use_logs:
-                    if self.log_chat:
-                        _frwded = await msg.forward(chat_id=self.log_chat)
-                        await _frwded.reply(
-                            f"**#UPLOAD_LOG** \n\n**From:** `{uid}` \n**Get history:** `/info {uid}`"
-                        )
 
                 return await func(client, msg)
             # Floodwait handling
@@ -195,16 +198,24 @@ class MeganzClient(Client):
             lstn["task"].set_result(msg)
         return msg.continue_propagation()
 
-    async def full_cleanup(self, path: str, msg_id: int, chat_id: int = None):
+    async def full_cleanup(self, path: str, msg_id: int, user_id: int = None):
         """
         Delete the file/folder and the message
         """
-        fs_cleanup(path)
-        self.glob_tmp.pop(msg_id)
-        if chat_id and chat_id in self.mega_running:
-            self.mega_running.remove(chat_id)
+        try:
+            fs_cleanup(path)
+            self.glob_tmp.pop(msg_id, None)
 
-    async def send_files(self, files: list[str], chat_id: int, msg_id: int):
+            # idk why I didn't do self.<dict>.pop(<key>, None), whatever this works
+            if user_id:
+                if user_id in self.mega_running:
+                    self.mega_running.pop(user_id)
+                if user_id in self.ddl_running:
+                    self.ddl_running.pop(user_id)
+        except:
+            pass
+
+    async def send_files(self, files: list[str], chat_id: int, msg_id: int, **kwargs):
         """
         Send files with automatic floodwait handling and file splitting
         """
@@ -223,10 +234,10 @@ class MeganzClient(Client):
                     splout = f"{self.tmp_loc}/splitted"
                     await splitit(file, splout)
                     for file in listfiles(splout):
-                        await send_as_guessed(self, file, chat_id, msg_id)
+                        await send_as_guessed(self, file, chat_id, msg_id, **kwargs)
                     fs_cleanup(splout)
                 else:
-                    await send_as_guessed(self, file, chat_id, msg_id)
+                    await send_as_guessed(self, file, chat_id, msg_id, **kwargs)
         else:
             await self.edit_message_text(
                 chat_id,
