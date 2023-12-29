@@ -6,13 +6,13 @@
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
-from megadl import MeganzClient
+from megadl import MegaCypher
 from megadl.helpers.sysfncs import kill_family
 
 
-@MeganzClient.on_callback_query(filters.regex(r"cancelqcb?.+"))
-@MeganzClient.handle_checks
-async def close_gb(client: MeganzClient, query: CallbackQuery):
+@MegaCypher.on_callback_query(filters.regex(r"cancelqcb?.+"))
+@MegaCypher.run_checks
+async def close_gb(client: MegaCypher, query: CallbackQuery):
     _mid = int(query.data.split("-")[1])
     try:
         # Remove user from global temp db

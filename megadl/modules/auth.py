@@ -7,12 +7,12 @@
 from pyrogram import filters
 from pyrogram.types import Message
 
-from megadl import MeganzClient
+from megadl import MegaCypher
 
 
-@MeganzClient.on_message(filters.command("login"))
-@MeganzClient.handle_checks
-async def mega_logger(client: MeganzClient, msg: Message):
+@MegaCypher.on_message(filters.command("login"))
+@MegaCypher.run_checks
+async def mega_logger(client: MegaCypher, msg: Message):
     user_id = msg.chat.id
 
     email = await client.ask(user_id, "Enter your Mega.nz email:")
@@ -30,9 +30,9 @@ async def mega_logger(client: MeganzClient, msg: Message):
     await msg.reply("Successfully logged in!")
 
 
-@MeganzClient.on_message(filters.command("logout"))
-@MeganzClient.handle_checks
-async def mega_logoutter(client: MeganzClient, msg: Message):
+@MegaCypher.on_message(filters.command("logout"))
+@MegaCypher.run_checks
+async def mega_logoutter(client: MegaCypher, msg: Message):
     really = await client.ask(msg.chat.id, "Are you sure you want to logout? (y/n)")
     if really.text.lower() == "y":
         await client.database.mega_logout(msg.chat.id)

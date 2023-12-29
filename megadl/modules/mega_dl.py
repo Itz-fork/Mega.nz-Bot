@@ -15,15 +15,15 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from megadl import MeganzClient
+from megadl import MegaCypher
 from megadl.lib.megatools import MegaTools
 
 
-@MeganzClient.on_message(
+@MegaCypher.on_message(
     filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)")
 )
-@MeganzClient.handle_checks
-async def dl_from(client: MeganzClient, msg: Message):
+@MegaCypher.run_checks
+async def dl_from(client: MegaCypher, msg: Message):
     # Push info to temp db
     _mid = msg.id
     client.glob_tmp[msg.id] = [msg.text, f"{client.dl_loc}/{_mid}"]
@@ -42,9 +42,9 @@ async def dl_from(client: MeganzClient, msg: Message):
 prv_rgx = r"(\/Root\/?.+)"
 
 
-@MeganzClient.on_callback_query(filters.regex(r"dwn_mg?.+"))
-@MeganzClient.handle_checks
-async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
+@MegaCypher.on_callback_query(filters.regex(r"dwn_mg?.+"))
+@MegaCypher.run_checks
+async def dl_from_cb(client: MegaCypher, query: CallbackQuery):
     # Access saved info
     _mid = int(query.data.split("-")[1])
     dtmp = client.glob_tmp.get(_mid)
@@ -111,9 +111,9 @@ async def dl_from_cb(client: MeganzClient, query: CallbackQuery):
     await resp.delete()
 
 
-@MeganzClient.on_callback_query(filters.regex(r"info_mg?.+"))
-@MeganzClient.handle_checks
-async def info_from_cb(client: MeganzClient, query: CallbackQuery):
+@MegaCypher.on_callback_query(filters.regex(r"info_mg?.+"))
+@MegaCypher.run_checks
+async def info_from_cb(client: MegaCypher, query: CallbackQuery):
     url = client.glob_tmp.pop(int(query.data.split("-")[1]))[0]
     size, name = await MegaTools.file_info(url)
     await query.edit_message_text(

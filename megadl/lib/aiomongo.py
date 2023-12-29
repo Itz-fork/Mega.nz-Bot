@@ -29,19 +29,19 @@ class AioMongo(MongoClient):
             self.atlas_host, port, document_class, tz_aware, connect, type_registry, **kwargs
         )
 
-    async def insert(self, coll: Collection, query: dict, *args, **kwargs):
+    async def insert_async(self, coll: Collection, query: dict, *args, **kwargs):
         """
         Perform `insert_one` operation on the given collection
         """
         return await run_partial(coll.insert_one, query, *args, **kwargs)
 
-    async def find(self, coll: Collection, query: dict, *args, **kwargs):
+    async def find_async(self, coll: Collection, query: dict, *args, **kwargs):
         """
         Perform `find_one` operation on the given collection
         """
         return await run_partial(coll.find_one, query, *args, **kwargs)
 
-    async def update(self, coll: Collection, query: dict, value: dict, *args, **kwargs):
+    async def update_async(self, coll: Collection, query: dict, value: dict, *args, **kwargs):
         """
         Perform `update_one` operation on the given collection
         """
@@ -49,7 +49,7 @@ class AioMongo(MongoClient):
             coll.update_one, query, {"$set": value}, *args, **kwargs
         )
 
-    async def delete(self, coll: Collection, query: dict, *args, **kwargs):
+    async def delete_async(self, coll: Collection, query: dict, *args, **kwargs):
         """
         Perform `delete_one` operation on the given collection
         """

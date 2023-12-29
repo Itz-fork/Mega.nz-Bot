@@ -73,7 +73,7 @@ async def send_as_guessed(client, file, chat_id, mid):
             # Get duration of video in seconds
             _sh = await run_partial(
                 run_on_shell,
-                f"ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 {file}",
+                f"ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 '{file}'",
             )
             vid_dur = int(float(_sh))
             # Generate thumbnail for the video
@@ -83,7 +83,7 @@ async def send_as_guessed(client, file, chat_id, mid):
                 makedirs(_tmpth)
             _sh = await run_partial(
                 run_on_shell,
-                f"ffmpeg -i {file} -ss {timedelta(seconds=int(vid_dur/10))} -vframes 1 {_thumb}",
+                f"ffmpeg -y -ss {timedelta(seconds=int(vid_dur/10))} -i '{file}' -vframes 1 '{_thumb}'",
             )
             await client.send_video(
                 chat_id,

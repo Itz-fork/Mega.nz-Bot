@@ -40,11 +40,6 @@ class MeganzClient(Client):
     dl_loc = None
     tmp_loc = None
     database = Users() if os.getenv("MONGO_URI") else None
-    auth_users = (
-        set(map(int, os.getenv("AUTH_USERS").split()))
-        if os.getenv("AUTH_USERS") and os.getenv("AUTH_USERS") != "*"
-        else "*"
-    )
 
     def __init__(self):
         # set DOWNLOAD_LOCATION variable
@@ -69,7 +64,7 @@ class MeganzClient(Client):
         # Initializing pyrogram
         print("> Initializing client")
         super().__init__(
-            "MegaBot",
+            "MegaBotCypher",
             bot_token=os.getenv("BOT_TOKEN"),
             api_id=os.getenv("APP_ID"),
             api_hash=os.getenv("API_HASH"),
@@ -81,6 +76,23 @@ class MeganzClient(Client):
         print("> Initializing database")
         self.glob_tmp = {}
         self.cipher = None
+
+        print("> Updating privacy settings")
+        _auths = os.getenv("AUTH_USERS")
+        self.auth_users = (
+            set()
+            if not isinstance(_auths, (list, str))
+            else set(map(int, os.getenv("AUTH_USERS").split()))
+            if not _auths.startswith("*")
+            else {"*"}
+            if len(_auths.split("|")) > 2
+            else set(map(int, _auths.split("|")[1].split())).union({"*"})
+        )
+
+        self.use_logs = (
+            {"dl_from", "up_to"} if os.getenv("USE_LOGS") in {"True", "true"} else set()
+        )
+        self.log_chat = int(os.getenv("LOG_CHAT")) if os.getenv("LOG_CHAT") else None
         self.is_public = True if self.database else False
 
         if self.is_public:
@@ -111,22 +123,21 @@ class MeganzClient(Client):
 
         print("--------------------")
 
-    @classmethod
-    def handle_checks(self, func: Callable) -> Callable:
+    def run_checks(self, func) -> Callable:
         """
         Decorator to run middleware
         """
 
-        async def fn_run(client: Client, msg: Message):
+        async def cy_run(client: Client, msg: Message):
             can_use = False
             uid = msg.from_user.id
             try:
+                # Check auth users
                 if self.database:
                     await self.database.add(uid)
 
-                if self.auth_users == "*":
+                if "*" in self.auth_users:
                     can_use = True
-
                 else:
                     can_use = uid in self.auth_users
 
@@ -135,6 +146,14 @@ class MeganzClient(Client):
                         "You're not authorized to use this bot 🙅‍♂️ \n\n**Join @NexaBotsUpdates ❤️**"
                     )
                     return msg.stop_propagation()
+
+                # send logs if needed
+                if func.__name__ in self.use_logs:
+                    if self.log_chat:
+                        _frwded = await msg.forward(chat_id=self.log_chat)
+                        await _frwded.reply(
+                            f"**#UPLOAD_LOG** \n\n**From:** `{uid}` \n**Get history:** `/info {uid}`"
+                        )
 
                 return await func(client, msg)
             # Floodwait handling
@@ -148,7 +167,7 @@ class MeganzClient(Client):
             except Exception as e:
                 logging.warning(_emsg.format(self.version, func.__module__, e))
 
-        return fn_run
+        return cy_run
 
     async def ask(self, chat_id: int, text: str, *args, **kwargs):
         await self.send_message(chat_id, text, *args, **kwargs)

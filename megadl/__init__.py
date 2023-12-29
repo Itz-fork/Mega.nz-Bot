@@ -13,4 +13,6 @@ print("--------------------")
 print("> Loading config")
 load_dotenv()
 
+# client
 from .helpers.mclient import MeganzClient
+MegaCypher: "MeganzClient" = MeganzClient()
