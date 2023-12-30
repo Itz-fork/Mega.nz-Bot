@@ -90,7 +90,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
         ),
     )
     if not f_list:
-        raise FileNotFoundError("Download failed")
+        return
 
     await query.edit_message_text("`Successfully downloaded the content 🥳`")
     # update download count

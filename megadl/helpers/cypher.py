@@ -172,7 +172,7 @@ class MeganzClient(Client):
             # Other exceptions
             except Exception as e:
                 await self.cyeor(msg, f"**Oops 🫨, Somethig bad happend!** \n\n`{e}`")
-                await self.full_cleanup(self.dl_loc, uid)
+                await self.full_cleanup(f"{self.dl_loc}/{uid}", uid)
                 logging.warning(_emsg.format(self.version, func.__module__, e))
 
         return cy_run

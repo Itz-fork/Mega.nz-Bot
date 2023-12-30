@@ -293,7 +293,6 @@ class MegaTools:
     async def __shellExec(
         self, cmd: str, user_id: int, chat_id: int = None, msg_id: int = None, **kwargs
     ):
-        print(cmd)
         run = await asyncio.create_subprocess_shell(
             cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -302,36 +301,41 @@ class MegaTools:
         )
         self.client.mega_running[user_id] = run.pid
 
-        while True:
-            out = (
-                lambda _ots: _ots.decode("utf-8") if isinstance(_ots, bytes) else _ots
-            )(await run.stdout.readline())
-            err = (
-                lambda _ots: _ots.decode("utf-8") if isinstance(_ots, bytes) else _ots
-            )(await run.stderr.readline())
-
-            if err:
-                print(err)
-                self.__checkErrors(err)
-
-            print(f"out is: {out}")
-            if out and out != "":
-                print(out)
-                try:
-                    await self.client.edit_message_text(
-                        chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
+        async def read_stream(stream, handler):
+            while True:
+                line = await stream.readline()
+                if line:
+                    await handler(
+                        line.decode("utf-8") if isinstance(line, bytes) else line
                     )
-                except:
-                    pass
+                else:
+                    break
 
-            if run.poll() is not None:
-                break
+        async def handle_stdout(out):
+            try:
+                await self.client.edit_message_text(
+                    chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
+                )
+            except:
+                pass
 
-        # sh_out = run.stdout.read()[:-1]
+        async def handle_stderr(err):
+            if run.returncode is None:
+                await self.__checkErrors(err)
+
+        stdout = read_stream(run.stdout, handle_stdout)
+        stderr = read_stream(run.stderr, handle_stderr)
+
+        try:
+            await asyncio.gather(stdout, stderr)
+        except asyncio.CancelledError:
+            asyncio.create_task(self.__terminate_sub(run))
+
         await run.wait()
-        sh_out = (await run.stdout.read()).decode("utf-8").strip()
-        self.__checkErrors(sh_out)
-        return sh_out
+
+    async def __terminate_sub(run):
+        run.terminate()
+        await run.wait()
 
     def __genErrorMsg(self, bs):
         return f"""
@@ -342,7 +346,7 @@ Please make sure that you've provided the correct username and password.
 You can open a new issue if the problem persists - https://github.com/Itz-fork/Mega.nz-Bot/issues
         """
 
-    def __checkErrors(self, out):
+    async def __checkErrors(self, out):
         if "command not found" in out:
             raise MegatoolsNotFound()
 
