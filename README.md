@@ -6,7 +6,7 @@
 </p>
 
 
-# Mega.nz-Bot (nightly 🌃)
+# Mega.nz-Bot - Cypher 🥷
 A simple telegram bot to download, upload files or folders from [Mega.nz](https://mega.nz/)
 
 
@@ -39,7 +39,7 @@ To setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot) follow these ste
 
 - Clone the Repo,
 ```
-git clone -b nightly https://github.com/Itz-fork/Mega.nz-Bot
+git clone https://github.com/Itz-fork/Mega.nz-Bot
 ```
 - Enter the directory,
 ```

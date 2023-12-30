@@ -100,8 +100,8 @@ class MeganzClient(Client):
                     key = f.read().encode()
                     self.cipher = Fernet(key)
             # check if private key exists as an env var
-            elif os.getenv("CIPHER_KEY"):
-                self.cipher = Fernet(os.getenv("CIPHER_KEY").encode())
+            elif os.getenv("CYPHER_KEY"):
+                self.cipher = Fernet(os.getenv("CYPHER_KEY").encode())
             # otherwise exit with error code 1
             # although we can generate a new key that's not a good idea
             # because if deployer lose it, it'll make all the existing data useless
