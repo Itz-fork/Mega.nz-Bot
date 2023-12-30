@@ -11,5 +11,7 @@ from . import MegaCypher
 # Run the bot
 if __name__ == "__main__":
     # Custom pyrogram client
+    print("> Starting Client")
     MegaCypher.start()
+    print("--------------------")
     idle()

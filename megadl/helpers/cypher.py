@@ -119,7 +119,6 @@ class MeganzClient(Client):
         self.ddl_running = {}
         self.add_handler(MessageHandler(self.use_listner))
 
-        print("--------------------")
 
     def run_checks(self, func) -> Callable:
         """
