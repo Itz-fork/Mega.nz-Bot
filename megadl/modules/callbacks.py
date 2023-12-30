@@ -7,16 +7,16 @@ import asyncio
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
-from megadl import MegaCypher
+from megadl import CypherClient
 from megadl.helpers.sysfncs import kill_family
 
 
-@MegaCypher.on_callback_query(filters.regex(r"cancelqcb?.+"))
-@MegaCypher.run_checks
-async def close_gb(client: MegaCypher, query: CallbackQuery):
+@CypherClient.on_callback_query(filters.regex(r"cancelqcb?.+"))
+@CypherClient.run_checks
+async def close_gb(client: CypherClient, query: CallbackQuery):
     usr = int(query.data.split("-")[1])
     try:
-        # Remove user from global temp db
+        # get user from global temp db
         dtmp = client.glob_tmp.get(usr)
 
         # cancel if user has a download running

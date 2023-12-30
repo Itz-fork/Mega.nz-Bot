@@ -6,12 +6,12 @@
 from pyrogram import filters
 from pyrogram.types import Message
 
-from megadl import MegaCypher
+from megadl import CypherClient
 
 
-@MegaCypher.on_message(filters.command("info"))
-@MegaCypher.run_checks
-async def admin_user_info(client: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("info"))
+@CypherClient.run_checks
+async def admin_user_info(client: CypherClient, msg: Message):
     if client.auth_users == "*" or msg.from_user.id not in client.auth_users:
         return await msg.reply("Getting user info can only be done by admins!")
 
@@ -55,9 +55,9 @@ If you think above total counts are abnormal, you can ban the user with `/ban {b
     )
 
 
-@MegaCypher.on_message(filters.command("ban"))
-@MegaCypher.run_checks
-async def admin_ban_user(client: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("ban"))
+@CypherClient.run_checks
+async def admin_ban_user(client: CypherClient, msg: Message):
     if msg.from_user.id not in client.auth_users:
         return await msg.reply("Banning users can only be done by admins!")
 
@@ -77,9 +77,9 @@ async def admin_ban_user(client: MegaCypher, msg: Message):
     await msg.reply(f"Banned user `{buid}`")
 
 
-@MegaCypher.on_message(filters.command("unban"))
-@MegaCypher.run_checks
-async def admin_unban_user(client: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("unban"))
+@CypherClient.run_checks
+async def admin_unban_user(client: CypherClient, msg: Message):
     if msg.from_user.id not in client.auth_users:
         return await msg.reply("Unbanning users can only be done by admins!")
     buid = None

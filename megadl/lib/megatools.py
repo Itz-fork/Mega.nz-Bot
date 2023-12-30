@@ -4,15 +4,40 @@
 # Description: Wrapper for megatools cli with extended features
 
 import os
-import subprocess
+import re
+import json
+import asyncio
 
-
-from re import search, match
 from aiohttp import ClientSession
 from megadl.helpers.pyros import humanbytes
 from megadl.helpers.files import listfiles
 from megadl.helpers.sysfncs import run_partial, run_on_shell
-from megadl.helpers.crypt import base64_to_a32, base64_url_decode, decrypt_attr
+from megadl.helpers.crypt import (
+    base64_to_a32,
+    decrypt_attr,
+    decrypt_node_key,
+    base64_url_decode,
+)
+
+
+# regexes
+class MegaRegexs:
+    pub_file_folder = re.compile(r"https?:\/\/mega\.nz\/(file|folder|#)?.+")
+    prv_file_folder = re.compile(r"\/Root\/((.*)|([^\s]*))\.")
+
+    pub_file = re.compile(
+        r"https://mega.nz/(?:file/([0-z-_]+)#|#!([0-z-_]+)!)([0-z-_]+)"
+    )
+    pub_folder = re.compile(
+        r"mega.[^/]+/(?:folder/([0-z-_]+)#|(?:(?:#F!([0-z-_]+))[!#]))([0-z-_]+)(?:/folder/([0-z-_]+))*"
+    )
+
+    file_id = re.compile(r"(?<=/file/)(.*)(?=#)")
+    file_key = re.compile(r"(?<=#)(.*)")
+    old_f_ik = re.compile(r"(?<=!)(.*)")
+
+
+Regexes = MegaRegexs()
 
 
 class MegaTools:
@@ -34,10 +59,6 @@ class MegaTools:
             self.config = ""
         self.client = tg_client
 
-        # regexes
-        self.rgx_pubf = r"https?:\/\/mega\.nz\/(file|folder|#)?.+"
-        self.rgx_prvf = r"\/Root\/((.*)|([^\s]*))\."
-
     async def download(
         self,
         url: str,
@@ -58,11 +79,11 @@ class MegaTools:
             - path (optional): string - Custom path to where the files need to be downloaded
         """
         # Public link download: Supports both file and folders
-        if match(self.rgx_pubf, url):
+        if Regexes.pub_file_folder.match(url):
             cmd = f'megadl {self.config} --path "{path}" {url}'
 
         # Private link downloads: Supports both file and folders
-        elif match(self.rgx_prvf, url):
+        elif Regexes.prv_file_folder.match(url):
             cmd = f'megaget --no-ask-password {self.config} --path "{path}" {url}'
 
         else:
@@ -136,65 +157,179 @@ class MegaTools:
         return ulink
 
     @staticmethod
-    async def file_info(url: str) -> list[str]:
+    async def get_info(url: str) -> list[str]:
         """
-        Return basic info of a public file
+        Return basic info of a public file/folder
 
         Arguments:
-            - url: string - Mega.nz link of the file
+            - url: string - Mega.nz link of the file / folder
+
+        Returns:
+            - File:
+                - (file_size, file_name)
+
+            - Folder:
+                - string of all the files and sub dirs in the url
+
+            - Otherwise:
+                - (undefined, undefined)
         """
-        file_id = None
-        file_key = None
-        data = None
-        # for mega.nz/file/
-        if "/file/" in url:
-            file_id = search(r"(?<=/file/)(.*)(?=#)", url)[0]
-            file_key = search(r"(?<=#)(.*)", url)[0]
-        # for mega.nz/#!...!....
-        elif "/#!" in url:
-            _udta = search(r"(?<=!)(.*)", url)[0].split("!")
-            file_id = _udta[0]
-            file_key = _udta[1]
+        is_file = Regexes.pub_file.search(url)
+        is_folder = Regexes.pub_folder.search(url)
+
+        if is_file:
+            file_id = None
+            file_key = None
+            data = None
+            # for mega.nz/file/
+            if "/file/" in url:
+                file_id = Regexes.file_id.search(url)[0]
+                file_key = Regexes.file_key.search(url)[0]
+            # for mega.nz/#!...!....
+            elif "/#!" in url:
+                file_id, file_key = Regexes.old_f_ik.search(url)[0].split("!")
+            else:
+                return "undefined", "undefined"
+
+            async with ClientSession() as session:
+                async with session.post(
+                    "https://g.api.mega.co.nz/cs",
+                    json=[{"a": "g", "ad": 1, "p": file_id}],
+                ) as resp:
+                    data = (await resp.json())[0]
+            key = base64_to_a32(file_key)
+            tk = (key[0] ^ key[4], key[1] ^ key[5], key[2] ^ key[6], key[3] ^ key[7])
+            fsize = humanbytes(data["s"])
+            fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
+            return [fsize, fname]
+
+        elif is_folder:
+            root_folder, shared_enc_key = tuple(
+                [x for x in is_folder.groups() if x is not None]
+            )
+            shared_key = base64_to_a32(shared_enc_key)
+
+            # get nodes in a the folder
+            nodes = None
+            data = [{"a": "f", "c": 1, "ca": 1, "r": 1}]
+            # print(nodes)
+            session = ClientSession()
+            resp = await session.post(
+                "https://g.api.mega.co.nz/cs",
+                params={"id": 0, "n": root_folder},
+                data=json.dumps(data),
+            )
+            nodes = (await resp.json())[0]["f"]
+
+            if not nodes:
+                return "undefined", "undefined"
+
+            # get nodes in a sub dir
+            async def get_sub_dir_nodes(root_folder, sub_dir):
+                resp = await session.post(
+                    "https://g.api.mega.co.nz/cs",
+                    params={"id": 0, "n": root_folder},
+                    data=json.dumps(data),
+                )
+                json_resp = await resp.json()
+                if (
+                    isinstance(json_resp, list)
+                    and isinstance(json_resp[0], dict)
+                    and "f" in json_resp[0]
+                ):
+                    all_nodes = json_resp[0]["f"]
+                    sub_dir_nodes = [node for node in all_nodes if node["p"] == sub_dir]
+                    return sub_dir_nodes
+                else:
+                    return []
+
+            # make string
+            to_return = ""
+            num = 1
+
+            async def prepare_string(nodes, shared_key, depth=0):
+                nonlocal to_return
+                nonlocal num
+                for node in nodes:
+                    key = decrypt_node_key(node["k"], shared_key)
+                    file_id = node["h"]
+                    if key:
+                        file_size = node["s"] if "s" in node else ""
+                        if node["t"] == 0:  # file
+                            k = (
+                                key[0] ^ key[4],
+                                key[1] ^ key[5],
+                                key[2] ^ key[6],
+                                key[3] ^ key[7],
+                            )
+                            attrs = decrypt_attr(base64_url_decode(node["a"]), k)
+                            file_name = attrs["n"]
+                            to_return += (
+                                "  " * depth
+                                + "|- "
+                                + f"{file_name} ({humanbytes(file_size)})\n"
+                            )
+                        elif node["t"] == 1:  # folder
+                            k = key
+                            attrs = decrypt_attr(base64_url_decode(node["a"]), k)
+                            file_name = attrs["n"]
+                            to_return += "  " * depth + "|- " + f"{file_name}\n"
+                            await prepare_string(
+                                await get_sub_dir_nodes(root_folder, file_id),
+                                shared_key,
+                                depth + 1,
+                            )
+                    if len(nodes) == num:
+                        break
+                    num += 1
+
+            await prepare_string(nodes, shared_key)
+            await session.close()
+            return to_return
+
         else:
             return "undefined", "undefined"
 
-        async with ClientSession() as session:
-            async with session.post(
-                "https://g.api.mega.co.nz/cs", json=[{"a": "g", "ad": 1, "p": file_id}]
-            ) as resp:
-                data = (await resp.json())[0]
-        key = base64_to_a32(file_key)
-        tk = (key[0] ^ key[4], key[1] ^ key[5], key[2] ^ key[6], key[3] ^ key[7])
-        fsize = humanbytes(data["s"])
-        fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
-        return [fsize, fname]
-
-    def __shellExec(
+    async def __shellExec(
         self, cmd: str, user_id: int, chat_id: int = None, msg_id: int = None, **kwargs
     ):
-        run = subprocess.Popen(
+        print(cmd)
+        run = await asyncio.create_subprocess_shell(
             cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=True,
-            encoding="utf-8",
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            env=os.environ.copy(),
         )
         self.client.mega_running[user_id] = run.pid
 
-        try:
-            # Live process info update
-            while run.poll() is None:
-                out = run.stdout.readline()
-                if out != "":
-                    try:
-                        self.client.edit_message_text(
-                            chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
-                        )
-                    except:
-                        pass
-        except FileNotFoundError:
-            pass
-        sh_out = run.stdout.read()[:-1]
+        while True:
+            out = (
+                lambda _ots: _ots.decode("utf-8") if isinstance(_ots, bytes) else _ots
+            )(await run.stdout.readline())
+            err = (
+                lambda _ots: _ots.decode("utf-8") if isinstance(_ots, bytes) else _ots
+            )(await run.stderr.readline())
+
+            if err:
+                print(err)
+                self.__checkErrors(err)
+
+            print(f"out is: {out}")
+            if out and out != "":
+                print(out)
+                try:
+                    await self.client.edit_message_text(
+                        chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
+                    )
+                except:
+                    pass
+
+            if run.poll() is not None:
+                break
+
+        # sh_out = run.stdout.read()[:-1]
+        await run.wait()
+        sh_out = (await run.stdout.read()).decode("utf-8").strip()
         self.__checkErrors(sh_out)
         return sh_out
 
@@ -208,12 +343,15 @@ You can open a new issue if the problem persists - https://github.com/Itz-fork/M
         """
 
     def __checkErrors(self, out):
-        if "not found" in out:
-            raise MegatoolsNotFound
-        
+        if "command not found" in out:
+            raise MegatoolsNotFound()
+
+        elif "Remote directory not found" in out:
+            raise RemoteContentNotFound()
+
         elif "File already exists" in out:
             raise FileAlreadyExists()
-    
+
         elif "already exists at" in out:
             pass
 
@@ -257,11 +395,20 @@ class MegatoolsNotFound(Exception):
             "'megatools' cli is not installed in this system. You can download it at - https://megatools.megous.com/"
         )
 
+
+class RemoteContentNotFound(Exception):
+    def __init__(self) -> None:
+        super().__init__(
+            "The file or folder you're trying to download doesn't exist in your account"
+        )
+
+
 class FileAlreadyExists(Exception):
     def __init__(self) -> None:
         super().__init__(
             "File you're trying to upload already exists in your account under 'MegaBot' folder"
         )
+
 
 class LoginError(Exception):
     def __init__(self) -> None:

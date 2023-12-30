@@ -15,15 +15,15 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from megadl import MegaCypher
+from megadl import CypherClient
 from megadl.lib.megatools import MegaTools
 
 
-@MegaCypher.on_message(
+@CypherClient.on_message(
     filters.regex(r"(https?:\/\/mega\.nz\/(file|folder|#)?.+)|(\/Root\/?.+)")
 )
-@MegaCypher.run_checks
-async def dl_from(client: MegaCypher, msg: Message):
+@CypherClient.run_checks
+async def dl_from(client: CypherClient, msg: Message):
     # Push info to temp db
     _mid = msg.id
     _usr = msg.from_user.id
@@ -34,11 +34,7 @@ async def dl_from(client: MegaCypher, msg: Message):
             [
                 [InlineKeyboardButton("Download 💾", callback_data=f"dwn_mg-{_mid}")],
                 [InlineKeyboardButton("Info ℹ️", callback_data=f"info_mg-{_mid}")],
-                [
-                    InlineKeyboardButton(
-                        "Cancel ❌", callback_data=f"cancelqcb-{_usr}"
-                    )
-                ],
+                [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{_usr}")],
             ]
         ),
     )
@@ -47,9 +43,9 @@ async def dl_from(client: MegaCypher, msg: Message):
 prv_rgx = r"(\/Root\/?.+)"
 
 
-@MegaCypher.on_callback_query(filters.regex(r"dwn_mg?.+"))
-@MegaCypher.run_checks
-async def dl_from_cb(client: MegaCypher, query: CallbackQuery):
+@CypherClient.on_callback_query(filters.regex(r"dwn_mg?.+"))
+@CypherClient.run_checks
+async def dl_from_cb(client: CypherClient, query: CallbackQuery):
     # Access saved info
     _mid = int(query.data.split("-")[1])
     qcid = query.message.chat.id
@@ -81,34 +77,22 @@ async def dl_from_cb(client: MegaCypher, query: CallbackQuery):
     cli = MegaTools(client, conf)
 
     f_list = None
-    try:
-        f_list = await cli.download(
-            url,
-            qusr,
-            qcid,
-            resp.id,
-            path=dlid,
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            "Cancel ❌", callback_data=f"cancelqcb-{qusr}"
-                        )
-                    ],
-                ]
-            ),
-        )
-        if not f_list:
-            return
-        await query.edit_message_text("`Successfully downloaded the content 🥳`")
-    except Exception as e:
-        await query.edit_message_text(
-            f"""
-            **Oops 🫨, Somethig bad happend!**
+    f_list = await cli.download(
+        url,
+        qusr,
+        qcid,
+        resp.id,
+        path=dlid,
+        reply_markup=InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("Cancel ❌", callback_data=f"cancelqcb-{qusr}")],
+            ]
+        ),
+    )
+    if not f_list:
+        raise FileNotFoundError("Download failed")
 
-            `{e}`
-            """
-        )
+    await query.edit_message_text("`Successfully downloaded the content 🥳`")
     # update download count
     await client.database.plus_fl_count(qusr, downloads=len(f_list))
     # Send file(s) to the user
@@ -120,23 +104,32 @@ async def dl_from_cb(client: MegaCypher, query: CallbackQuery):
         reply_to_message_id=_mid,
         caption=f"**Join @NexaBotsUpdates ❤️**",
     )
-    await client.full_cleanup(dlid, _mid, qusr)
+    await client.full_cleanup(dlid, qusr)
     await resp.delete()
 
 
-@MegaCypher.on_callback_query(filters.regex(r"info_mg?.+"))
-@MegaCypher.run_checks
-async def info_from_cb(client: MegaCypher, query: CallbackQuery):
-    url = client.glob_tmp.pop(int(query.data.split("-")[1]))[0]
-    size, name = await MegaTools.file_info(url)
-    await query.edit_message_text(
-        f"""
+@CypherClient.on_callback_query(filters.regex(r"info_mg?.+"))
+@CypherClient.run_checks
+async def info_from_cb(client: CypherClient, query: CallbackQuery):
+    url = client.glob_tmp.get(query.from_user.id)[0]
+    retrieved = await MegaTools.get_info(url)
+
+    if isinstance(retrieved, list):
+        await query.edit_message_text(
+            f"""
 》 **File Details**
 
-**📛 Name:** `{name}`
-**🗂 Size:** `{size}`
+**📛 Name:** `{retrieved[0]}`
+**🗂 Size:** `{retrieved[1]}`
 **📎 URL:** `{url}`
-
 """,
-        reply_markup=None,
-    )
+            reply_markup=None,
+        )
+
+    else:
+        await query.edit_message_text(
+            f"""
+`{retrieved}`
+""",
+            reply_markup=None,
+        )

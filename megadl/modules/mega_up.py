@@ -12,14 +12,14 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from megadl import MegaCypher
+from megadl import CypherClient
 from megadl.lib.ddl import Downloader
 from megadl.lib.megatools import MegaTools
 from megadl.helpers.pyros import track_progress
 
 
 # Respond only to Documents, Photos, Videos, GIFs, Audio and to urls other than mega
-@MegaCypher.on_message(
+@CypherClient.on_message(
     filters.document
     | filters.photo
     | filters.video
@@ -29,8 +29,8 @@ from megadl.helpers.pyros import track_progress
         r"((http|https)://)(www.)?(?!mega)[a-zA-Z0-9@:%._\+~#?&//=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%._\+~#?&//=]*)"
     )
 )
-@MegaCypher.run_checks
-async def up_to(_: MegaCypher, msg: Message):
+@CypherClient.run_checks
+async def up_to(_: CypherClient, msg: Message):
     _mid = msg.id
     await msg.reply(
         "Select what you want to do 🤗",
@@ -47,9 +47,9 @@ async def up_to(_: MegaCypher, msg: Message):
     )
 
 
-@MegaCypher.on_callback_query(filters.regex(r"up_tgdl?.+"))
-@MegaCypher.run_checks
-async def to_up_cb(client: MegaCypher, query: CallbackQuery):
+@CypherClient.on_callback_query(filters.regex(r"up_tgdl?.+"))
+@CypherClient.run_checks
+async def to_up_cb(client: CypherClient, query: CallbackQuery):
     # Get message content
     _mid = int(query.data.split("-")[1])
     qmid = query.message.id
@@ -101,4 +101,4 @@ async def to_up_cb(client: MegaCypher, query: CallbackQuery):
             [[InlineKeyboardButton("Visit 🔗", url=limk)]]
         ),
     )
-    await client.full_cleanup(dl_path, _mid, qusr)
+    await client.full_cleanup(dl_path, qusr)

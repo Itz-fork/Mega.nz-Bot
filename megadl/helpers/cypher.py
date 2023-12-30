@@ -43,11 +43,13 @@ class MeganzClient(Client):
 
     def __init__(self):
         # set DOWNLOAD_LOCATION variable
-        # if USE_ENV is True or DOWNLOAD_LOCATION var is empty it'll use currend dir + NexaBots
+        # if USE_ENV is True it'll use currend dir + NexaBots
         # otherwise use location defined in .env file by user
         print("> Setting up file locations")
         self.cwd = os.getcwd()
-        if os.getenv("USE_ENV") in ["True", "true"] or not os.getenv("DOWNLOAD_LOCATION"):
+        if os.getenv("USE_ENV") in ["True", "true"] or not os.getenv(
+            "DOWNLOAD_LOCATION"
+        ):
             self.dl_loc = f"{self.cwd}/NexaBots"
         else:
             self.dl_loc = os.getenv("DOWNLOAD_LOCATION")
@@ -119,7 +121,6 @@ class MeganzClient(Client):
         self.ddl_running = {}
         self.add_handler(MessageHandler(self.use_listner))
 
-
     def run_checks(self, func) -> Callable:
         """
         Decorator to run middleware
@@ -165,11 +166,28 @@ class MeganzClient(Client):
             # pyrogram message not modified error handling
             except errors.MessageNotModified:
                 pass
+            except FileExistsError:
+                await self.cyeor(msg, "`File already exists in the server 😬`")
+                await self.full_cleanup(self.dl_loc, uid)
             # Other exceptions
             except Exception as e:
+                await self.cyeor(msg, f"**Oops 🫨, Somethig bad happend!** \n\n`{e}`")
+                await self.full_cleanup(self.dl_loc, uid)
                 logging.warning(_emsg.format(self.version, func.__module__, e))
 
         return cy_run
+
+    async def cyeor(self, msg, text: str, reply: bool = False, **kwargs):
+        if isinstance(msg, Message):
+            if reply:
+                await msg.reply(text)
+            else:
+                await msg.edit(text, **kwargs)
+        else:
+            if reply:
+                await msg.message.reply(text, **kwargs)
+            else:
+                await msg.message.edit_text(text, **kwargs)
 
     async def ask(self, chat_id: int, text: str, *args, **kwargs):
         await self.send_message(chat_id, text, *args, **kwargs)
@@ -197,13 +215,14 @@ class MeganzClient(Client):
             lstn["task"].set_result(msg)
         return msg.continue_propagation()
 
-    async def full_cleanup(self, path: str, msg_id: int, user_id: int = None):
+    async def full_cleanup(self, path: str = None, user_id: int = None):
         """
         Delete the file/folder and the message
         """
         try:
-            fs_cleanup(path)
-            self.glob_tmp.pop(msg_id, None)
+            if path:
+                fs_cleanup(path)
+            self.glob_tmp.pop(user_id, None)
 
             # idk why I didn't do self.<dict>.pop(<key>, None), whatever this works
             if user_id:

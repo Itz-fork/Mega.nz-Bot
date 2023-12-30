@@ -8,12 +8,12 @@ from pyrogram import filters
 from pyrogram.enums import ChatType
 from pyrogram.types import Message
 
-from megadl import MegaCypher
+from megadl import CypherClient
 
 
-@MegaCypher.on_message(filters.command("login"))
-@MegaCypher.run_checks
-async def mega_logger(client: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("login"))
+@CypherClient.run_checks
+async def mega_logger(client: CypherClient, msg: Message):
     if msg.chat.type != ChatType.PRIVATE:
         return await msg.reply("`You can only login in private chats for obivious reasons`")
     user_id = msg.chat.id
@@ -33,9 +33,9 @@ async def mega_logger(client: MegaCypher, msg: Message):
     await msg.reply("`Successfully logged in ✅`")
 
 
-@MegaCypher.on_message(filters.command("logout"))
-@MegaCypher.run_checks
-async def mega_logoutter(client: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("logout"))
+@CypherClient.run_checks
+async def mega_logoutter(client: CypherClient, msg: Message):
     really = await client.ask(msg.chat.id, "Are you sure you want to logout? (y/n)")
     if really.text.lower() == "y":
         await client.database.mega_logout(msg.chat.id)

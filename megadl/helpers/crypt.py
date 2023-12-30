@@ -2,8 +2,7 @@
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Decryption functions
-
-# Ported from: https://github.com/Itz-fork/pyro-mega.py/blob/master/src/mega/crypto.py
+# Credits: https://github.com/Itz-fork/pyro-mega.py/blob/master/src/mega/crypto.py
 
 import re
 import json
@@ -40,7 +39,7 @@ def base64_to_a32(s):
 
 def base64_url_decode(data):
     data += "=="[(2 - len(data) * 3) % 4 :]
-    data = re.sub(r'[-_,]', lambda x: {'-': '+', '_': '/', ',': ''}[x.group()], data)
+    data = re.sub(r"[-_,]", lambda x: {"-": "+", "_": "/", ",": ""}[x.group()], data)
     return base64.b64decode(data)
 
 
@@ -53,3 +52,20 @@ def decrypt_attr(attr, key):
     attr = makestring(attr)
     attr = attr.rstrip("\0")
     return json.loads(attr[4:]) if attr[:6] == 'MEGA{"' else False
+
+
+def aes_cbc_decrypt_a32(data, key):
+    return str_to_a32(aes_cbc_decrypt(a32_to_str(data), a32_to_str(key)))
+
+
+def decrypt_key(a, key):
+    return sum(
+        (aes_cbc_decrypt_a32(a[i : i + 4], key) for i in range(0, len(a), 4)), ()
+    )
+
+
+def decrypt_node_key(key_str: str, shared_key: str):
+    if ":" not in key_str:
+        return None
+    encrypted_key = base64_to_a32(key_str.split(":")[1])
+    return decrypt_key(encrypted_key, shared_key)

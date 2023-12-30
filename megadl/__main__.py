@@ -6,12 +6,12 @@
 
 from pyrogram import idle
 
-from . import MegaCypher
+from . import CypherClient
 
 # Run the bot
 if __name__ == "__main__":
     # Custom pyrogram client
     print("> Starting Client")
-    MegaCypher.start()
+    CypherClient.start()
     print("--------------------")
     idle()

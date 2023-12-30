@@ -15,4 +15,4 @@ load_dotenv()
 
 # client
 from .helpers.cypher import MeganzClient
-MegaCypher: "MeganzClient" = MeganzClient()
+CypherClient: "MeganzClient" = MeganzClient()

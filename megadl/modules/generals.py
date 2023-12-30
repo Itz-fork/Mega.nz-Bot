@@ -7,12 +7,12 @@
 from pyrogram import filters
 from pyrogram.types import Message
 
-from megadl import MegaCypher
+from megadl import CypherClient
 
 
-@MegaCypher.on_message(filters.command("start"))
-@MegaCypher.run_checks
-async def start_msg(_: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("start"))
+@CypherClient.run_checks
+async def start_msg(_: CypherClient, msg: Message):
     await msg.reply_text(
         f"""
 Hi `{msg.from_user.first_name}` 👋, I'm [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot)!
@@ -27,9 +27,9 @@ Not sure what to do? Check /help for more info 😇
     )
 
 
-@MegaCypher.on_message(filters.command("help"))
-@MegaCypher.run_checks
-async def help_msg(_: MegaCypher, msg: Message):
+@CypherClient.on_message(filters.command("help"))
+@CypherClient.run_checks
+async def help_msg(_: CypherClient, msg: Message):
     await msg.reply_text(
         f"""
 **How do I login?**

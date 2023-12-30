@@ -4,10 +4,11 @@
 # Description: Shell, loops and other sys functions
 
 
+from asyncio import to_thread
 from functools import partial
 from subprocess import Popen, PIPE
 from psutil import Process as PsuPrc
-from asyncio import get_running_loop
+from asyncio import iscoroutinefunction, get_running_loop
 
 
 async def run_partial(func, *args, **kwargs):
@@ -18,8 +19,11 @@ async def run_partial(func, *args, **kwargs):
 
         - func: function - Function to execute
     """
-    loop = get_running_loop()
-    return await loop.run_in_executor(None, partial(func, *args, **kwargs))
+    if iscoroutinefunction(func):
+        return await func(*args, **kwargs)
+    else:
+        loop = get_running_loop()
+        return await loop.run_in_executor(None, partial(func, *args, **kwargs))
 
 
 def run_on_shell(cmd):
@@ -39,3 +43,4 @@ async def kill_family(pid: int):
     for child in running.children(recursive=True):
         child.kill()
     running.kill()
+    await to_thread(running.wait)
