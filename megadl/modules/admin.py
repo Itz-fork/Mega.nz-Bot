@@ -34,7 +34,7 @@ async def admin_user_info(client: CypherClient, msg: Message):
     up_count = _user["total_uploads"]
 
     ban_status = (
-        f"`Banned`\n      ↳ `{ban_rsn}`"
+        f"`Banned`\n      ⤷ `{ban_rsn}`"
         if is_ban
         else "Admin"
         if buid in client.auth_users
@@ -43,10 +43,10 @@ async def admin_user_info(client: CypherClient, msg: Message):
     await msg.reply(
         f"""
 **User Info**
-    ↳ **ID:** `{buid}`
-    ↳ **Status:** {ban_status}
-    ↳ **Total downloads:** `{dl_count}`
-    ↳ **Total uploads:** `{up_count}`
+    ⤷ **ID:** `{buid}`
+    ⤷ **Status:** {ban_status}
+    ⤷ **Total downloads:** `{dl_count}`
+    ⤷ **Total uploads:** `{up_count}`
 
 
 **Detect abuse?**
@@ -74,7 +74,7 @@ async def admin_ban_user(client: CypherClient, msg: Message):
         return await msg.reply("Why do you want to ban an admin 😶‍🌫️?")
 
     await client.database.ban_user(buid, reason)
-    await msg.reply(f"Banned user `{buid}`")
+    await msg.reply(f"Banned user `{buid}` ✅")
 
 
 @CypherClient.on_message(filters.command("unban"))
@@ -91,4 +91,4 @@ async def admin_unban_user(client: CypherClient, msg: Message):
         return await msg.reply("Provide a user id to unban \n\nEx: `/unban 12345`")
 
     await client.database.unban_user(buid)
-    await msg.reply(f"Unbanned user `{buid}`")
+    await msg.reply(f"Unbanned user `{buid}` ✅")

@@ -10,3 +10,4 @@ dnspython
 cryptography
 pycryptodome
 psutil
+humans-formatter

@@ -14,42 +14,38 @@ class Users:
     # <<<<<<<<<< Active user functions >>>>>>>>>> #
 
     async def add(self, user_id: int):
-        added = await self.is_there(user_id)
-        if not added:
-            await self.mongoc.insert_async(
-                self.coll_users,
-                {
-                    "_id": user_id,
-                    "email": "",
-                    "password": "",
-                    "status": {"banned": False, "reason": ""},
-                    "total_downloads": 0,
-                    "total_uploads": 0,
-                },
-            )
+        await self.mongoc.update_async(
+            self.coll_users,
+            {"_id": user_id},
+            {
+                "_id": user_id,
+                "email": "",
+                "password": "",
+                "status": {"banned": False, "reason": ""},
+                "total_downloads": 0,
+                "total_uploads": 0,
+            },
+            upsert=True,
+        )
 
     async def plus_fl_count(
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
     ):
-        dl_up = await self.is_there(user_id)
         if downloads:
             await self.mongoc.update_async(
                 self.coll_users,
                 {"_id": user_id},
-                {"total_downloads": dl_up["total_downloads"] + downloads},
+                {"$inc": {"total_downloads": downloads}},
             )
         elif uploads:
             await self.mongoc.update_async(
                 self.coll_users,
                 {"_id": user_id},
-                {"total_uploads": dl_up["total_uploads"] + uploads},
+                {"$inc": {"total_uploads": uploads}},
             )
 
     async def delete(self, user_id: int):
-        uid = {"_id": user_id}
-        added = await self.is_there(self.coll_users, user_id)
-        if added:
-            await self.mongoc.delete_async(self.coll_users, uid)
+        await self.mongoc.delete_async(self.coll_users, {"_id": user_id})
 
     async def is_there(self, user_id: int, use_acc: bool = False):
         """
@@ -74,45 +70,31 @@ class Users:
 
     # <<<<<<<<<< Banned user functions >>>>>>>>>> #
     async def ban_user(self, user_id: int, reason: str):
-        uid = {"_id": user_id}
-        to_ban = await self.mongoc.find_async(self.coll_users, uid)
-        if to_ban:
-            await self.mongoc.update_async(
-                self.coll_users,
-                {"_id": user_id},
-                {"status": {"banned": True, "reason": reason}},
-            )
+        await self.mongoc.update_async(
+            self.coll_users,
+            {"_id": user_id},
+            {"status": {"banned": True, "reason": reason}},
+        )
 
     async def unban_user(self, user_id: int):
-        uid = {"_id": user_id}
-        to_ban = await self.mongoc.find_async(self.coll_users, uid)
-        if to_ban:
-            await self.mongoc.update_async(
-                self.coll_users,
-                {"_id": user_id},
-                {"status": {"banned": False, "reason": "Got unbanned"}},
-            )
+        await self.mongoc.update_async(
+            self.coll_users,
+            {"_id": user_id},
+            {"status": {"banned": False, "reason": "Got unbanned"}},
+        )
 
     # <<<<<<<<<< Mega functions >>>>>>>>>> #
 
     async def mega_login(self, user_id: int, email: str, password: str):
-        uid = {"_id": user_id}
-        logged = await self.mongoc.find_async(self.coll_users, uid)
-        if logged:
-            await self.mongoc.update_async(
-                self.coll_users, uid, {"email": email, "password": password}
-            )
-        # this should never happen but better safe than sorry
-        else:
-            await self.mongoc.insert_async(
-                self.coll_users, {"_id": user_id, "email": email, "password": password}
-            )
+        await self.mongoc.update_async(
+            self.coll_users,
+            {"_id": user_id},
+            {"email": email, "password": password},
+            upsert=True,
+        )
 
     async def mega_logout(self, user_id: int):
-        uid = {"_id": user_id}
-        logged = await self.mongoc.find_async(self.coll_users, uid)
-        if logged:
-            await self.mongoc.delete_async(self.coll_users, uid)
+        await self.mongoc.delete_async(self.coll_users, {"_id": user_id})
 
     async def how_many(self):
         return (user["user_id"] async for user in self.coll_users.find({}))

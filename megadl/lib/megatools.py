@@ -8,8 +8,8 @@ import re
 import json
 import asyncio
 
+from humans import human_bytes
 from aiohttp import ClientSession
-from megadl.helpers.pyros import humanbytes
 from megadl.helpers.files import listfiles
 from megadl.helpers.sysfncs import run_partial, run_on_shell
 from megadl.helpers.crypt import (
@@ -199,7 +199,7 @@ class MegaTools:
                     data = (await resp.json())[0]
             key = base64_to_a32(file_key)
             tk = (key[0] ^ key[4], key[1] ^ key[5], key[2] ^ key[6], key[3] ^ key[7])
-            fsize = humanbytes(data["s"])
+            fsize = human_bytes(data["s"])
             fname = decrypt_attr(base64_url_decode(data["at"]), tk)["n"]
             return [fsize, fname]
 
@@ -264,16 +264,12 @@ class MegaTools:
                             )
                             attrs = decrypt_attr(base64_url_decode(node["a"]), k)
                             file_name = attrs["n"]
-                            to_return += (
-                                "  " * depth
-                                + "|- "
-                                + f"{file_name} ({humanbytes(file_size)})\n"
-                            )
+                            to_return += f"{' ' * depth}├─ {file_name} ({human_bytes(file_size)})\n"
                         elif node["t"] == 1:  # folder
                             k = key
                             attrs = decrypt_attr(base64_url_decode(node["a"]), k)
                             file_name = attrs["n"]
-                            to_return += "  " * depth + "|- " + f"{file_name}\n"
+                            to_return += f"{' ' * depth}├─ {file_name}\n"
                             await prepare_string(
                                 await get_sub_dir_nodes(root_folder, file_id),
                                 shared_key,
