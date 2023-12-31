@@ -205,6 +205,8 @@ TG_MAX_SIZE=2040108421
 EOF
 
    show_hint "If your bot won't work as expected, try reassigning USE_ENV and DOWNLOAD_LOCATION in .env file. Not sure what to do? Contact support at @Nexa_bots"
+
+   show_hint "It is recommended to check the mega.ini file for more configuration options"
 }
 
 

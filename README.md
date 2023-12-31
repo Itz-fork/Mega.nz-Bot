@@ -12,11 +12,12 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 
 # Features
 - ⚡ Download, Upload files/folders easily
-- 🙅‍♂️ No login required*
+- 🙅‍♂️ No login required[^1]
 - 🗃️ Support for Mega.nz user account
 - 🤝 Support for both private and public content
 - 🛡 Can be used as either private or public bot
 - 🖇 Direct download link to mega.nz upload
+- 🧐 See what files are in your links
 
 
 # Deploy
@@ -60,6 +61,8 @@ python3 -m megadl
 ### Config vars
 Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
 
+
+[^1]: This only applies to public contents and you're still limited by the daily download quota limit of the mega.nz platform
 
 # Support
 [![Support Group](https://img.shields.io/badge/Support_Group-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Nexa_bots)
