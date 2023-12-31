@@ -1,14 +1,18 @@
-# Copyright (c) 2022 Itz-fork
-# Don't kang this else your dad is gae
+# Copyright (c) 2023 Itz-fork
+# Author: https://github.com/Itz-fork
+# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Description: __init__.py
 
-from pyrogram import Client
-from config import Config
+# start msg
+print("Mega.nz Bot - Cypher is starting...")
 
-meganzbot = Client(
-        name="MegaBot",
-        bot_token=Config.BOT_TOKEN,
-        api_id=Config.APP_ID,
-        api_hash=Config.API_HASH,
-        plugins=dict(root="megadl/modules"),
-        sleep_threshold=10
-    )
+
+# loading config
+from dotenv import load_dotenv
+print("--------------------")
+print("> Loading config")
+load_dotenv()
+
+# client
+from .helpers.cypher import MeganzClient
+CypherClient: "MeganzClient" = MeganzClient()

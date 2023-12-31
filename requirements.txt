@@ -1,6 +1,13 @@
 pyrogram
-TgCrypto
-filetype
+Tgcrypto
 filesplit
-wget
-git+https://github.com/Itz-fork/pyro-mega.py.git
+filetype
+python-dotenv
+aiofiles
+aiohttp[speedups]
+pymongo
+dnspython
+cryptography
+pycryptodome
+psutil
+humans-formatter
