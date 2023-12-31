@@ -6,7 +6,6 @@
 
 import re
 from os import path, makedirs
-from aiohttp import ClientSession
 
 from pyrogram import filters
 from pyrogram.types import (
@@ -64,7 +63,10 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
                 "`You must be logged in first to download this file 😑`"
             )
         if udoc:
-            conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
+            email = client.cipher.decrypt(udoc["email"]).decode()
+            password = client.cipher.decrypt(udoc["password"]).decode()
+            proxy = f"--proxy {udoc['proxy']}" if udoc["proxy"] else ""
+            conf = f"--username {email} --password {password} {proxy}"
 
     # Create unique download folder
     if not path.isdir(dlid):
@@ -107,36 +109,3 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
     )
     await client.full_cleanup(dlid, qusr)
     await resp.delete()
-
-
-@CypherClient.on_callback_query(filters.regex(r"info_mg?.+"))
-@CypherClient.run_checks
-async def info_from_cb(client: CypherClient, query: CallbackQuery):
-    url = client.glob_tmp.get(query.from_user.id)[0]
-    retrieved = await MegaTools.get_info(url)
-
-    if isinstance(retrieved, list):
-        await query.edit_message_text(
-            f"""
-》 **File Details**
-
-**📛 Name:** `{retrieved[0]}`
-**🗂 Size:** `{retrieved[1]}`
-**📎 URL:** `{url}`
-""",
-            reply_markup=None,
-        )
-
-    else:
-        async with ClientSession() as nekoc:
-            resp = await nekoc.post(
-                "https://nekobin.com/api/documents", json={"content": retrieved}
-            )
-            if resp.status == 200:
-                nekourl = f"https://nekobin.com/{(await resp.json())['result']['key']}"
-                await query.edit_message_text(
-                    f"Check folder info here: `{nekourl}`",
-                    reply_markup=InlineKeyboardMarkup(
-                        [[InlineKeyboardButton("Visit 🔗", url=nekourl)]]
-                    ),
-                )

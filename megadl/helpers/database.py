@@ -6,7 +6,7 @@
 from megadl.lib.aiomongo import AioMongo
 
 
-class Users:
+class CypherDB:
     def __init__(self) -> None:
         self.mongoc = AioMongo()
         self.coll_users = self.mongoc["mega_nz"]["users"]
@@ -24,9 +24,12 @@ class Users:
                 "status": {"banned": False, "reason": ""},
                 "total_downloads": 0,
                 "total_uploads": 0,
+                "proxy": "",
             },
+            no_modify=True,
             upsert=True,
         )
+        return await self.mongoc.find_async(self.coll_users, {"_id": user_id}, {"status": 1})
 
     async def plus_fl_count(
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
@@ -56,6 +59,7 @@ class Users:
                 "status": {"banned": False, "reason": ""},
                 "total_downloads": 0,
                 "total_uploads": 0,
+                "proxy": ""
             }
         """
         uid = {"_id": user_id}
@@ -64,7 +68,7 @@ class Users:
             return None
         docu.pop("_id")
         if use_acc:
-            return docu if not "" in docu.values() else None
+            return docu if not "" in {docu["email"], docu["password"]} else None
         else:
             return docu
 
@@ -86,6 +90,7 @@ class Users:
     # <<<<<<<<<< Mega functions >>>>>>>>>> #
 
     async def mega_login(self, user_id: int, email: str, password: str):
+        print(user_id, email, password)
         await self.mongoc.update_async(
             self.coll_users,
             {"_id": user_id},
@@ -98,3 +103,17 @@ class Users:
 
     async def how_many(self):
         return (user["user_id"] async for user in self.coll_users.find({}))
+
+    # <<<<<<<<<< Proxy functions >>>>>>>>>> #
+    async def update_proxy(self, user_id: int, proxy: str):
+        await self.mongoc.update_async(
+            self.coll_users,
+            {"_id": user_id},
+            {"proxy": proxy},
+            upsert=True,
+        )
+
+    async def get_proxy(self, user_id: int):
+        return await self.mongoc.find_async(
+            self.coll_users, {"_id": user_id}, {"proxy": 1}
+        )

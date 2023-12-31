@@ -16,7 +16,7 @@ from pyrogram.types import Message
 from pyrogram import Client, errors
 from pyrogram.handlers import MessageHandler
 
-from .database import Users
+from .database import CypherDB
 from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 
 
@@ -39,7 +39,7 @@ class MeganzClient(Client):
     version = "cypher-1.0"
     dl_loc = None
     tmp_loc = None
-    database = Users() if os.getenv("MONGO_URI") else None
+    database = CypherDB() if os.getenv("MONGO_URI") else None
 
     def __init__(self):
         # set DOWNLOAD_LOCATION variable
@@ -146,7 +146,11 @@ class MeganzClient(Client):
 
                 # Check auth users
                 if self.database:
-                    await self.database.add(uid)
+                    status = await self.database.add(uid)
+                    if status["banned"]:
+                        return await msg.reply(
+                            f"**You're banned from using this bot 😬** \n\n**Reason:** `{status['reason']}`"
+                        )
 
                 if "*" in self.auth_users:
                     can_use = True

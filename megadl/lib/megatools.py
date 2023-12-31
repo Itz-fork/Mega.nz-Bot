@@ -40,6 +40,8 @@ class MegaRegexs:
     user_used = re.compile(r"Used: (.*)")
     user_free = re.compile(r"Free: (.*)")
 
+    proxy_regex = re.compile(r'^(http|https|socks5|socks5h)://([a-zA-Z0-9\-\.]+):(\d+)$')
+
 
 Regexes = MegaRegexs()
 
@@ -279,7 +281,7 @@ class MegaTools:
                             )
                             attrs = decrypt_attr(base64_url_decode(node["a"]), k)
                             file_name = attrs["n"]
-                            to_return += f"{' ' * depth}├─ {file_name} ({human_bytes(file_size)})\n"
+                            to_return += f"{' ' * depth}├── {file_name} ({human_bytes(file_size)})\n"
                         elif node["t"] == 1:  # folder
                             k = key
                             attrs = decrypt_attr(base64_url_decode(node["a"]), k)
@@ -304,6 +306,7 @@ class MegaTools:
     async def __shellExec(
         self, cmd: str, user_id: int, chat_id: int = None, msg_id: int = None, **kwargs
     ):
+        print(cmd)
         run = await asyncio.create_subprocess_shell(
             cmd,
             stdout=asyncio.subprocess.PIPE,

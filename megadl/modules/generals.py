@@ -37,10 +37,17 @@ async def help_msg(_: CypherClient, msg: Message):
 
 **✘ How to download from mega link?**
   ⤷ It's very easy. Just send the link you want to download and I'll download it for you 😉.
-  For private content you need to login first then send path to the file or folder you want to download starting with `/Root/<path-to-dl>`.
+  ⤷ For private content you need to login first then send path to the file or folder you want to download starting with `/Root/<path-to-dl>`.
 
 **✘ How to upload files to Mega.nz?**
   ⤷ Just send me the files and I'll ask you whether you want to upload it or not. Same goes for direct download links 😎
+
+**✘ How to setup proxy?**
+  ⤷ Send /proxy command alongside the proxy 📡 (Ex: `/proxy https://example.com:8080`)
+    Please note that the free proxies you see on internet are **not working**
+  
+** ✘ How to get my account details?**
+  ⤷ Send /acc command and I'll send you your account details 🫣
 
 
 **Made with ❤️ by @NexaBotsUpdates**

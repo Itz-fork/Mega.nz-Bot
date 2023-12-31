@@ -26,7 +26,13 @@ class AioMongo(MongoClient):
     ) -> None:
         self.atlas_host = getenv("MONGO_URI")
         super().__init__(
-            self.atlas_host, port, document_class, tz_aware, connect, type_registry, **kwargs
+            self.atlas_host,
+            port,
+            document_class,
+            tz_aware,
+            connect,
+            type_registry,
+            **kwargs
         )
 
     async def insert_async(self, coll: Collection, query: dict, *args, **kwargs):
@@ -41,16 +47,43 @@ class AioMongo(MongoClient):
         """
         return await run_partial(coll.find_one, query, *args, **kwargs)
 
-    async def update_async(self, coll: Collection, query: dict, value: dict, *args, **kwargs):
+    async def update_async(
+        self,
+        coll: Collection,
+        query: dict,
+        value: dict,
+        no_modify: bool = False,
+        *args,
+        **kwargs
+    ):
         """
         Perform `update_one` operation on the given collection
         """
-        return await run_partial(
-            coll.update_one, query, {"$set": value}, *args, **kwargs
-        )
+        if no_modify:
+            return await run_partial(
+                coll.update_one, query, {"$setOnInsert": value}, *args, **kwargs
+            )
+        else:
+            return await run_partial(
+                coll.update_one, query, {"$set": value}, *args, **kwargs
+            )
 
     async def delete_async(self, coll: Collection, query: dict, *args, **kwargs):
         """
         Perform `delete_one` operation on the given collection
         """
         return await run_partial(coll.delete_one, query, *args, **kwargs)
+
+    async def count_documents_async(
+        self, coll: Collection, query: dict, *args, **kwargs
+    ):
+        """
+        Perform `count_documents` operation on the given collection
+        """
+        return await run_partial(coll.count_documents, query, *args, **kwargs)
+
+    async def find_many_async(self, coll: Collection, query: dict, *args, **kwargs):
+        """
+        Perform `find` operation on the given collection
+        """
+        return await run_partial(coll.find, query, *args, **kwargs)
