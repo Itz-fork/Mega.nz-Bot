@@ -6,6 +6,7 @@
 
 import re
 from os import path, makedirs
+from aiohttp import ClientSession
 
 from pyrogram import filters
 from pyrogram.types import (
@@ -127,9 +128,15 @@ async def info_from_cb(client: CypherClient, query: CallbackQuery):
         )
 
     else:
-        await query.edit_message_text(
-            f"""
-`{retrieved}`
-""",
-            reply_markup=None,
-        )
+        async with ClientSession() as nekoc:
+            resp = await nekoc.post(
+                "https://nekobin.com/api/documents", json={"content": retrieved}
+            )
+            if resp.status == 200:
+                nekourl = f"https://nekobin.com/{(await resp.json())['result']['key']}"
+                await query.edit_message_text(
+                    f"Check folder info here: `{nekourl}`",
+                    reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton("Visit 🔗", url=nekourl)]]
+                    ),
+                )

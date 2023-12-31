@@ -77,6 +77,7 @@ class MeganzClient(Client):
         # Initializing mongodb
         print("> Initializing database")
         self.glob_tmp = {}
+        self.environs = os.environ.copy()
         self.cipher = None
 
         print("> Updating privacy settings")

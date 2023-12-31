@@ -102,3 +102,34 @@ async def to_up_cb(client: CypherClient, query: CallbackQuery):
         ),
     )
     await client.full_cleanup(dl_path, qusr)
+
+
+# CypherClient on "/acc" command
+@CypherClient.on_message(filters.command("acc"))
+@CypherClient.run_checks
+async def acc(_: CypherClient, msg: Message):
+    # Check if the user exists in database
+    usr = msg.from_user.id
+    udoc = await _.database.is_there(usr, True)
+    if not udoc:
+        return await msg.reply(
+            "`You must be logged in first to check account status 😑`"
+        )
+
+    # Get user data
+    email = _.cipher.decrypt(udoc["email"]).decode()
+    password = _.cipher.decrypt(udoc["password"]).decode()
+    conf = f"--username {email} --password {password}"
+    cli = MegaTools(_, conf)
+    total, used, free = await cli.user_fs()
+
+    return await msg.reply(f"""
+**~ Your User Account Info ~**
+
+✦ **Email:** `{email}`
+✦ **Password:** `{password}`
+✦ **Storage,**
+    ⤷ **Total:** `{total}`
+    ⤷ **Used:** `{used}`
+    ⤷ **Free:** `{free}`
+""")

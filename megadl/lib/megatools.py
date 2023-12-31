@@ -11,7 +11,7 @@ import asyncio
 from humans import human_bytes
 from aiohttp import ClientSession
 from megadl.helpers.files import listfiles
-from megadl.helpers.sysfncs import run_partial, run_on_shell
+from megadl.helpers.sysfncs import run_partial, run_on_shell, with_sub_shell
 from megadl.helpers.crypt import (
     base64_to_a32,
     decrypt_attr,
@@ -35,6 +35,10 @@ class MegaRegexs:
     file_id = re.compile(r"(?<=/file/)(.*)(?=#)")
     file_key = re.compile(r"(?<=#)(.*)")
     old_f_ik = re.compile(r"(?<=!)(.*)")
+
+    user_total = re.compile(r"Total: (.*)")
+    user_used = re.compile(r"Used: (.*)")
+    user_free = re.compile(r"Free: (.*)")
 
 
 Regexes = MegaRegexs()
@@ -155,6 +159,17 @@ class MegaTools:
                 self.__genErrorMsg("Upload failed due to an unknown error.")
             )
         return ulink
+
+    async def user_fs(self):
+        """ """
+        _sh_dta = await with_sub_shell(f"megadf -h {self.config}")
+        if _sh_dta:
+            _total = Regexes.user_total.search(_sh_dta).group(1)
+            _used = Regexes.user_used.search(_sh_dta).group(1)
+            _free = Regexes.user_free.search(_sh_dta).group(1)
+            return _total, _used, _free
+        else:
+            raise LoginError
 
     @staticmethod
     async def get_info(url: str) -> list[str]:
@@ -293,7 +308,7 @@ class MegaTools:
             cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
-            env=os.environ.copy(),
+            env=self.client.environs,
         )
         self.client.mega_running[user_id] = run.pid
 
@@ -312,8 +327,8 @@ class MegaTools:
                 await self.client.edit_message_text(
                     chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
                 )
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         async def handle_stderr(err):
             if run.returncode is None:
