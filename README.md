@@ -9,10 +9,6 @@
 # Mega.nz-Bot - Cypher 🥷
 A simple telegram bot to download, upload files or folders from [Mega.nz](https://mega.nz/)
 
-# Use [nightly](https://github.com/Itz-fork/Mega.nz-Bot/tree/nightly)
-
-> [!WARNING]
-> This branch is unmaintained! New version of the project can be found at: [`nightly`](https://github.com/Itz-fork/Mega.nz-Bot/tree/nightly) branch.
 
 # Features
 - ⚡ Download, Upload files/folders easily
