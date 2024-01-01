@@ -29,7 +29,9 @@ class CypherDB:
             no_modify=True,
             upsert=True,
         )
-        return await self.mongoc.find_async(self.coll_users, {"_id": user_id}, {"status": 1})
+        return (await self.mongoc.find_async(
+            self.coll_users, {"_id": user_id}, {"_id": 0, "status": 1}
+        ))["status"]
 
     async def plus_fl_count(
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
@@ -63,10 +65,9 @@ class CypherDB:
             }
         """
         uid = {"_id": user_id}
-        docu = await self.mongoc.find_async(self.coll_users, uid)
+        docu = await self.mongoc.find_async(self.coll_users, uid, {"_id": 0})
         if not docu:
             return None
-        docu.pop("_id")
         if use_acc:
             return docu if not "" in {docu["email"], docu["password"]} else None
         else:
