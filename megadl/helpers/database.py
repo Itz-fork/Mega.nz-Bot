@@ -44,6 +44,7 @@ class CypherDB:
                 {"_id": user_id},
                 {"$inc": {"total_downloads": downloads}},
                 use_given=True,
+                upsert=False,
             )
         elif uploads:
             await self.mongoc.update_async(
@@ -51,6 +52,7 @@ class CypherDB:
                 {"_id": user_id},
                 {"$inc": {"total_uploads": uploads}},
                 use_given=True,
+                upsert=False,
             )
 
     async def delete(self, user_id: int):
