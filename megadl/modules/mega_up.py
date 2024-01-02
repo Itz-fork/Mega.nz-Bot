@@ -55,7 +55,6 @@ async def to_up_cb(client: CypherClient, query: CallbackQuery):
     qmid = query.message.id
     qcid = query.message.chat.id
     qusr = query.from_user.id
-    msg = await client.get_messages(qcid, _mid)
 
     # weird workaround to add support for private mode
     conf = None
@@ -68,6 +67,8 @@ async def to_up_cb(client: CypherClient, query: CallbackQuery):
         if udoc:
             conf = f"--username {client.cipher.decrypt(udoc['email']).decode()} --password {client.cipher.decrypt(udoc['password']).decode()}"
 
+    # Get message
+    msg = await client.get_messages(qcid, _mid)
     strtim = time()
     # Status msg
     await query.edit_message_text("`Trying to download the file 📥`", reply_markup=None)

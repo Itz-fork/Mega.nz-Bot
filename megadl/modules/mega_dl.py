@@ -8,7 +8,6 @@ import re
 from os import path, makedirs
 
 from pyrogram import filters
-from pyrogram.enums import ChatType
 from pyrogram.types import (
     Message,
     CallbackQuery,
