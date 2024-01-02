@@ -53,6 +53,7 @@ class AioMongo(MongoClient):
         query: dict,
         value: dict,
         no_modify: bool = False,
+        use_given: bool = False,
         *args,
         **kwargs
     ):
@@ -63,6 +64,8 @@ class AioMongo(MongoClient):
             return await run_partial(
                 coll.update_one, query, {"$setOnInsert": value}, *args, **kwargs
             )
+        elif use_given:
+            return await run_partial(coll.update_one, query, value, *args, **kwargs)
         else:
             return await run_partial(
                 coll.update_one, query, {"$set": value}, *args, **kwargs

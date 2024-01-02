@@ -29,9 +29,11 @@ class CypherDB:
             no_modify=True,
             upsert=True,
         )
-        return (await self.mongoc.find_async(
-            self.coll_users, {"_id": user_id}, {"_id": 0, "status": 1}
-        ))["status"]
+        return (
+            await self.mongoc.find_async(
+                self.coll_users, {"_id": user_id}, {"_id": 0, "status": 1}
+            )
+        )["status"]
 
     async def plus_fl_count(
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
@@ -41,12 +43,14 @@ class CypherDB:
                 self.coll_users,
                 {"_id": user_id},
                 {"$inc": {"total_downloads": downloads}},
+                use_given=True,
             )
         elif uploads:
             await self.mongoc.update_async(
                 self.coll_users,
                 {"_id": user_id},
                 {"$inc": {"total_uploads": uploads}},
+                use_given=True,
             )
 
     async def delete(self, user_id: int):
