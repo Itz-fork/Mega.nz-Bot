@@ -49,7 +49,7 @@ async def dl_from_cb(client: CypherClient, query: CallbackQuery):
     # Access saved info
     _mid = int(query.data.split("-")[1])
     qcid = query.message.chat.id
-    qusr = query.from_user.id
+    qusr = query.message.from_user.id
     dtmp = client.glob_tmp.get(qusr)
     url = dtmp[0]
     dlid = dtmp[1]

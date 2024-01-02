@@ -54,7 +54,7 @@ async def to_up_cb(client: CypherClient, query: CallbackQuery):
     _mid = int(query.data.split("-")[1])
     qmid = query.message.id
     qcid = query.message.chat.id
-    qusr = query.from_user.id
+    qusr = query.message.from_user.id
 
     # weird workaround to add support for private mode
     conf = None
