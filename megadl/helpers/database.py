@@ -42,15 +42,22 @@ class CypherDB:
             await self.mongoc.update_async(
                 self.coll_users,
                 {"_id": user_id},
-                {"$inc": {"total_downloads": downloads}},
+                [
+                    {"$match": {"_id": user_id}},
+                    {"$inc": {"total_downloads": downloads}},
+                    {"$replaceWith": {"$mergeObjects": ["$$ROOT", "$$CURRENT"]}},
+                ],
                 use_given=True,
-                upsert=False,
             )
         elif uploads:
             await self.mongoc.update_async(
                 self.coll_users,
                 {"_id": user_id},
-                {"$inc": {"total_uploads": uploads}},
+                [
+                    {"$match": {"_id": user_id}},
+                    {"$inc": {"total_uploads": uploads}},
+                    {"$replaceWith": {"$mergeObjects": ["$$ROOT", "$$CURRENT"]}},
+                ],
                 use_given=True,
                 upsert=False,
             )
