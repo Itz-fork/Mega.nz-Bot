@@ -23,6 +23,7 @@ from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 _emsg = """
 ##### Mega.nz-Bot Error Handler #####
 
+Raised by: {}
 Version: {}
 Module: {}
 Error:
@@ -178,7 +179,9 @@ class MeganzClient(Client):
             except Exception as e:
                 await self.cyeor(msg, f"**Oops 🫨, Somethig bad happend!** \n\n`{e}`")
                 await self.full_cleanup(f"{self.dl_loc}/{uid}", uid)
-                logging.warning(_emsg.format(self.version, func.__module__, e))
+                logging.warning(
+                    _emsg.format(func.__name__, self.version, func.__module__, e)
+                )
 
         return cy_run
 
