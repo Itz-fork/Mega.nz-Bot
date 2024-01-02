@@ -59,7 +59,6 @@ class CypherDB:
                     {"$replaceWith": {"$mergeObjects": ["$$ROOT", "$$CURRENT"]}},
                 ],
                 use_given=True,
-                upsert=False,
             )
 
     async def delete(self, user_id: int):
