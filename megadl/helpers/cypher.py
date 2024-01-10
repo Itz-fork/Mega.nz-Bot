@@ -130,7 +130,12 @@ class MeganzClient(Client):
 
         async def cy_run(client: Client, msg: Message):
             can_use = False
-            uid = msg.from_user.id
+            # shit might just work
+            uid = (
+                msg.from_user.id
+                if isinstance(msg, Message)
+                else msg.message.from_user.id
+            )
             try:
                 if func.__name__ in self.use_logs:
                     # return if user has already started a process
