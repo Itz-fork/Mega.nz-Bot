@@ -3,7 +3,10 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Callbacks that can be used globally
 
+import logging
 import asyncio
+
+
 from pyrogram import filters
 from pyrogram.types import CallbackQuery
 
@@ -34,7 +37,7 @@ async def close_gb(client: CypherClient, query: CallbackQuery):
         if dtmp:
             await client.full_cleanup(dtmp[1], usr)
     except Exception as e:
-        print(e)
+        logging.warning(e)
     await query.edit_message_text(
         "`Process was canceled by the user ❌`",
         reply_markup=None,

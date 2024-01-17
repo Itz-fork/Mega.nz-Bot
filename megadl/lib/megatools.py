@@ -6,6 +6,7 @@
 import os
 import re
 import json
+import logging
 import asyncio
 
 from humans import human_bytes
@@ -306,7 +307,6 @@ class MegaTools:
     async def __shellExec(
         self, cmd: str, user_id: int, chat_id: int = None, msg_id: int = None, **kwargs
     ):
-        print(cmd)
         run = await asyncio.create_subprocess_shell(
             cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -331,7 +331,7 @@ class MegaTools:
                     chat_id, msg_id, f"**Process info:** \n`{out}`", **kwargs
                 )
             except Exception as e:
-                print(e)
+                logging.warning(e)
 
         async def handle_stderr(err):
             if run.returncode is None:

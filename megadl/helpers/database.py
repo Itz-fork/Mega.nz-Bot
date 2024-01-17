@@ -95,7 +95,6 @@ class CypherDB:
     # <<<<<<<<<< Mega functions >>>>>>>>>> #
 
     async def mega_login(self, user_id: int, email: str, password: str):
-        print(user_id, email, password)
         await self.mongoc.update_async(
             self.coll_users,
             {"_id": user_id},

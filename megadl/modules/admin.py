@@ -64,7 +64,7 @@ async def admin_ban_user(client: CypherClient, msg: Message):
     buid = None
     reason = None
     try:
-        _splt = msg.text.split(None, 1)
+        _splt = msg.text.split(None, 2)
         buid = int(_splt[1])
         reason = _splt[2] if len(_splt) >= 3 else "No reason given"
     except:
