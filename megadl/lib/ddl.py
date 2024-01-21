@@ -18,7 +18,7 @@ from ..helpers.pyros import track_progress
 CMP_GD_QUERY = re.compile(
     r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=(sharing|drive_link)"
 )
-CMP_GD_REPLACE = re.compile(r"https://drive.google.com/uc?export=download&id=\1")
+STR_GD_REPLACE = r"https://drive.google.com/uc?export=download&id=\1"
 
 
 class Downloader:
