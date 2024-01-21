@@ -4,14 +4,21 @@
 # Description: Downloader for direct download links and gdrive
 
 import os
+import re
 import asyncio
 
 from time import time
-from re import match, sub
 from aiohttp import ClientSession
 from aiofiles import open as async_open
 
 from ..helpers.pyros import track_progress
+
+
+# pre compled regexes for ddl
+CMP_GD_QUERY = re.compile(
+    r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=(sharing|drive_link)"
+)
+CMP_GD_REPLACE = re.compile(r"https://drive.google.com/uc?export=download&id=\1")
 
 
 class Downloader:
@@ -27,7 +34,6 @@ class Downloader:
     """
 
     def __init__(self, client) -> None:
-        self.gdrive_regex = r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=sharing"
         self.tg_client = client
 
     async def download(
@@ -42,24 +48,27 @@ class Downloader:
             - `path` - Output path
             - `ides` - Tuple of ids (chat_id, msg_id, user_id)
         """
-        if match(self.gdrive_regex, url):
+        if re.match(CMP_GD_QUERY, url):
             url = await self._parse_gdrive(url)
 
+        # unpack ids
+        chat_id, msg_id, user_id = ides
+
         dl_task = asyncio.create_task(
-            self.from_ddl(url=url, path=path, ides=(ides[0], ides[1]), **kwargs)
+            self.from_ddl(url=url, path=path, chat_id=chat_id, msg_id=msg_id, **kwargs)
         )
-        self.tg_client.ddl_running[ides[2]] = dl_task
+        self.tg_client.ddl_running[user_id] = dl_task
         return await dl_task
 
     async def _parse_gdrive(self, url: str):
-        return sub(
-            r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=sharing",
-            r"https://drive.google.com/uc?export=download&id=\1",
+        return re.sub(
+            CMP_GD_QUERY,
+            CMP_GD_REPLACE,
             url,
         )
 
     async def from_ddl(
-        self, url: str, path: str, ides: tuple[int, int], **kwargs
+        self, url: str, path: str, chat_id: int, msg_id: int, **kwargs
     ) -> str:
         """
         Download files from a direct download link
@@ -70,7 +79,7 @@ class Downloader:
             - `ides` - chat id and message id where the action takes place (chat_id, msg_id)
         """
         # Create folder if it doesn't exist
-        wpath = f"{path}/{ides[0]}"
+        wpath = f"{path}/{chat_id}"
         os.makedirs(wpath)
         wpath = f"{wpath}/{os.path.basename(url)}"
 
@@ -89,9 +98,15 @@ class Downloader:
                         await file.write(chunk)
                         curr += len(chunk)
                         # Make sure everything is present before calling track_progress
-                        if None not in {ides, self.tg_client, total}:
+                        if None not in {chat_id, msg_id, self.tg_client, total}:
                             await track_progress(
-                                curr, total, self.tg_client, ides, st, **kwargs
+                                curr,
+                                total,
+                                self.tg_client,
+                                chat_id,
+                                msg_id,
+                                st,
+                                **kwargs,
                             )
 
                         await asyncio.sleep(0)

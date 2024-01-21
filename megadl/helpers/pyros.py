@@ -9,8 +9,10 @@ from humans import human_time, human_bytes
 
 
 # Porogress bar for pyrogram
-# Credits: SpEcHiDe's AnyDL-Bot
-async def track_progress(current, total, client, ides, start, **kwargs):
+# Improved version of SpEcHiDe's AnyDL-Bot
+async def track_progress(
+    current, total, client, chat_id: int, msg_id: int, start: float, **kwargs
+):
     now = time()
     diff = now - start
     if round(diff % 10.00) == 0 or current == total:
@@ -32,7 +34,7 @@ async def track_progress(current, total, client, ides, start, **kwargs):
         tmp = f"{progress}{human_bytes(current)} of {human_bytes(total)}\n**Speed:** {human_bytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n"
         try:
             await client.edit_message_text(
-                ides[0], ides[1], f"{tmp}\n\n**Powered by @NexaBotsUpdates**", **kwargs
+                chat_id, msg_id, f"{tmp}\n\n**Powered by @NexaBotsUpdates**", **kwargs
             )
         except:
             pass

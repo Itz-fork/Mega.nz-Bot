@@ -45,7 +45,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
             chat_id,
             file,
             progress=track_progress,
-            progress_args=(client, [chat_id, mid], strtim),
+            progress_args=(client, chat_id, mid, strtim),
             **kwargs,
         )
     else:
@@ -56,7 +56,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
                 chat_id,
                 file,
                 progress=track_progress,
-                progress_args=(client, [chat_id, mid], strtim),
+                progress_args=(client, chat_id, mid, strtim),
                 **kwargs,
             )
         # Images
@@ -65,7 +65,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
                 chat_id,
                 file,
                 progress=track_progress,
-                progress_args=(client, [chat_id, mid], strtim),
+                progress_args=(client, chat_id, mid, strtim),
                 **kwargs,
             )
         # Audio
@@ -74,7 +74,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
                 chat_id,
                 file,
                 progress=track_progress,
-                progress_args=(client, [chat_id, mid], strtim),
+                progress_args=(client, chat_id, mid, strtim),
                 **kwargs,
             )
         # Video
@@ -100,7 +100,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
                 duration=vid_dur,
                 thumb=_thumb,
                 progress=track_progress,
-                progress_args=(client, [chat_id, mid], strtim),
+                progress_args=(client, chat_id, mid, strtim),
                 **kwargs,
             )
         # Document
@@ -109,7 +109,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
                 chat_id,
                 file,
                 progress=track_progress,
-                progress_args=(client, [chat_id, mid], strtim),
+                progress_args=(client, chat_id, mid, strtim),
                 **kwargs,
             )
 

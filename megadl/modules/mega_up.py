@@ -79,7 +79,7 @@ async def to_up_cb(client: CypherClient, query: CallbackQuery):
     dl_path = None
     if msg.media:
         dl_path = await client.download_media(
-            msg, progress=track_progress, progress_args=(client, [qcid, qmid], strtim)
+            msg, progress=track_progress, progress_args=(client, qcid, qmid, strtim)
         )
     else:
         dl = Downloader(client)
