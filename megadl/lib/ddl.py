@@ -63,7 +63,7 @@ class Downloader:
     async def _parse_gdrive(self, url: str):
         return re.sub(
             CMP_GD_QUERY,
-            CMP_GD_REPLACE,
+            STR_GD_REPLACE,
             url,
         )
 
