@@ -12,9 +12,9 @@ from typing import Callable
 from asyncio import sleep as xsleep
 from cryptography.fernet import Fernet
 
-from pyrogram.types import Message
 from pyrogram import Client, errors
 from pyrogram.handlers import MessageHandler
+from pyrogram.types import Message, CallbackQuery
 
 from .database import CypherDB
 from .files import send_as_guessed, fs_cleanup, splitit, listfiles
@@ -128,15 +128,17 @@ class MeganzClient(Client):
         Decorator to run middleware
         """
 
-        async def cy_run(client: Client, msg: Message):
+        async def cy_run(client: Client, msg: Message | CallbackQuery):
             can_use = False
-            # shit might just work
+            # use message of the query if it's a callback query
             uid = (
-                msg.from_user.id
-                if isinstance(msg, Message)
-                else msg.message.from_user.id
+                msg.message.from_user.id
+                if isinstance(msg, CallbackQuery)
+                else msg.from_user.id
             )
+
             try:
+                # no need to use "Cypher.cyeor" as `use_logs` are Message handlers
                 if func.__name__ in self.use_logs:
                     # return if user has already started a process
                     if uid in self.mega_running or uid in self.ddl_running:
@@ -154,8 +156,10 @@ class MeganzClient(Client):
                 if self.database:
                     status = await self.database.add(uid)
                     if status["banned"]:
-                        return await msg.reply(
-                            f"**You're banned from using this bot 😬** \n\n**Reason:** `{status['reason']}`"
+                        return await self.cyeor(
+                            msg,
+                            f"**You're banned from using this bot 😬** \n\n**Reason:** `{status['reason']}`",
+                            True,
                         )
 
                 if "*" in self.auth_users:
@@ -164,8 +168,10 @@ class MeganzClient(Client):
                     can_use = uid in self.auth_users
 
                 if not can_use:
-                    await msg.reply(
-                        "`You're not authorized to use this bot 🙅‍♂️` \n\n**Join @NexaBotsUpdates ❤️**"
+                    await self.cyeor(
+                        msg,
+                        "`You're not authorized to use this bot 🙅‍♂️` \n\n**Join @NexaBotsUpdates ❤️**",
+                        True,
                     )
                     return msg.stop_propagation()
 
@@ -178,7 +184,9 @@ class MeganzClient(Client):
             except errors.MessageNotModified:
                 pass
             except FileExistsError:
-                await self.cyeor(msg, "`File already exists in the server 😬`")
+                await self.cyeor(
+                    msg, "`File already exists in the server. Try again 😬`"
+                )
                 await self.full_cleanup(self.dl_loc, uid)
             # Other exceptions
             except Exception as e:
@@ -190,7 +198,17 @@ class MeganzClient(Client):
 
         return cy_run
 
-    async def cyeor(self, msg, text: str, reply: bool = False, **kwargs):
+    async def cyeor(
+        self, msg: Message | CallbackQuery, text: str, reply: bool = False, **kwargs
+    ):
+        """
+        Edit or Reply to a Message or CallbackQuery
+
+        Arguments:
+            msg (Message | CallbackQuery): Message or CallbackQuery to edit or reply to
+            text (str): Text to edit or reply with
+            reply (bool, optional): Whether to reply to the msg or not. Defaults to False.
+        """
         if isinstance(msg, Message):
             if reply:
                 await msg.reply(text)
