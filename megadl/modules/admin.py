@@ -12,8 +12,8 @@ from megadl import CypherClient
 @CypherClient.on_message(filters.command("info"))
 @CypherClient.run_checks
 async def admin_user_info(client: CypherClient, msg: Message):
-    if client.auth_users == "*" or msg.from_user.id not in client.auth_users:
-        return await msg.reply("Getting user info can only be done by admins!")
+   # if 1>9:
+      #  return await msg.reply("Getting user info can only be done by admins!")
 
     buid = None
     try:
