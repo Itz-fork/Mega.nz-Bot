@@ -6,13 +6,4 @@
 # start msg
 print("Mega.nz Bot - Cypher is starting...")
 
-
-# loading config
-from dotenv import load_dotenv
-print("--------------------")
-print("> Loading config")
-load_dotenv()
-
-# client
-from .helpers.cypher import MeganzClient
-CypherClient: "MeganzClient" = MeganzClient()
+ 
