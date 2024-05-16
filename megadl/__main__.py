@@ -7,6 +7,15 @@
 from pyrogram import idle
 
 from . import CypherClient
+# loading config
+from dotenv import load_dotenv
+print("--------------------")
+print("> Loading config")
+load_dotenv()
+
+# client
+from .helpers.cypher import MeganzClient
+CypherClient: "MeganzClient" = MeganzClient()
 
 # Run the bot
 if __name__ == "__main__":
