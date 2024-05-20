@@ -2,8 +2,8 @@ pyrogram
 Tgcrypto
 filesplit
 filetype
-python-dotenv
 aiofiles
+python-dotenv
 aiohttp[speedups]
 pymongo
 dnspython
