@@ -1,2 +1,6 @@
 # dev environment
+.env
+venv
 .mega/
+*.session
+NexaBots

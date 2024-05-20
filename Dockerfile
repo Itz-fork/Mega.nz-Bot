@@ -1,9 +1,7 @@
-FROM fedora:latest
+FROM alpine:latest
 
-RUN dnf upgrade -y
-RUN dnf install \
-  https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm -y
-RUN dnf install gcc python3-devel  git python3-pip ffmpeg megatools -y
+RUN apk update && apk upgrade
+RUN apk add --no-cache gcc python3-dev git py3-pip ffmpeg megatools
 RUN pip3 install -U pip
 RUN mkdir /app/
 WORKDIR /app/

@@ -89,10 +89,11 @@ class MeganzClient(Client):
             else set(map(int, os.getenv("AUTH_USERS").split()))
             if not _auths.startswith("*")
             else {"*"}
-            if len(_auths.split("|")) > 2
+            if len(_auths) < 2
             else set(map(int, _auths.split("|")[1].split())).union({"*"})
         )
-        self.log_chat = int(os.getenv("LOG_CHAT")) if os.getenv("LOG_CHAT") else None
+        log_chat = os.getenv("LOG_CHAT")
+        self.log_chat = int(log_chat) if log_chat and log_chat != "-1001234567890" else None
         self.use_logs = {"dl_from", "up_to"}
         self.is_public = True if self.database else False
 
