@@ -4,8 +4,10 @@
 # Description: Custom pyrogram client useful methods
 
 import os
+import json
 import asyncio
 import logging
+import requests
 import functools
 
 from typing import Callable
@@ -16,9 +18,10 @@ from pyrogram import Client, errors
 from pyrogram.handlers import MessageHandler
 from pyrogram.types import Message, CallbackQuery
 
-from .database import CypherDB
-from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 
+from .database import CypherDB
+from .sysfncs import run_on_shell
+from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 
 _emsg = """
 ##### Mega.nz-Bot Error Handler #####
@@ -115,7 +118,27 @@ class MeganzClient(Client):
                 logging.warning("Unable to find encryption key")
                 exit(1)
         else:
-            print("     Warning: Mongodb url not found")
+            logging.warning("Warning: Mongodb url not found")
+
+        # Check for updates
+        print("> Checking for updates")
+        try:
+            remote_updates = requests.get(
+                "https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/updates.json"
+            ).json()
+            
+            with open("updates.json", "r") as f:
+                local_updates = json.load(f)
+                if remote_updates["commit"] != local_updates["commit"]:
+                    print("    |> New update found, updating...")
+                    run_on_shell("git update-index --assume-unchanged .env mega.ini")
+                    run_on_shell("git pull")
+                    self.send_message(
+                        self.log_chat,
+                        f"**#UPDATE** \n\n**Version:** `{remote_updates['version']}` \n**Date:** `{remote_updates["date"]}` \n**Changes:** `{remote_updates['message']}`",
+                    )
+        except:
+            logging.warning("Auto-update failed!")
 
         # other stuff
         print("> Setting up additional functions")
@@ -186,7 +209,7 @@ class MeganzClient(Client):
                 pass
             except FileExistsError:
                 await self.cyeor(
-                    msg, "`File already exists in the server. Try again 😬`"
+                    msg, "`File already exists in the server. Try again after I wipe your data 😬`"
                 )
                 await self.full_cleanup(self.dl_loc, uid)
             # Other exceptions

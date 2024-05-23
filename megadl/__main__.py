@@ -3,7 +3,6 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: __main__.py
 
-
 from pyrogram import idle
 
 from . import CypherClient
