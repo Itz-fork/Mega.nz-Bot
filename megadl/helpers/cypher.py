@@ -40,7 +40,7 @@ class MeganzClient(Client):
     Custom pyrogram client for Mega.nz-Bot
     """
 
-    version = "cypher-1.0"
+    version = "1.0.1"
     dl_loc = None
     tmp_loc = None
     database = CypherDB() if os.getenv("MONGO_URI") else None
@@ -133,9 +133,10 @@ class MeganzClient(Client):
                     print("    |> New update found, updating...")
                     run_on_shell("git update-index --assume-unchanged .env mega.ini")
                     run_on_shell("git pull")
+                    self.version = remote_updates["version"]
                     self.send_message(
                         self.log_chat,
-                        f"**#UPDATE** \n\n**Version:** `{remote_updates['version']}` \n**Date:** `{remote_updates["date"]}` \n**Changes:** `{remote_updates['message']}`",
+                        f"**#UPDATE** \n\n**Version:** `{self.version}` \n**Date:** `{remote_updates["date"]}` \n**Changes:** `{remote_updates['message']}`",
                     )
         except:
             logging.warning("Auto-update failed!")

@@ -28,8 +28,8 @@ async def info_from_cb(client: CypherClient, query: CallbackQuery):
             f"""
 》 **File Details**
 
-**📛 Name:** `{retrieved[0]}`
-**🗂 Size:** `{retrieved[1]}`
+**📛 Name:** `{retrieved[1]}`
+**🗂 Size:** `{retrieved[0]}`
 **📎 URL:** `{url}`
 """,
             reply_markup=None,
