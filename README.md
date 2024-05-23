@@ -32,30 +32,38 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 If you're using a linux distro with `apt`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot).
 
 ```bash
-curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/nightly/installer.sh | bash
+curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
 ```
 ---
 
 To setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot) follow these steps,
 
-- Clone the Repo,
+- Clone the Repo
 ```
 git clone https://github.com/Itz-fork/Mega.nz-Bot
 ```
-- Enter the directory,
+- Enter the directory
 ```
 cd Mega.nz-Bot
 ```
-- Install Requirements,
+- Create a new virtual environment
+```
+python -m venv .venv
+source .venv/bin/activate
+```
+- Install Requirements
 ```
 pip3 install -U -r requirements.txt
 ```
 - Install [megatools](https://megatools.megous.com/), [ffmpeg](https://ffmpeg.org/download.html) according to your system
 - Create a `.env` file (see [example](/.env.sample))
 - Fill config vars with your own values ([How to get config values](#config-vars)),
-- Run the Bot,
+- Run the Bot (using same shell session),
 ```
 python3 -m megadl
+
+# If you get erros such as ModuleNotFoundError, use below command
+.venv/bin/python3 -m megadl
 ```
 
 ### Config vars
