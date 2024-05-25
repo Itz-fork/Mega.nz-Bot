@@ -136,7 +136,7 @@ class MeganzClient(Client):
                     self.version = remote_updates["version"]
                     self.send_message(
                         self.log_chat,
-                        f"**#UPDATE** \n\n**Version:** `{self.version}` \n**Date:** `{remote_updates["date"]}` \n**Changes:** `{remote_updates['message']}`",
+                        f"**#UPDATE** \n\n**Version:** `{self.version}` \n**Date:** `{remote_updates['date']}` \n**Changes:** `{remote_updates['message']}`",
                     )
         except:
             logging.warning("Auto-update failed!")
