@@ -27,7 +27,7 @@ function show_hint() {
 
 function show_error() {
     echo -e "${Red}ERROR: ${1}${Reset}"
-    if [ $2 == "noex" ]; then
+    if [ "$2" == "noex" ]; then
         :
     else
         exit 1
