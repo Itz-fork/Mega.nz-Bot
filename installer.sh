@@ -60,7 +60,7 @@ function pkg_installer() {
             ;;
         
         apt)
-            sudo apt install $1 &> /dev/null || show_error "apt: Unable to install ${1}"
+            sudo sudo apt update -y &> /dev/null ; sudo apt install -y $1 &> /dev/null || show_error "apt: Unable to install ${1}"
             ;;
         
         dnf)
@@ -88,15 +88,10 @@ function clone_repo() {
 # Check dependencies
 function check_deps() {
     show_process "Checking dependencies 🔍"
-    if ! command -v git &> /dev/null ; then
-        pkg_installer ${pkgs_git[$PKGMN]}
-    elif ! command -v pip3 &> /dev/null ; then
-        pkg_installer ${pkgs_pip[$PKGMN]}
-    elif ! command -v ffmpeg &> /dev/null ; then
-        pkg_installer ffmpeg
-    elif ! command -v megatools &> /dev/null ; then
-        pkg_installer megatools
-    fi
+    if ! command -v git &> /dev/null ; then pkg_installer ${pkgs_git[$PKGMN]}; fi
+    if ! command -v pip3 &> /dev/null ; then pkg_installer ${pkgs_pip[$PKGMN]}; fi
+    if ! command -v ffmpeg &> /dev/null ; then pkg_installer ffmpeg; fi
+    if ! command -v megatools &> /dev/null ; then pkg_installer megatools; fi
 
     show_process "Setting up python virtual environment"
     python3 -m venv .venv
