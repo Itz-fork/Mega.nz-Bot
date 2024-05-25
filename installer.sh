@@ -56,7 +56,7 @@ function pkg_installer() {
     case $PKGMN in
 
         pacman)
-            sudo pacman -S $1 &> /dev/null || show_error "pacman: Unable to install ${1}"
+            sudo pacman -S $1 --noconfirm &> /dev/null || show_error "pacman: Unable to install ${1}"
             ;;
         
         apt)

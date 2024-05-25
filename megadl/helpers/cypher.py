@@ -98,6 +98,7 @@ class MeganzClient(Client):
         log_chat = os.getenv("LOG_CHAT")
         self.log_chat = int(log_chat) if log_chat and log_chat != "-1001234567890" else None
         self.use_logs = {"dl_from", "up_to"}
+        self.req_db_fn = {"mega_logger", "mega_logoutter", "set_user_proxy"}
         self.is_public = True if self.database else False
 
         if self.is_public:
@@ -148,6 +149,7 @@ class MeganzClient(Client):
         self.ddl_running = {}
         self.add_handler(MessageHandler(self.use_listner))
 
+
     def run_checks(self, func) -> Callable:
         """
         Decorator to run middleware
@@ -156,15 +158,12 @@ class MeganzClient(Client):
         async def cy_run(client: Client, msg: Message | CallbackQuery):
             can_use = False
             # use message of the query if it's a callback query
-            uid = (
-                msg.message.from_user.id
-                if isinstance(msg, CallbackQuery)
-                else msg.from_user.id
-            )
+            uid = msg.from_user.id
 
             try:
                 # no need to use "Cypher.cyeor" as `use_logs` are Message handlers
-                if func.__name__ in self.use_logs:
+                _func_name = func.__name__
+                if _func_name in self.use_logs:
                     # return if user has already started a process
                     if uid in self.mega_running or uid in self.ddl_running:
                         return await msg.reply(
@@ -175,6 +174,14 @@ class MeganzClient(Client):
                         _frwded = await msg.forward(chat_id=self.log_chat)
                         await _frwded.reply(
                             f"**#UPLOAD_LOG** \n\n**From:** `{uid}` \n**Get history:** `/info {uid}`"
+                        )
+                
+                if _func_name.startswith("admin") or _func_name in self.req_db_fn:
+                    if not self.database:
+                        return await self.cyeor(
+                            msg,
+                            "`Please set up database to use this feature!`",
+                            True,
                         )
 
                 # Check auth users
