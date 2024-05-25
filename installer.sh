@@ -78,7 +78,7 @@ function pkg_installer() {
 # CLone git repo
 function clone_repo() {
     show_process "Cloning Mega.nz-Bot repository"
-    git clone -b nightly https://github.com/Itz-fork/Mega.nz-Bot.git || show_error "git: Clone failed"
+    git clone https://github.com/Itz-fork/Mega.nz-Bot.git || show_error "git: Clone failed"
 
     show_process "Changing current working directory"
     cd Mega.nz-Bot || show_error "fs: 'Mega.nz-Bot' not found"
@@ -213,7 +213,7 @@ function run_installer() {
     check_deps
     gen_env
 
-    show_hint "You can start the bot with: python3 -m megadl"
+    show_hint "You can start the bot with: cd Mega.nz-Bot && .venv/bin/python3 -m megadl"
 }
 
 run_installer
