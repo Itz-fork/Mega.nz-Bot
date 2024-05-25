@@ -213,7 +213,6 @@ EOF
 function run_installer() {
     echo -e "${White}${Un_Purple}Welcome to ${Red}Mega.nz-Bot${Reset}${White}${Un_Purple} - ${Cyan}Cypher${Reset}${White}${Un_Purple} Setup!${Reset}"
 
-    exit
     setup_env
     clone_repo
     check_deps
