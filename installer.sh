@@ -11,9 +11,28 @@ Un_Purple="\033[4;35m"
 Reset="\033[0m"
 
 # Variables
+USE_DOCKER=false
 PKGMN=""
-declare -A pkgs_git=([apt]=git-all [pacman]=git [dnf]=git-all)
-declare -A pkgs_pip=([apt]=python3-pip [pacman]=python-pip [dnf]=python3-pip)
+declare -A pkgs_git=([apt]="sudo apt-get install git-all" [pacman]="sudo pacman -S git" [dnf]="sudo dnf install git-all" [apk]="sudo apk add git")
+declare -A pkgs_pip=([apt]="sudo apt-get install python3-pip" [pacman]="sudo pacman -S python-pip" [dnf]="sudo dnf install python3-pip" [apk]="sudo apk add py3-pip")
+declare -A pkgs_ffmpeg=([apt]="sudo apt-get install ffmpeg" [pacman]="sudo pacman -S ffmpeg" [dnf]="sudo dnf install ffmpeg" [apk]="sudo apk add ffmpeg")
+declare -A pkgs_megatools=([apt]="sudo apt-get install megatools" [pacman]="sudo pacman -S megatools" [dnf]="sudo dnf install megatools" [apk]="apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/; sudo apk add megatools")
+declare -A pkgs_docker=([apt]="sudo apt-get update; sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release; curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; echo 'deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; sudo apt-get update; sudo apt-get install docker-ce docker-ce-cli containerd.io"
+                    [dnf]="sudo dnf -y install dnf-plugins-core; sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo; sudo dnf install docker-ce docker-ce-cli containerd.io"
+                    [pacman]="sudo pacman -S docker"
+                    [apk]="sudo apk update; sudo apk add docker")
+
+
+# Argument parser
+while [[ $# -gt 0 ]]; do
+    case "${1}" in
+        -d|--docker)
+            USE_DOCKER=true
+            shift
+            shift
+            ;;
+    esac
+done
 
 
 # Output functions
@@ -34,47 +53,6 @@ function show_error() {
     fi
 }
 
-
-# Identify current package manager
-function setup_env() {
-    # Detect current systems package manager
-    if $(command -v pacman &> /dev/null) ; then
-        PKGMN=pacman
-    elif $(command -v apt &> /dev/null) ; then
-        PKGMN=apt
-    elif $(command -v dnf &> /dev/null) ; then
-        PKGMN=dnf
-    else show_error "Your system isn't compatible with the installer"
-    fi
-}
-
-
-# Install packages for the current system
-function pkg_installer() {
-    echo -e "${White}   > Installing ${1}${Reset}"
-
-    case $PKGMN in
-
-        pacman)
-            sudo pacman -S $1 --noconfirm &> /dev/null || show_error "pacman: Unable to install ${1}"
-            ;;
-        
-        apt)
-            sudo sudo apt update -y &> /dev/null ; sudo apt install -y $1 &> /dev/null || show_error "apt: Unable to install ${1}"
-            ;;
-        
-        dnf)
-            sudo dnf install $1 &> /dev/null || show_error "dnf: Unable to install ${1}"
-            ;;
-        
-        *)
-            show_error "Your system isn't compatible with the installer"
-            ;;
-            
-    esac
-}
-
-
 # CLone git repo
 function clone_repo() {
     show_process "Cloning Mega.nz-Bot repository"
@@ -85,21 +63,47 @@ function clone_repo() {
 }
 
 
+# Identify current package manager
+function setup_env() {
+    # Detect current systems package manager
+    if $(command -v pacman &> /dev/null) ; then
+        PKGMN=pacman
+    elif $(command -v apt &> /dev/null) ; then
+        PKGMN=apt
+    elif $(command -v dnf &> /dev/null) ; then
+        PKGMN=dnf
+    elif $(command -v apk &> /dev/null) ; then
+        PKGMN=apk
+    else show_error "Your system isn't compatible with the installer"
+    fi
+}
+
+
+# Install packages for the current system
+function pkg_installer() {
+    echo -e "${White}   > Installing ${1}${Reset}"
+    eval $2 || show_error "package installer: Unable to install ${1}"
+}
+
 # Check dependencies
 function check_deps() {
     show_process "Checking dependencies 🔍"
-    if ! command -v git &> /dev/null ; then pkg_installer ${pkgs_git[$PKGMN]}; fi
-    if ! command -v pip3 &> /dev/null ; then pkg_installer ${pkgs_pip[$PKGMN]}; fi
-    if ! command -v ffmpeg &> /dev/null ; then pkg_installer ffmpeg; fi
-    if ! command -v megatools &> /dev/null ; then pkg_installer megatools; fi
+    if [ $USE_DOCKER = true ]; then
+        if ! command -v git &> /dev/null ; then pkg_installer Docker "${pkgs_docker[$PKGMN]}"; fi
+    else
+        if ! command -v git &> /dev/null ; then pkg_installer git ${pkgs_git[$PKGMN]}; fi
+        if ! command -v pip3 &> /dev/null ; then pkg_installer pip3 ${pkgs_pip[$PKGMN]}; fi
+        if ! command -v ffmpeg &> /dev/null ; then pkg_installer ffmpeg ${pkgs_ffmpeg[$PKGMN]}; fi
+        if ! command -v megatools &> /dev/null ; then pkg_installer megatools ${pkgs_megatools[$PKGMN]}; fi
 
-    show_process "Setting up python virtual environment"
-    python3 -m venv .venv
-    source .venv/bin/activate
+        show_process "Setting up python virtual environment"
+        python3 -m venv .venv
+        source .venv/bin/activate
 
-    pip3 install -U -r requirements.txt ||
-        pip install -U -r requirements.txt ||
-            show_error "python: Unable to install requirements"
+        pip3 install -U -r requirements.txt ||
+            pip install -U -r requirements.txt ||
+                show_error "python: Unable to install requirements"
+    fi
 }
 
 
@@ -222,13 +226,19 @@ EOF
 
 function run_installer() {
     echo -e "${White}${Un_Purple}Welcome to ${Red}Mega.nz-Bot${Reset}${White}${Un_Purple} - ${Cyan}Cypher${Reset}${White}${Un_Purple} Setup!${Reset}"
-
+    
     setup_env
     clone_repo
     check_deps
     gen_env
 
-    show_hint "You can start the bot with: cd Mega.nz-Bot && .venv/bin/python3 -m megadl"
+    if [ $USE_DOCKER = true ]; then
+        show_hint "You chose to run the bot in a docker container"
+        show_hint "Once you make sure that .env file is correctly configured, you can build the bot"
+        show_hint "Use: cd Mega.nz-Bot && docker build -t meganzbot && docker run meganzbot"
+    else
+        show_hint "You can start the bot with: cd Mega.nz-Bot && .venv/bin/python3 -m megadl"
+    fi
 }
 
 run_installer
