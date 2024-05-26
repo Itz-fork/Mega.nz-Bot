@@ -28,6 +28,22 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### Local
 ---
+You can now use official Docker image to run Mega.nz-Bot 🐳
+
+- Install Docker on your server
+- Create the .env file (see [env sample](/.env.sample) and [config vars](https://megabot.hirusha.codes/config-vars))
+- Pull the docker image
+	```
+	docker pull ghcr.io/itz-fork/meganzbot:latest
+	```
+- Run it! (`.env` is path to .env file you created)
+	```
+	docker run --env-file .env ghcr.io/itz-fork/meganzbot
+	```
+
+---
+
+---
 **Tip 💡:**
 If you're using a linux distro with `apt`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot).
 
