@@ -32,7 +32,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 If you're using a linux distro with `apt`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot).
 
 ```bash
-curl -sS https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh | bash
+curl -sS -O https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh && chmod +x installer.sh && ./installer.sh
 ```
 ---
 

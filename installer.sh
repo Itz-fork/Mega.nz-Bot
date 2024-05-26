@@ -119,7 +119,7 @@ function gen_env() {
     mega_password=""
     private_bot=false
     while true; do
-        read -p "Do you want to create private bot with pre-configured mega account? [y/n]" add_mega
+        read -p "Do you want to create private bot with pre-configured mega account? [y/n]: " add_mega
         case $add_mega in
             y|yes|Y|Yes ) private_bot=true; break;;
             * ) private_bot=false; break;;
@@ -127,9 +127,9 @@ function gen_env() {
     done
     if $private_bot ; then
         read -p "Enter your Mega.nz Email [$def_mail]: " mega_email
-        mega_email="MEGA_EMAIL=${mega_email:-def_mail}"
-        read -p "Enter your Mega.nz Passsword [$def_pass]: " mega_password
-        mega_password="MEGA_PASSWORD=${mega_password:-def_pass}"
+        mega_email=${mega_email:-$def_mail}
+        read -p "Enter your Mega.nz Password [$def_pass]: " mega_password
+        mega_password=${mega_password:-$def_pass}
     fi
 
     # read authorized users in to a variable called auth_users
@@ -146,7 +146,7 @@ function gen_env() {
     # add log chat
     log_chat=""
     while true; do
-        read -p "Do you want to see user activity logs? [y/n]" see_logs
+        read -p "Do you want to see user activity logs? [y/n]: " see_logs
         case $see_logs in
             y|yes|Y|Yes ) see_logs=true; break;;
             * ) see_logs=false; break;;
@@ -162,7 +162,7 @@ function gen_env() {
     # add mongodb url
     mongo_url=""
     while true; do
-        read -p "Do you want to setup mongodb? [y/n]" set_mongo
+        read -p "Do you want to setup mongodb? [y/n]: " set_mongo
         case $set_mongo in
             y|yes|Y|Yes ) set_mongo=true; break;;
             * ) set_mongo=false; break;;
@@ -179,16 +179,12 @@ function gen_env() {
     cypher_key=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")
     
 
+    # write config files
     touch .env || echo "" > .env
     cat <<EOF >> .env
 APP_ID=$api_id
 API_HASH=$api_hash
 BOT_TOKEN=$bot_token
-
-$mega_email
-$mega_password
-
-USE_ENV=False
 AUTH_USERS=$auth_users
 $log_chat
 $mongo_url
@@ -199,9 +195,28 @@ CHUNK_SIZE=524288
 TG_MAX_SIZE=2040108421
 EOF
 
-   show_hint "If your bot won't work as expected, try reassigning USE_ENV and DOWNLOAD_LOCATION in .env file. Not sure what to do? Contact support at @Nexa_bots"
+    if $private_bot ; then
+        if [ ! -f mega.ini ]; then
+            touch mega.ini || echo "" > mega.ini
+        fi
+        cat <<EOF >> mega.ini
 
-   show_hint "It is recommended to check the mega.ini file for more configuration options"
+[Login]
+Username = $mega_email
+Password = $mega_password
+EOF
+    else
+        cat <<EOF >> .env
+
+USE_ENV=false
+MEGA_EMAIL=$mega_email
+MEGA_PASSWORD=$mega_password
+EOF
+    fi
+
+    show_hint "If your bot won't work as expected, try reassigning USE_ENV and DOWNLOAD_LOCATION in .env file. Not sure what to do? Contact support at @Nexa_bots"
+
+    show_hint "It is recommended to check the mega.ini file for more configuration options"
 }
 
 
