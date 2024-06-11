@@ -89,6 +89,10 @@ class Downloader:
                 # Raise HttpStatusError on failed requests
                 if resp.status != 200:
                     raise HttpStatusError(resp.status)
+                # Try to get the file name
+                cnt_disp = resp.headers.get("Content-Disposition")
+                if cnt_disp:
+                    
                 # Handle content length header
                 total = resp.content_length
                 curr = 0
