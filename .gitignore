@@ -1,6 +1,8 @@
 # dev environment
 .env
 venv
+.venv
 .mega/
 *.session
 NexaBots
+tests
