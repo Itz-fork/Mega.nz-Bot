@@ -21,7 +21,7 @@ CMP_GD_QUERY = re.compile(
     r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=(sharing|drive_link)"
 )
 STR_GD_REPLACE = r"https://drive.google.com/uc?export=download&id=\1"
-DEFAULT_EXT = ".bin"
+DEFAULT_EXT = ".megabot.bin"
 
 
 class Downloader:

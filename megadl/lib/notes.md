@@ -1,7 +1,6 @@
 # Megatools dev notes
 Developer notes to work with mega.nz api
 
-
 ### Requesting nodes of a shared node
 **Request:** Please refer to [`megatools.get_info`](/megatools.py?L=160)
 **Response:**
