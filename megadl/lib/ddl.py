@@ -6,6 +6,8 @@
 import os
 import re
 import asyncio
+import hashlib
+import mimetypes
 
 from time import time
 from aiohttp import ClientSession
@@ -19,6 +21,7 @@ CMP_GD_QUERY = re.compile(
     r"https://drive\.google\.com/file/d/(.*?)/.*?\?usp=(sharing|drive_link)"
 )
 STR_GD_REPLACE = r"https://drive.google.com/uc?export=download&id=\1"
+DEFAULT_EXT = ".bin"
 
 
 class Downloader:
@@ -81,7 +84,6 @@ class Downloader:
         # Create folder if it doesn't exist
         wpath = f"{path}/{chat_id}"
         os.makedirs(wpath)
-        wpath = f"{wpath}/{os.path.basename(url)}"
 
         async with ClientSession() as session:
             _chunksize = int(os.getenv("CHUNK_SIZE"))
@@ -89,6 +91,25 @@ class Downloader:
                 # Raise HttpStatusError on failed requests
                 if resp.status != 200:
                     raise HttpStatusError(resp.status)
+
+                # Try to get the file name
+                cnt_disp = resp.headers.get("Content-Disposition")
+                if (
+                    cnt_disp
+                    and (cd_parts := cnt_disp.split("filename="))
+                    and len(cd_parts) > 1
+                ):
+                    fname = cd_parts[1].strip('\"')
+
+                elif _ftype := mimetypes.guess_type(url):
+                    _fext = mimetypes.guess_extension(_ftype)
+                    fname = f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT if not _fext else _fext}"
+
+                else:
+                    fname = os.path.basename(url)
+
+                wpath = f"{wpath}/{fname}"
+
                 # Handle content length header
                 total = resp.content_length
                 curr = 0
