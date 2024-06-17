@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Itz-fork
+# Copyright (c) 2021 - Present Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Shell, loops and other sys functions
@@ -7,7 +7,7 @@ import asyncio
 
 from functools import partial
 from subprocess import Popen, PIPE
-from psutil import Process as PsuPrc
+from psutil import Process as psu_proc
 from asyncio import iscoroutinefunction, get_running_loop
 
 
@@ -67,7 +67,7 @@ async def kill_family(pid: int):
     """
     Murder a process and it's whole family using pid
     """
-    running = PsuPrc(pid)
+    running = psu_proc(pid)
     for child in running.children(recursive=True):
         child.kill()
     running.kill()

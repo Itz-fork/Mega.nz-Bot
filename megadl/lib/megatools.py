@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Itz-fork
+# Copyright (c) 2021 - Present Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Wrapper for megatools cli with extended features
@@ -126,6 +126,11 @@ class MegaTools:
             - to_path (optional): string - Custom path to where the files need to be uploaded
         """
         cmd = ""
+        # check if the file is already present
+        
+
+
+        
         # For files
         if os.path.isfile(path):
             cmd = f'megaput {self.config} --no-ask-password --path "/Root/{to_path}/" "{path}"'

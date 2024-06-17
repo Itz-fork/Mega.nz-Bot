@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Itz-fork
+# Copyright (c) 2021 - Present Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: File system functions
@@ -121,4 +121,6 @@ def _usesplit(path_in, path_out):
 
 
 async def splitit(path_in, path_out):
+    if not path.isdir(path_out):
+        makedirs(path_out)
     await run_partial(_usesplit, path_in, path_out)

@@ -1,4 +1,4 @@
-# Copyright (c) 2023 Itz-fork
+# Copyright (c) 2021 - Present Itz-fork
 # Author: https://github.com/Itz-fork
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Custom pyrogram client useful methods
@@ -312,7 +312,7 @@ class MeganzClient(Client):
                         Trying to split the files 🔪...
                         """,
                     )
-                    splout = f"{self.tmp_loc}/splitted"
+                    splout = f"{self.tmp_loc}/{chat_id}/splitted"
                     await splitit(file, splout)
                     for file in listfiles(splout):
                         await send_as_guessed(self, file, chat_id, msg_id, **kwargs)
