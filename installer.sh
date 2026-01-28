@@ -16,9 +16,9 @@ PKGMN=""
 declare -A pkgs_git=([apt]="sudo apt-get install git-all" [pacman]="sudo pacman -S git" [dnf]="sudo dnf install git-all" [apk]="sudo apk add git")
 declare -A pkgs_pip=([apt]="sudo apt-get install python3-pip" [pacman]="sudo pacman -S python-pip" [dnf]="sudo dnf install python3-pip" [apk]="sudo apk add py3-pip")
 declare -A pkgs_ffmpeg=([apt]="sudo apt-get install ffmpeg" [pacman]="sudo pacman -S ffmpeg" [dnf]="sudo dnf install ffmpeg" [apk]="sudo apk add ffmpeg")
-declare -A pkgs_megatools=([apt]="sudo apt-get install megatools" [pacman]="sudo pacman -S megatools" [dnf]="sudo dnf install megatools" [apk]="apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/; sudo apk add megatools")
-declare -A pkgs_docker=([apt]="sudo apt-get update; sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release; curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; echo 'deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable' | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; sudo apt-get update; sudo apt-get install docker-ce docker-ce-cli containerd.io"
-                    [dnf]="sudo dnf -y install dnf-plugins-core; sudo dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo; sudo dnf install docker-ce docker-ce-cli containerd.io"
+declare -A pkgs_megatools=([apt]="sudo apt-get install megatools" [pacman]="git clone https://aur.archlinux.org/megatools.git && cd megatools && makepkg -sic --noconfirm && cd .." [dnf]="sudo dnf install megatools" [apk]="apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/; sudo apk add megatools")
+declare -A pkgs_docker=([apt]="sudo apt update && sudo apt install -y ca-certificates curl && sudo install -m 0755 -d /etc/apt/keyrings && sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && sudo chmod a+r /etc/apt/keyrings/docker.asc && echo \"deb [arch=\$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \$(. /etc/os-release && echo \"\$VERSION_CODENAME\") stable\" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && sudo apt update && sudo apt install -y docker-ce docker-ce-cli containerd.io"
+                    [dnf]="sudo dnf config-manager addrepo --from-repofile https://download.docker.com/linux/fedora/docker-ce.repo && sudo dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin"
                     [pacman]="sudo pacman -S docker"
                     [apk]="sudo apk update; sudo apk add docker")
 
@@ -82,6 +82,7 @@ function setup_env() {
 # Install packages for the current system
 function pkg_installer() {
     echo -e "${White}   > Installing ${1}${Reset}"
+    echo $2
     eval $2 || show_error "package installer: Unable to install ${1}"
 }
 
@@ -89,12 +90,12 @@ function pkg_installer() {
 function check_deps() {
     show_process "Checking dependencies 🔍"
     if [ $USE_DOCKER = true ]; then
-        if ! command -v git &> /dev/null ; then pkg_installer Docker "${pkgs_docker[$PKGMN]}"; fi
+        if ! command -v docker &> /dev/null ; then pkg_installer Docker "${pkgs_docker[$PKGMN]}"; fi
     else
-        if ! command -v git &> /dev/null ; then pkg_installer git ${pkgs_git[$PKGMN]}; fi
-        if ! command -v pip3 &> /dev/null ; then pkg_installer pip3 ${pkgs_pip[$PKGMN]}; fi
-        if ! command -v ffmpeg &> /dev/null ; then pkg_installer ffmpeg ${pkgs_ffmpeg[$PKGMN]}; fi
-        if ! command -v megatools &> /dev/null ; then pkg_installer megatools ${pkgs_megatools[$PKGMN]}; fi
+        if ! command -v git &> /dev/null ; then pkg_installer git "${pkgs_git[$PKGMN]}"; fi
+        if ! command -v pip3 &> /dev/null ; then pkg_installer pip3 "${pkgs_pip[$PKGMN]}"; fi
+        if ! command -v ffmpeg &> /dev/null ; then pkg_installer ffmpeg "${pkgs_ffmpeg[$PKGMN]}"; fi
+        if ! command -v megatools &> /dev/null ; then pkg_installer megatools "${pkgs_megatools[$PKGMN]}"; fi
 
         show_process "Setting up python virtual environment"
         python3 -m venv .venv
