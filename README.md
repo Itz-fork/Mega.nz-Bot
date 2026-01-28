@@ -1,3 +1,8 @@
+> [!WARNING]
+>
+> There is no active development going on and the project (under the Nexa brand) has been sunset.
+> The project may still receive patches for usability though schedule is not defined
+
 <p align="center">
 	<img src="assests/logo.png" width=200, height=200/>
 	<br>
