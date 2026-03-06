@@ -4,11 +4,21 @@
 # Description: __init__.py
 
 import os
+import sys
 import logging
 
 # start msg
 print("Mega.nz Bot - Cypher is starting...")
 
+# uvloop integration for better asyncio performance
+# only on Unix-like systems (not Windows)
+if sys.platform != "win32":
+    try:
+        import uvloop
+        uvloop.install()
+        print("> Using uvloop for better performance")
+    except ImportError:
+        pass
 
 # loading config
 from dotenv import load_dotenv
@@ -21,5 +31,4 @@ else:
 
 # client
 from .helpers.cypher import MeganzClient
-import os
 CypherClient: "MeganzClient" = MeganzClient()

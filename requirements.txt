@@ -12,3 +12,4 @@ cryptography
 pycryptodome
 psutil
 humans-formatter
+uvloop; sys_platform != "win32"

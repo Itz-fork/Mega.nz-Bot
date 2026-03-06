@@ -86,7 +86,7 @@ class Downloader:
         os.makedirs(wpath)
 
         async with ClientSession() as session:
-            _chunksize = int(os.getenv("CHUNK_SIZE"))
+            _chunksize = int(os.getenv("CHUNK_SIZE", "524288"))
             async with session.get(url, timeout=None, allow_redirects=True) as resp:
                 # Raise HttpStatusError on failed requests
                 if resp.status != 200:
@@ -101,8 +101,8 @@ class Downloader:
                 ):
                     fname = cd_parts[1].strip('\"')
 
-                elif _ftype := mimetypes.guess_type(url):
-                    _fext = mimetypes.guess_extension(_ftype)
+                elif (_ftype := mimetypes.guess_type(url)) and _ftype[0]:
+                    _fext = mimetypes.guess_extension(_ftype[0])
                     fname = f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT if not _fext else _fext}"
 
                 else:

@@ -36,5 +36,5 @@ async def track_progress(
             await client.edit_message_text(
                 chat_id, msg_id, f"{tmp}\n\n**Powered by @NexaBotsUpdates**", **kwargs
             )
-        except:
+        except Exception:
             pass

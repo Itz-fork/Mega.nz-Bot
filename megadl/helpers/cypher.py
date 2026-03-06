@@ -125,7 +125,8 @@ class MeganzClient(Client):
         print("> Checking for updates")
         try:
             remote_updates = requests.get(
-                "https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/updates.json"
+                "https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/updates.json",
+                timeout=10
             ).json()
             
             with open("updates.json", "r") as f:
@@ -139,8 +140,8 @@ class MeganzClient(Client):
                         self.log_chat,
                         f"**#UPDATE** \n\n**Version:** `{self.version}` \n**Date:** `{remote_updates['date']}` \n**Changes:** `{remote_updates['message']}`",
                     )
-        except:
-            logging.warning("Auto-update failed!")
+        except (requests.RequestException, json.JSONDecodeError, KeyError, FileNotFoundError) as e:
+            logging.warning(f"Auto-update failed: {e}")
 
         # other stuff
         print("> Setting up additional functions")
@@ -287,14 +288,11 @@ class MeganzClient(Client):
                 fs_cleanup(path)
             self.glob_tmp.pop(user_id, None)
 
-            # idk why I didn't do self.<dict>.pop(<key>, None), whatever this works
             if user_id:
-                if user_id in self.mega_running:
-                    self.mega_running.pop(user_id)
-                if user_id in self.ddl_running:
-                    self.ddl_running.pop(user_id)
-        except:
-            pass
+                self.mega_running.pop(user_id, None)
+                self.ddl_running.pop(user_id, None)
+        except (OSError, KeyError) as e:
+            logging.debug(f"Cleanup error: {e}")
 
     async def send_files(self, files: list[str], chat_id: int, msg_id: int, **kwargs):
         """

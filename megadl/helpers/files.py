@@ -87,7 +87,7 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
             vid_dur = int(float(_sh))
             # Generate thumbnail for the video
             _tmpth = f"{client.tmp_loc}/thumbnails"
-            _thumb = f"{_tmpth}/{{chat_id}}_{mid}.png"
+            _thumb = f"{_tmpth}/{chat_id}_{mid}.png"
             if not path.isdir(_tmpth):
                 makedirs(_tmpth)
             _sh = await run_partial(
