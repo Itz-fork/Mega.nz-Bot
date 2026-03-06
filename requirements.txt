@@ -1,7 +1,6 @@
 https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.21.zip
 Tgcrypto
 requests
-filesplit
 filetype
 aiofiles
 python-dotenv

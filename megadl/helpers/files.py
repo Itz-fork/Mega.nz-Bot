@@ -10,10 +10,10 @@ from datetime import timedelta
 from os import path, walk, makedirs, remove
 
 from filetype import guess
-from filesplit.split import Split
 
 from megadl.helpers.pyros import track_progress
 from megadl.helpers.sysfncs import run_partial, run_on_shell
+from megadl.lib.splitter import split_file
 
 
 # List all the files inside a dir
@@ -114,13 +114,16 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
             )
 
 
-# Split files
-def _usesplit(path_in, path_out):
-    spl = Split(path_in, path_out)
-    spl.bysize(2040108421)
-
-
+# Split files using the optimized async splitter
 async def splitit(path_in, path_out):
+    """
+    Split a file into parts for Telegram upload.
+    
+    Uses the optimized async splitter that:
+    - Minimizes memory usage with buffered I/O
+    - Runs in thread pool to avoid blocking event loop
+    - Handles thousands of simultaneous operations efficiently
+    """
     if not path.isdir(path_out):
         makedirs(path_out)
-    await run_partial(_usesplit, path_in, path_out)
+    return await split_file(path_in, path_out)
