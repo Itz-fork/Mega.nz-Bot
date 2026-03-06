@@ -1,0 +1,49 @@
+name: Update updates.json commit
+
+"on":
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  update-commit:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update commit field in updates.json
+        env:
+          LATEST_COMMIT: ${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+
+          path = "updates.json"
+          with open(path, "r", encoding="utf-8") as f:
+              data = json.load(f)
+
+          data["commit"] = os.environ["LATEST_COMMIT"]
+
+          with open(path, "w", encoding="utf-8") as f:
+              json.dump(data, f, indent=2)
+              f.write("\n")
+          PY
+
+      - name: Commit and push changes
+        run: |
+          if git diff --quiet -- updates.json; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates.json
+          git commit -m "chore: update updates.json commit to ${GITHUB_SHA}"
+          git push
