@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Update commit field in updates.json
         env:
@@ -36,6 +38,8 @@ jobs:
           PY
 
       - name: Commit and push changes
+        env:
+          LATEST_COMMIT: ${{ github.sha }}
         run: |
           if git diff --quiet -- updates.json; then
             echo "No changes to commit"
@@ -45,5 +49,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add updates.json
-          git commit -m "chore: update updates.json commit to ${GITHUB_SHA}"
+          git commit -m "chore: update updates.json commit to ${LATEST_COMMIT}"
           git push
