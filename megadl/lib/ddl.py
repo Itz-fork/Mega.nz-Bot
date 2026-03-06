@@ -22,6 +22,8 @@ CMP_GD_QUERY = re.compile(
 )
 STR_GD_REPLACE = r"https://drive.google.com/uc?export=download&id=\1"
 DEFAULT_EXT = ".megabot.bin"
+# Default chunk size in bytes (512KB) - balances memory usage and download speed
+DEFAULT_CHUNK_SIZE = 524288
 
 
 class Downloader:
@@ -86,7 +88,7 @@ class Downloader:
         os.makedirs(wpath)
 
         async with ClientSession() as session:
-            _chunksize = int(os.getenv("CHUNK_SIZE", "524288"))
+            _chunksize = int(os.getenv("CHUNK_SIZE", str(DEFAULT_CHUNK_SIZE)))
             async with session.get(url, timeout=None, allow_redirects=True) as resp:
                 # Raise HttpStatusError on failed requests
                 if resp.status != 200:

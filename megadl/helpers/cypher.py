@@ -141,7 +141,7 @@ class MeganzClient(Client):
                         f"**#UPDATE** \n\n**Version:** `{self.version}` \n**Date:** `{remote_updates['date']}` \n**Changes:** `{remote_updates['message']}`",
                     )
         except (requests.RequestException, json.JSONDecodeError, KeyError, FileNotFoundError) as e:
-            logging.warning(f"Auto-update failed: {e}")
+            logging.warning(f"Auto-update check failed: {e}")
 
         # other stuff
         print("> Setting up additional functions")
