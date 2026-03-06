@@ -64,31 +64,35 @@ class Downloader:
         Uses a shared connector to efficiently manage connections across
         all download instances, reducing memory overhead and connection setup time.
         """
+        if cls._session and not cls._session.closed:
+            return cls._session
+
         async with cls._lock:
-            if cls._session is None or cls._session.closed:
-                # Configure connector for high concurrency with resource limits
-                pool_limit = int(os.getenv("DDL_POOL_LIMIT", str(DEFAULT_POOL_LIMIT)))
-                total_limit = int(os.getenv("DDL_TOTAL_LIMIT", str(DEFAULT_TOTAL_LIMIT)))
-                
-                cls._connector = TCPConnector(
-                    limit_per_host=pool_limit,
-                    limit=total_limit,
-                    ttl_dns_cache=300,  # Cache DNS for 5 minutes
-                    enable_cleanup_closed=True,  # Clean up closed connections
-                )
-                
-                # Create session with reasonable timeouts
-                timeout = ClientTimeout(
-                    total=None,  # No total timeout for large downloads
-                    connect=30,  # 30 seconds to establish connection
-                    sock_read=60,  # 60 seconds between reads
-                )
-                
-                cls._session = ClientSession(
-                    connector=cls._connector,
-                    timeout=timeout,
-                )
-            
+            if cls._session and not cls._session.closed:
+                return cls._session
+
+            pool_limit = int(os.getenv("DDL_POOL_LIMIT", str(DEFAULT_POOL_LIMIT)))
+            total_limit = int(os.getenv("DDL_TOTAL_LIMIT", str(DEFAULT_TOTAL_LIMIT)))
+
+            connector = TCPConnector(
+                limit=TOTAL_LIMIT,
+                limit_per_host=POOL_LIMIT,
+                ttl_dns_cache=300,
+                enable_cleanup_closed=True,
+            )
+
+            timeout = ClientTimeout(
+                total=None,
+                connect=30,
+                sock_read=60,
+            )
+
+            cls._connector = connector
+            cls._session = ClientSession(
+                connector=connector,
+                timeout=timeout,
+            )
+
             return cls._session
 
     @classmethod
