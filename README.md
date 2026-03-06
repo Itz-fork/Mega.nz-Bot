@@ -1,7 +1,9 @@
 > [!WARNING]
 >
 > There is little active development going on and the project (under the Nexa brand) has been scheduled to be sunset.
+> 
 > The project may still receive patches for usability though schedule is not defined
+> 
 > Latest functionality update was on: 2026-03-06
 
 <p align="center">
