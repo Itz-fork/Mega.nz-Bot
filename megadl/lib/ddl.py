@@ -208,8 +208,11 @@ class Downloader:
             fext = mimetypes.guess_extension(ftype[0])
             return f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT if not fext else fext}"
 
-        # Fall back to URL basename
-        return os.path.basename(url) or f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT}"
+        # Fall back to URL basename, with hash fallback for empty strings
+        basename = os.path.basename(url)
+        if basename:
+            return basename
+        return f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT}"
 
 
 # Exceptions raised by the Downloader class
