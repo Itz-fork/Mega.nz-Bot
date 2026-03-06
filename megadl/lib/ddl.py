@@ -174,6 +174,8 @@ class Downloader:
             total = resp.content_length
             curr = 0
             st = time()
+            last_up = 0
+            up_interval = 2
             
             async with async_open(wpath, mode="wb") as file:
                 async for chunk in resp.content.iter_chunked(_chunksize):
@@ -181,7 +183,8 @@ class Downloader:
                     curr += len(chunk)
                     
                     # Make sure everything is present before calling track_progress
-                    if all((chat_id, msg_id, self.tg_client, total)):
+                    now = time()
+                    if all((chat_id, msg_id, self.tg_client, total)) and (now - last_up >= up_interval):
                         await track_progress(
                             curr,
                             total,
@@ -191,6 +194,7 @@ class Downloader:
                             st,
                             **kwargs,
                         )
+                        last_up = now
                     
                     # Yield control to allow other tasks to run
                     await asyncio.sleep(0)
