@@ -235,75 +235,73 @@ class MegaTools:
             # get nodes in a the folder
             nodes = None
             data = [{"a": "f", "c": 1, "ca": 1, "r": 1}]
-            # print(nodes)
-            session = ClientSession()
-            resp = await session.post(
-                "https://g.api.mega.co.nz/cs",
-                params={"id": 0, "n": root_folder},
-                data=json.dumps(data),
-            )
-            nodes = (await resp.json())[0]["f"]
-
-            if not nodes:
-                return "undefined", "undefined"
-
-            # get nodes in a sub dir
-            async def get_sub_dir_nodes(root_folder, sub_dir):
+            async with ClientSession() as session:
                 resp = await session.post(
                     "https://g.api.mega.co.nz/cs",
                     params={"id": 0, "n": root_folder},
                     data=json.dumps(data),
                 )
-                json_resp = await resp.json()
-                if (
-                    isinstance(json_resp, list)
-                    and isinstance(json_resp[0], dict)
-                    and "f" in json_resp[0]
-                ):
-                    all_nodes = json_resp[0]["f"]
-                    sub_dir_nodes = [node for node in all_nodes if node["p"] == sub_dir]
-                    return sub_dir_nodes
-                else:
-                    return []
+                nodes = (await resp.json())[0]["f"]
 
-            # make string
-            to_return = ""
-            num = 1
+                if not nodes:
+                    return "undefined", "undefined"
 
-            async def prepare_string(nodes, shared_key, depth=0):
-                nonlocal to_return
-                nonlocal num
-                for node in nodes:
-                    key = decrypt_node_key(node["k"], shared_key)
-                    file_id = node["h"]
-                    if key:
-                        file_size = node["s"] if "s" in node else ""
-                        if node["t"] == 0:  # file
-                            k = (
-                                key[0] ^ key[4],
-                                key[1] ^ key[5],
-                                key[2] ^ key[6],
-                                key[3] ^ key[7],
-                            )
-                            attrs = decrypt_attr(base64_url_decode(node["a"]), k)
-                            file_name = attrs["n"]
-                            to_return += f"{' ' * depth}├── {file_name} ({human_bytes(file_size)})\n"
-                        elif node["t"] == 1:  # folder
-                            k = key
-                            attrs = decrypt_attr(base64_url_decode(node["a"]), k)
-                            file_name = attrs["n"]
-                            to_return += f"{' ' * depth}├─ {file_name}\n"
-                            await prepare_string(
-                                await get_sub_dir_nodes(root_folder, file_id),
-                                shared_key,
-                                depth + 1,
-                            )
-                    if len(nodes) == num:
-                        break
-                    num += 1
+                # get nodes in a sub dir
+                async def get_sub_dir_nodes(root_folder, sub_dir):
+                    resp = await session.post(
+                        "https://g.api.mega.co.nz/cs",
+                        params={"id": 0, "n": root_folder},
+                        data=json.dumps(data),
+                    )
+                    json_resp = await resp.json()
+                    if (
+                        isinstance(json_resp, list)
+                        and isinstance(json_resp[0], dict)
+                        and "f" in json_resp[0]
+                    ):
+                        all_nodes = json_resp[0]["f"]
+                        sub_dir_nodes = [node for node in all_nodes if node["p"] == sub_dir]
+                        return sub_dir_nodes
+                    else:
+                        return []
 
-            await prepare_string(nodes, shared_key)
-            await session.close()
+                # make string
+                to_return = ""
+                num = 1
+
+                async def prepare_string(nodes, shared_key, depth=0):
+                    nonlocal to_return
+                    nonlocal num
+                    for node in nodes:
+                        key = decrypt_node_key(node["k"], shared_key)
+                        file_id = node["h"]
+                        if key:
+                            file_size = node["s"] if "s" in node else ""
+                            if node["t"] == 0:  # file
+                                k = (
+                                    key[0] ^ key[4],
+                                    key[1] ^ key[5],
+                                    key[2] ^ key[6],
+                                    key[3] ^ key[7],
+                                )
+                                attrs = decrypt_attr(base64_url_decode(node["a"]), k)
+                                file_name = attrs["n"]
+                                to_return += f"{' ' * depth}├── {file_name} ({human_bytes(file_size)})\n"
+                            elif node["t"] == 1:  # folder
+                                k = key
+                                attrs = decrypt_attr(base64_url_decode(node["a"]), k)
+                                file_name = attrs["n"]
+                                to_return += f"{' ' * depth}├─ {file_name}\n"
+                                await prepare_string(
+                                    await get_sub_dir_nodes(root_folder, file_id),
+                                    shared_key,
+                                    depth + 1,
+                                )
+                        if len(nodes) == num:
+                            break
+                        num += 1
+
+                await prepare_string(nodes, shared_key)
             return to_return
 
         else:
@@ -352,7 +350,7 @@ class MegaTools:
 
         await run.wait()
 
-    async def __terminate_sub(run):
+    async def __terminate_sub(self, run):
         run.terminate()
         await run.wait()
 
