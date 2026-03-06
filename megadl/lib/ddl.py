@@ -71,12 +71,12 @@ class Downloader:
             if cls._session and not cls._session.closed:
                 return cls._session
 
-            pool_limit = int(os.getenv("DDL_POOL_LIMIT", str(DEFAULT_POOL_LIMIT)))
             total_limit = int(os.getenv("DDL_TOTAL_LIMIT", str(DEFAULT_TOTAL_LIMIT)))
+            pool_limit = int(os.getenv("DDL_POOL_LIMIT", str(DEFAULT_POOL_LIMIT)))
 
             connector = TCPConnector(
-                limit=TOTAL_LIMIT,
-                limit_per_host=POOL_LIMIT,
+                limit=total_limit,
+                limit_per_host=pool_limit,
                 ttl_dns_cache=300,
                 enable_cleanup_closed=True,
             )
@@ -184,7 +184,7 @@ class Downloader:
                     
                     # Make sure everything is present before calling track_progress
                     now = time()
-                    if all((chat_id, msg_id, self.tg_client, total)) and (now - last_up >= up_interval):
+                    if None not in (chat_id, msg_id, self.tg_client, total) and (now - last_up >= up_interval):
                         await track_progress(
                             curr,
                             total,
