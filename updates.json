@@ -1,6 +1,6 @@
 {
-  "version": " 1.0.9",
+  "version": " 1.1",
   "commit": "875fb11dc6a6d0ac126eb1b41f787a0c1b507166",
-  "date": "2024-06-18",
-  "message": ""
+  "date": "2026-03-06",
+  "message": "Significantly improve lib/dll.py and replace filesplit with optimized async splitter for much better performance"
 }
