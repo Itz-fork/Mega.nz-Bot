@@ -11,6 +11,7 @@ import hashlib
 import mimetypes
 
 from time import time
+from urllib.parse import urlsplit
 from aiohttp import ClientSession, TCPConnector, ClientTimeout
 from aiofiles import open as async_open
 
@@ -170,14 +171,13 @@ class Downloader:
             curr = 0
             st = time()
             
-            # Stream directly to file for memory efficiency
             async with async_open(wpath, mode="wb") as file:
                 async for chunk in resp.content.iter_chunked(_chunksize):
                     await file.write(chunk)
                     curr += len(chunk)
                     
                     # Make sure everything is present before calling track_progress
-                    if None not in {chat_id, msg_id, self.tg_client, total}:
+                    if all((chat_id, msg_id, self.tg_client, total)):
                         await track_progress(
                             curr,
                             total,
@@ -196,20 +196,16 @@ class Downloader:
     def _extract_filename(self, resp, url: str) -> str:
         """Extract filename from response headers or URL."""
         # Try Content-Disposition header first
-        cnt_disp = resp.headers.get("Content-Disposition")
-        if cnt_disp:
-            cd_parts = cnt_disp.split("filename=")
-            if len(cd_parts) > 1:
-                return cd_parts[1].strip('\"')
+        if (cd := resp.content_disposition) and cd.filename:
+            return os.path.basename(cd.filename)
 
         # Try to guess from mime type
-        ftype = mimetypes.guess_type(url)
-        if ftype and ftype[0]:
-            fext = mimetypes.guess_extension(ftype[0])
-            return f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT if not fext else fext}"
+        ct = resp.headers.get('Content-Type', '').split(';')[0]
+        if ct and (fext := mimetypes.guess_extension(ct)):
+            return f"{hashlib.md5(url.encode()).hexdigest()}{fext}"
 
         # Fall back to URL basename, with hash fallback for empty strings
-        basename = os.path.basename(url)
+        basename = os.path.basename(urlsplit(url).path)
         if basename:
             return basename
         return f"{hashlib.md5(url.encode()).hexdigest()}{DEFAULT_EXT}"
