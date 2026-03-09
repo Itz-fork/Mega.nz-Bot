@@ -75,12 +75,13 @@ async def admin_ban_user(client: CypherClient, msg: Message):
 @CypherClient.run_checks
 async def admin_unban_user(client: CypherClient, msg: Message):
     buid = None
+    reason = None
     try:
-        buid = int(msg.text.split(None, 1)[1])
+        _splt = msg.text.split(None, 2)
+        buid = int(_splt[1])
+        reason = _splt[2] if len(_splt) >= 3 else "No reason given"
     except:
-        pass
-    if not buid or not isinstance(buid, int):
-        return await msg.reply("Provide a user id to unban \n\nEx: `/unban 12345`")
+        return await msg.reply("Provide a user id to unban \n\nEx: `/unban 12345 good guy now`")
 
-    await client.database.unban_user(buid)
+    await client.database.unban_user(buid, reason)
     await msg.reply(f"Unbanned user `{buid}` ✅")
