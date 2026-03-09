@@ -228,7 +228,7 @@ class MeganzClient(Client):
                 await self.cyeor(
                     msg, "`File already exists in the server. Try again after I wipe your data 😬`"
                 )
-                await self.full_cleanup(self.dl_loc, uid)
+                await self.full_cleanup(f"{self.dl_loc}/{uid}", uid)
             # Other exceptions
             except Exception as e:
                 await self.cyeor(msg, f"**Oops 🫨, Somethig bad happend!** \n\n`{e}`")
@@ -292,10 +292,10 @@ class MeganzClient(Client):
         Delete the file/folder and the message
         """
         try:
-            if path:
-                fs_cleanup(path)
+            # remove from memory. RAM baby!!
             self.glob_tmp.pop(user_id, None)
 
+            # clean up tasks
             if user_id:
                 mg_pid = self.mega_running.pop(user_id, None)
                 ddl_task = self.ddl_running.pop(user_id, None)
@@ -304,6 +304,13 @@ class MeganzClient(Client):
                 if ddl_task:
                     ddl_task.cancel()
                     await ddl_task
+            
+            # clean after task kill
+            # sometimes ddl produce unfinished download files and they might not get cleaned up until full_cleanup called again
+            # when run_checks gets triggered by the same user
+            # not mandatory. would've been better to yield before calling this but thats just more work to do
+            if path:
+                fs_cleanup(path)
         except Exception as e:
             logging.debug(f"Cleanup error: {e}")
 
