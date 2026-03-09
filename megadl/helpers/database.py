@@ -3,20 +3,19 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Database functions
 
-from pymongo import ReturnDocument
+from os import getenv
 
-from megadl.lib.aiomongo import AioMongo
+from pymongo import AsyncMongoClient, ReturnDocument
 
 
 class CypherDB:
     def __init__(self) -> None:
-        self.mongoc = AioMongo()
+        self.mongoc = AsyncMongoClient(getenv("MONGO_URI"))
         self.coll_users = self.mongoc["mega_nz"]["users"]
 
     # <<<<<<<<<< Active user functions >>>>>>>>>> #
     async def add(self, user_id: int):
-        result = await self.mongoc.find_one_and_update_async(
-            self.coll_users,
+        result = await self.coll_users.find_one_and_update(
             {"_id": user_id},
             {
                 "$setOnInsert": {
@@ -39,22 +38,18 @@ class CypherDB:
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
     ):
         if downloads:
-            await self.mongoc.update_async(
-                self.coll_users,
+            await self.coll_users.update_one(
                 {"_id": user_id},
                 {"$inc": {"total_downloads": downloads}},
-                use_given=True,
             )
         elif uploads:
-            await self.mongoc.update_async(
-                self.coll_users,
+            await self.coll_users.update_one(
                 {"_id": user_id},
                 {"$inc": {"total_uploads": uploads}},
-                use_given=True,
             )
 
     async def delete(self, user_id: int):
-        await self.mongoc.delete_async(self.coll_users, {"_id": user_id})
+        await self.coll_users.delete_one({"_id": user_id})
 
     async def is_there(self, user_id: int, use_acc: bool = False):
         """
@@ -69,7 +64,7 @@ class CypherDB:
             }
         """
         uid = {"_id": user_id}
-        docu = await self.mongoc.find_async(self.coll_users, uid, {"_id": 0})
+        docu = await self.coll_users.find_one(uid, {"_id": 0})
         if not docu:
             return None
         if use_acc:
@@ -79,32 +74,28 @@ class CypherDB:
 
     # <<<<<<<<<< Banned user functions >>>>>>>>>> #
     async def ban_user(self, user_id: int, reason: str = "Got banned :("):
-        await self.mongoc.update_async(
-            self.coll_users,
+        await self.coll_users.update_one(
             {"_id": user_id},
-            {"status": {"banned": True, "reason": reason}},
+            {"$set": {"status": {"banned": True, "reason": reason}}},
         )
 
     async def unban_user(self, user_id: int, reason: str = "Got unbanned :)"):
-        await self.mongoc.update_async(
-            self.coll_users,
+        await self.coll_users.update_one(
             {"_id": user_id},
-            {"status": {"banned": False, "reason": reason}},
+            {"$set": {"status": {"banned": False, "reason": reason}}},
         )
 
     # <<<<<<<<<< Mega functions >>>>>>>>>> #
     async def mega_login(self, user_id: int, email: str, password: str):
-        await self.mongoc.update_async(
-            self.coll_users,
+        await self.coll_users.update_one(
             {"_id": user_id},
-            {"email": email, "password": password},
+            {"$set": {"email": email, "password": password}},
         )
 
     async def mega_logout(self, user_id: int):
-        await self.mongoc.update_async(
-            self.coll_users,
+        await self.coll_users.update_one(
             {"_id": user_id},
-            {"email": "", "password": ""},
+            {"$set": {"email": "", "password": ""}},
         )
 
     # this isnt used anywhere as far as from what i can tell but im not gonna risk it by deleting anything either
@@ -114,13 +105,12 @@ class CypherDB:
 
     # <<<<<<<<<< Proxy functions >>>>>>>>>> #
     async def update_proxy(self, user_id: int, proxy: str):
-        await self.mongoc.update_async(
-            self.coll_users,
+        await self.coll_users.update_one(
             {"_id": user_id},
-            {"proxy": proxy},
+            {"$set": {"proxy": proxy}},
         )
 
     async def get_proxy(self, user_id: int):
-        return await self.mongoc.find_async(
-            self.coll_users, {"_id": user_id}, {"proxy": 1}
+        return await self.coll_users.find_one(
+            {"_id": user_id}, {"proxy": 1}
         )
