@@ -25,16 +25,11 @@ async def track_progress(
         elapsed_time = human_time(elapsed_time)
         estimated_total_time = human_time(estimated_total_time)
 
-        progress = "[{0}{1}] \n**Process**: {2}%\n".format(
-            "█" * floor(percentage / 5),
-            "░" * (20 - floor(percentage / 5)),
-            round(percentage, 2),
-        )
+        filled = floor(percentage / 5)
+        progress = f"[{'█'*filled}{'░'*(20-filled)}]\n**Process**: {round(percentage,2)}%\n"
 
-        tmp = f"{progress}{human_bytes(current)} of {human_bytes(total)}\n**Speed:** {human_bytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n"
+        pmsg = f"{progress}{human_bytes(current)} of {human_bytes(total)}\n**Speed:** {human_bytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n\n\n**Powered by @NexaBotsUpdates**"
         try:
-            await client.edit_message_text(
-                chat_id, msg_id, f"{tmp}\n\n**Powered by @NexaBotsUpdates**", **kwargs
-            )
+            await client.edit_message_text(chat_id, msg_id, pmsg, **kwargs)
         except:
             pass
