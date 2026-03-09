@@ -20,7 +20,7 @@ from pyrogram.types import Message, CallbackQuery
 
 
 from .database import CypherDB
-from .sysfncs import run_on_shell
+from .sysfncs import run_on_shell, kill_family
 from .files import send_as_guessed, fs_cleanup, splitit, listfiles
 
 _emsg = """
@@ -297,9 +297,14 @@ class MeganzClient(Client):
             self.glob_tmp.pop(user_id, None)
 
             if user_id:
-                self.mega_running.pop(user_id, None)
-                self.ddl_running.pop(user_id, None)
-        except (OSError, KeyError) as e:
+                mg_pid = self.mega_running.pop(user_id, None)
+                ddl_task = self.ddl_running.pop(user_id, None)
+                if mg_pid:
+                    await kill_family(mg_pid)
+                if ddl_task:
+                    ddl_task.cancel()
+                    await ddl_task
+        except Exception as e:
             logging.debug(f"Cleanup error: {e}")
 
     async def send_files(self, files: list[str], chat_id: int, msg_id: int, **kwargs):
