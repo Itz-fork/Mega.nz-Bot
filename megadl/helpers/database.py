@@ -78,14 +78,14 @@ class CypherDB:
             return docu
 
     # <<<<<<<<<< Banned user functions >>>>>>>>>> #
-    async def ban_user(self, user_id: int, reason: str):
+    async def ban_user(self, user_id: int, reason: str = "Got banned :("):
         await self.mongoc.update_async(
             self.coll_users,
             {"_id": user_id},
             {"status": {"banned": True, "reason": reason}},
         )
 
-    async def unban_user(self, user_id: int, reason: str = "Got unbanned"):
+    async def unban_user(self, user_id: int, reason: str = "Got unbanned :)"):
         await self.mongoc.update_async(
             self.coll_users,
             {"_id": user_id},
