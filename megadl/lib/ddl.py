@@ -179,6 +179,10 @@ class Downloader:
             
             async with async_open(wpath, mode="wb") as file:
                 async for chunk in resp.content.iter_chunked(_chunksize):
+                    # yield before write
+                    await asyncio.sleep(0)
+                    
+                    # write chunk
                     await file.write(chunk)
                     curr += len(chunk)
                     
