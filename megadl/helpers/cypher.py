@@ -313,7 +313,7 @@ class MeganzClient(Client):
             # when run_checks gets triggered by the same user
             # not mandatory. would've been better to yield before calling this but thats just more work to do
             if path:
-                fs_cleanup(path)
+                await asyncio.to_thread(fs_cleanup,path)
         # no need for anything else
         except asyncio.CancelledError::
             pass
