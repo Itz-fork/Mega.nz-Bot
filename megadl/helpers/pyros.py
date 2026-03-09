@@ -4,9 +4,14 @@
 # Description: Tools and helper functions related to pyrogram
 
 from time import time
-from math import floor
 from humans import human_time, human_bytes
 
+
+# pre compute possible progress bars
+PROGRESS_BARS = tuple(
+    f"[{'█'*i}{'░'*(20-i)}]"
+    for i in range(21)
+)
 
 # Porogress bar for pyrogram
 # Improved version of SpEcHiDe's AnyDL-Bot
@@ -25,8 +30,8 @@ async def track_progress(
         elapsed_time = human_time(elapsed_time)
         estimated_total_time = human_time(estimated_total_time)
 
-        filled = floor(percentage / 5)
-        progress = f"[{'█'*filled}{'░'*(20-filled)}]\n**Process**: {round(percentage,2)}%\n"
+        filled = min(int(percentage) // 5, 20)
+        progress = f"{PROGRESS_BARS[filled]}\n**Process**: {percentage:.2f}%\n"
 
         pmsg = f"{progress}{human_bytes(current)} of {human_bytes(total)}\n**Speed:** {human_bytes(speed)}/s\n**ETA:** {estimated_total_time if estimated_total_time != '' else '0 s'}\n\n\n**Powered by @NexaBotsUpdates**"
         try:
