@@ -9,6 +9,13 @@ from pymongo import AsyncMongoClient, ReturnDocument
 
 
 class CypherDB:
+    # use slots for faster var lookups
+    # usually this isnt needed, like at all
+    # i cant justify myself for adding this either
+    # but wait maybe i can?
+    # i use find_one_and_update in .add(...) maximum efficiency so i guess its not that conflicting
+    __slots__ = ("mongoc", "coll_users")
+    
     def __init__(self) -> None:
         self.mongoc = AsyncMongoClient(getenv("MONGO_URI"))
         self.coll_users = self.mongoc["mega_nz"]["users"]
