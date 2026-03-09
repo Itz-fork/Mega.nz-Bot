@@ -53,6 +53,9 @@ class Downloader:
     _session = None
     _lock = asyncio.Lock()
 
+    # again same comment as the one you'd find in helpers/database.py -> CypherDB
+    __slots__ = ("tg_client",) # dont remove "," its there for a reason
+
     def __init__(self, client) -> None:
         self.tg_client = client
 
