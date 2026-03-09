@@ -5,7 +5,7 @@ filetype
 aiofiles
 python-dotenv
 aiohttp[speedups]
-pymongo
+pymongo>=4.8
 dnspython
 cryptography
 pycryptodome
