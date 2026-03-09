@@ -85,6 +85,21 @@ class AioMongo(MongoClient):
         """
         return await run_partial(coll.count_documents, query, *args, **kwargs)
 
+    async def find_one_and_update_async(
+        self,
+        coll: Collection,
+        query: dict,
+        value: dict,
+        *args,
+        **kwargs
+    ):
+        """
+        Perform `find_one_and_update` operation on the given collection
+        """
+        return await run_partial(
+            coll.find_one_and_update, query, value, *args, **kwargs
+        )
+
     async def find_many_async(self, coll: Collection, query: dict, *args, **kwargs):
         """
         Perform `find` operation on the given collection

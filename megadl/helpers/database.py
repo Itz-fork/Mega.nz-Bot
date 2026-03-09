@@ -3,6 +3,8 @@
 # Project: https://github.com/Itz-fork/Mega.nz-Bot
 # Description: Database functions
 
+from pymongo import ReturnDocument
+
 from megadl.lib.aiomongo import AioMongo
 
 
@@ -14,26 +16,25 @@ class CypherDB:
     # <<<<<<<<<< Active user functions >>>>>>>>>> #
 
     async def add(self, user_id: int):
-        await self.mongoc.update_async(
+        result = await self.mongoc.find_one_and_update_async(
             self.coll_users,
             {"_id": user_id},
             {
-                "_id": user_id,
-                "email": "",
-                "password": "",
-                "status": {"banned": False, "reason": ""},
-                "total_downloads": 0,
-                "total_uploads": 0,
-                "proxy": "",
+                "$setOnInsert": {
+                    "_id": user_id,
+                    "email": "",
+                    "password": "",
+                    "status": {"banned": False, "reason": ""},
+                    "total_downloads": 0,
+                    "total_uploads": 0,
+                    "proxy": "",
+                }
             },
-            no_modify=True,
+            projection={"_id": 0, "status": 1},
             upsert=True,
+            return_document=ReturnDocument.AFTER,
         )
-        return (
-            await self.mongoc.find_async(
-                self.coll_users, {"_id": user_id}, {"_id": 0, "status": 1}
-            )
-        )["status"]
+        return result["status"]
 
     async def plus_fl_count(
         self, user_id: int, downloads: int | None = None, uploads: int | None = None
