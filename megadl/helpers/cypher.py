@@ -179,11 +179,19 @@ class MeganzClient(Client):
                 
                 if _func_name.startswith("admin") or _func_name in self.req_db_fn:
                     if not self.database:
-                        return await self.cyeor(
+                        await self.cyeor(
                             msg,
                             "`Please set up database to use this feature!`",
                             True,
                         )
+                        return msg.stop_propagation()
+                    if uid not in client.auth_users:
+                        await self.cyeor(
+                            msg,
+                            "✋🛑 Only admins can use this command. Fuck off, will you?",
+                            True,
+                        )
+                        return msg.stop_propagation()
 
                 # Check auth users
                 if self.database:
