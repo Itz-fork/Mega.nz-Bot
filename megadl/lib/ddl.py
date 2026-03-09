@@ -177,21 +177,20 @@ class Downloader:
             total = resp.content_length
             curr = 0
             st = time()
+            # for update throttling
             last_up = 0
             up_interval = 2
+            can_progress = None not in (chat_id, msg_id, self.tg_client, total)
             
             async with async_open(wpath, mode="wb") as file:
                 async for chunk in resp.content.iter_chunked(_chunksize):
-                    # yield before write
-                    await asyncio.sleep(0)
-                    
                     # write chunk
                     await file.write(chunk)
                     curr += len(chunk)
                     
                     # Make sure everything is present before calling track_progress
                     now = time()
-                    if None not in (chat_id, msg_id, self.tg_client, total) and (now - last_up >= up_interval):
+                    if can_progress and (now - last_up >= up_interval):
                         await track_progress(
                             curr,
                             total,
