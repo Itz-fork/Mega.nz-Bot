@@ -176,7 +176,10 @@ class MeganzClient(Client):
                         await _frwded.reply(
                             f"**#UPLOAD_LOG** \n\n**From:** `{uid}` \n**Get history:** `/info {uid}`"
                         )
-                
+
+                # admin function handling
+                # if you are modifying this code: Never have a function name start with "admin_" prefix
+                # unless its indended to be used by one
                 if _func_name.startswith("admin") or _func_name in self.req_db_fn:
                     if not self.database:
                         await self.cyeor(
@@ -310,7 +313,10 @@ class MeganzClient(Client):
             # when run_checks gets triggered by the same user
             # not mandatory. would've been better to yield before calling this but thats just more work to do
             if path:
-                fs_cleanup(path)
+                await asyncio.to_thread(fs_cleanup,path)
+        # no need for anything else
+        except asyncio.CancelledError::
+            pass
         except Exception as e:
             logging.debug(f"Cleanup error: {e}")
 
