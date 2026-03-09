@@ -40,7 +40,7 @@ class MeganzClient(Client):
     Custom pyrogram client for Mega.nz-Bot
     """
 
-    version = "1.0.1"
+    version = "2.0.1"
     dl_loc = None
     tmp_loc = None
     database = CypherDB() if os.getenv("MONGO_URI") else None
