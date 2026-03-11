@@ -60,6 +60,7 @@ class MeganzClient(Client):
 
         self.tmp_loc = f"{self.dl_loc}/temps"
         self.mx_size = int(os.getenv("TG_MAX_SIZE", 2040108421))
+        self.splt_buffer = int(os.getenv("SPLITTER_BUFFER_SIZE", 1048576)) # 1024 * 10224
 
         if not os.path.isdir(self.dl_loc):
             os.makedirs(self.dl_loc)
@@ -337,7 +338,8 @@ class MeganzClient(Client):
                         """,
                     )
                     splout = f"{self.tmp_loc}/{chat_id}/splitted"
-                    await splitit(file, splout)
+                    # file, path, split size, buffer size
+                    await splitit(file, splout, self.mx_size, self.splt_buffer)
                     for file in listfiles(splout):
                         await send_as_guessed(self, file, chat_id, msg_id, **kwargs)
                     fs_cleanup(splout)
