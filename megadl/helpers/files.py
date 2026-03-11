@@ -115,15 +115,10 @@ async def send_as_guessed(client, file, chat_id, mid, **kwargs):
 
 
 # Split files using the optimized async splitter
-async def splitit(path_in, path_out):
+async def splitit(path_in: str, path_out: str, split_size: int, buffer_size: int):
     """
-    Split a file into parts for Telegram upload.
-    
-    Uses the optimized async splitter that:
-    - Minimizes memory usage with buffered I/O
-    - Runs in thread pool to avoid blocking event loop
-    - Handles thousands of simultaneous operations efficiently
+    Split a file into parts for Telegram upload
     """
     if not path.isdir(path_out):
         makedirs(path_out)
-    return await split_file(path_in, path_out)
+    return await split_file(path_in, path_out, split_size, buffer_size)
