@@ -9,7 +9,7 @@
 <p align="center">
 	<img src="assests/logo.png" width=200, height=200/>
 	<br>
-	<a href="https://megabot.hirusha.codes/"><img src="https://img.shields.io/badge/Docs-e6615f?style=for-the-badge&logo=gitbook&logoColor=white" /></a>
+	<a href="https://itz-fork.gitbook.io/mega.nz-bot"><img src="https://img.shields.io/badge/Docs-e6615f?style=for-the-badge&logo=gitbook&logoColor=white" /></a>
 	<a href="https://t.me/Nexa_bots"><img src="https://img.shields.io/badge/Support-0a0a0a?style=for-the-badge&logo=telegram&logoColor=white" /></a>
 </p>
 
@@ -41,7 +41,7 @@ Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 Use official Docker image to run Mega.nz-Bot 🐳
 
 - Install Docker on your server
-- Create the .env file (see [env sample](/.env.sample) and [config vars](https://megabot.hirusha.codes/config-vars))
+- Create the .env file (see [env sample](/.env.sample) and [config vars](https://itz-fork.gitbook.io/mega.nz-bot/config-vars))
 - Pull the docker image
 	```
 	docker pull ghcr.io/itz-fork/meganzbot:latest
@@ -92,7 +92,7 @@ Use official Docker image to run Mega.nz-Bot 🐳
 	```
 
 ### Config vars
-Please refer to [documentation](https://megabot.hirusha.codes/config-vars)
+Please refer to [documentation](https://itz-fork.gitbook.io/mega.nz-bot/config-vars)
 
 
 [^1]: This only applies to public contents and you're still limited by the daily download quota limit of the mega.nz platform
