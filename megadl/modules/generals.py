@@ -1,6 +1,6 @@
-# Copyright (c) 2021 - Present Itz-fork
-# Author: https://github.com/Itz-fork
-# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Copyright (c) 2021 - Present partiallywritten
+# Author: https://github.com/partiallywritten
+# Project: https://github.com/partiallywritten/Mega.nz-Bot
 # Description: General commands of the bot
 
 
@@ -15,7 +15,7 @@ from megadl import CypherClient
 async def start_msg(_: CypherClient, msg: Message):
     await msg.reply_text(
         f"""
-Hi `{msg.from_user.first_name}` 👋, I'm [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot)!
+Hi `{msg.from_user.first_name}` 👋, I'm [Mega.nz-Bot](https://github.com/partiallywritten/Mega.nz-Bot)!
 
 I can help you download, upload files or folders from telegram.
 Not sure what to do? Check /help for more info 😇

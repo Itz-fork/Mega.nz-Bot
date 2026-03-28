@@ -32,7 +32,7 @@ A simple telegram bot to download, upload files or folders from [Mega.nz](https:
 Deploy your own Bot ♥️! **Star 🌟 Fork 🍴 and Deploy**
 
 ### Heroku
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/Itz-fork/X-Bin-Patch#deployment)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://github.com/partiallywritten/X-Bin-Patch#deployment)
 
 ### Local
 
@@ -44,28 +44,28 @@ Use official Docker image to run Mega.nz-Bot 🐳
 - Create the .env file (see [env sample](/.env.sample) and [config vars](https://itz-fork.gitbook.io/mega.nz-bot/config-vars))
 - Pull the docker image
 	```
-	docker pull ghcr.io/itz-fork/meganzbot:latest
+	docker pull ghcr.io/partiallywritten/meganzbot:latest
 	```
 - Run it! (`.env` is path to .env file you created)
 	```
-	docker run --env-file .env ghcr.io/itz-fork/meganzbot
+	docker run --env-file .env ghcr.io/partiallywritten/meganzbot
 	```
 
 **Legacy Metods,**
 
 1) Using installer script
 
-	If you're using a linux distro with `apt`, `apk`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/Itz-fork/Mega.nz-Bot).
+	If you're using a linux distro with `apt`, `apk`, `pacman` or `dnf` as the package manager, you can use the official installer script to setup [Mega.nz-Bot](https://github.com/partiallywritten/Mega.nz-Bot).
 
 	```bash
-	curl -sS -O https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/installer.sh && chmod +x installer.sh && ./installer.sh
+	curl -sS -O https://raw.githubusercontent.com/partiallywritten/Mega.nz-Bot/main/installer.sh && chmod +x installer.sh && ./installer.sh
 	```
 
 2) Using classic git clone
 
 	- Clone the Repo
 	```
-	git clone https://github.com/Itz-fork/Mega.nz-Bot
+	git clone https://github.com/partiallywritten/Mega.nz-Bot
 	```
 	- Enter the directory
 	```

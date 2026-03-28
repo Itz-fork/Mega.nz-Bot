@@ -56,7 +56,7 @@ function show_error() {
 # CLone git repo
 function clone_repo() {
     show_process "Cloning Mega.nz-Bot repository"
-    git clone https://github.com/Itz-fork/Mega.nz-Bot.git || show_error "git: Clone failed"
+    git clone https://github.com/partiallywritten/Mega.nz-Bot.git || show_error "git: Clone failed"
 
     show_process "Changing current working directory"
     cd Mega.nz-Bot || show_error "fs: 'Mega.nz-Bot' not found"

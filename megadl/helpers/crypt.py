@@ -1,8 +1,8 @@
-# Copyright (c) 2021 - Present Itz-fork
-# Author: https://github.com/Itz-fork
-# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Copyright (c) 2021 - Present partiallywritten
+# Author: https://github.com/partiallywritten
+# Project: https://github.com/partiallywritten/Mega.nz-Bot
 # Description: Decryption functions
-# Credits: https://github.com/Itz-fork/pyro-mega.py/blob/master/src/mega/crypto.py
+# Credits: https://github.com/partiallywritten/pyro-mega.py/blob/master/src/mega/crypto.py
 
 import re
 import json
