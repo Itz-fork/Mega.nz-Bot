@@ -1,6 +1,6 @@
-# Copyright (c) 2021 - Present Itz-fork
-# Author: https://github.com/Itz-fork
-# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Copyright (c) 2021 - Present partiallywritten
+# Author: https://github.com/partiallywritten
+# Project: https://github.com/partiallywritten/Mega.nz-Bot
 # Description: Custom pyrogram client useful methods
 
 import os
@@ -126,7 +126,7 @@ class MeganzClient(Client):
         print("> Checking for updates")
         try:
             remote_updates = requests.get(
-                "https://raw.githubusercontent.com/Itz-fork/Mega.nz-Bot/main/updates.json",
+                "https://raw.githubusercontent.com/partiallywritten/Mega.nz-Bot/main/updates.json",
                 timeout=10
             ).json()
             

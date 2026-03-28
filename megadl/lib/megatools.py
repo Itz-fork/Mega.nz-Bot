@@ -1,6 +1,6 @@
-# Copyright (c) 2021 - Present Itz-fork
-# Author: https://github.com/Itz-fork
-# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Copyright (c) 2021 - Present partiallywritten
+# Author: https://github.com/partiallywritten
+# Project: https://github.com/partiallywritten/Mega.nz-Bot
 # Description: Wrapper for megatools cli with extended features
 
 import os
@@ -51,8 +51,8 @@ class MegaTools:
     """
     Helper class for pyrogram bots to interact with megatools cli
 
-    Author: https://github.com/Itz-fork
-    Project: https://github.com/Itz-fork/Mega.nz-Bot
+    Author: https://github.com/partiallywritten
+    Project: https://github.com/partiallywritten/Mega.nz-Bot
     """
 
     def __init__(self, tg_client, pre_conf=None) -> None:
@@ -360,7 +360,7 @@ class MegaTools:
 
 Please make sure that you've provided the correct username and password.
 
-You can open a new issue if the problem persists - https://github.com/Itz-fork/Mega.nz-Bot/issues
+You can open a new issue if the problem persists - https://github.com/partiallywritten/Mega.nz-Bot/issues
         """
 
     async def __checkErrors(self, out):
@@ -434,7 +434,7 @@ class FileAlreadyExists(Exception):
 class LoginError(Exception):
     def __init__(self) -> None:
         super().__init__(
-            "Unable to login to your mega.nz account. \n\nYou can open a new issue if the problem persists - https://github.com/Itz-fork/Mega.nz-Bot/issues"
+            "Unable to login to your mega.nz account. \n\nYou can open a new issue if the problem persists - https://github.com/partiallywritten/Mega.nz-Bot/issues"
         )
 
 

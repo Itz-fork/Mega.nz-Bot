@@ -1,6 +1,6 @@
-# Copyright (c) 2021 - Present Itz-fork
-# Author: https://github.com/Itz-fork
-# Project: https://github.com/Itz-fork/Mega.nz-Bot
+# Copyright (c) 2021 - Present partiallywritten
+# Author: https://github.com/partiallywritten
+# Project: https://github.com/partiallywritten/Mega.nz-Bot
 # Description: Callbacks that can be used globally
 
 import logging

@@ -2,7 +2,7 @@
 
 # Header
 start() {
-    echo -e "\e[1m\e[101m Script by Itz-fork \e[0m \n"
+    echo -e "\e[1m\e[101m Script by partiallywritten \e[0m \n"
 }
 
 # Write down all sub dirs to one text file
